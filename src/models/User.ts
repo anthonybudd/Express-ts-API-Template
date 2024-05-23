@@ -1,11 +1,12 @@
-import db from '../providers/db';
+import sequelize from '../providers/db';
 import * as Sequelize from 'sequelize';
-import { Table, Model } from 'sequelize-typescript';
+import { Model, InferAttributes, InferCreationAttributes } from 'sequelize';
 
-interface UserAttributes {
+
+interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
     id: String,
     email: String,
-    password: String,
+    password: string,
     firstName: String,
     lastName: String,
     bio: String,
@@ -17,12 +18,7 @@ interface UserAttributes {
     lastLoginAt: String,
 }
 
-interface UserCreationAttributes extends Sequelize.Optional<UserAttributes, 'id'> { }
-
-@Table
-class User extends Model<UserAttributes, UserCreationAttributes> { }
-
-User.init({
+const User = sequelize.define<UserModel>('User', {
     id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -57,7 +53,6 @@ User.init({
         allowNull: true,
     },
 }, {
-    sequelize: db,
     tableName: 'Users',
     defaultScope: {
         attributes: {
@@ -69,21 +64,10 @@ User.init({
     },
 });
 
-const UserModel = sequelize.define<UserModel>('User', {
-    id: {
-        primaryKey: true,
-        type: DataTypes.INTEGER.UNSIGNED,
-    },
-    name: {
-        type: DataTypes.STRING,
-    },
-});
-
 
 export default User;
 
 export {
-    UserAttributes,
-    UserCreationAttributes,
-    User
+    UserModel,
+    User,
 };

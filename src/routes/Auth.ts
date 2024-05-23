@@ -5,7 +5,6 @@ import { body, validationResult } from 'express-validator';
 import User from './../models/User';
 
 import MessageResponse from './../interfaces/MessageResponse';
-import UserInterface from './../interfaces/UserInterface';
 
 const router = express.Router();
 
@@ -22,7 +21,7 @@ router.post<{}, MessageResponse>('/auth/login', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
 
-    passport.authenticate('local', { session: false }, (err: Error | null, user: User | null) => {
+    passport.authenticate('local', { session: false }, (err: Error | null, user: typeof User | null) => {
         // if (err) return errorHandler(err, res);
         if (!user) return res.status(401).json('Incorrect email or password');
 
