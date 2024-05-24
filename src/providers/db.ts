@@ -1,10 +1,7 @@
 import { Sequelize } from 'sequelize-typescript';
+import errorHandler from './errorHandler';
 
 const connections = require('./connections');
-// const errorHandler = require('./errorHandler');
-
-
-// import User from '../models/User';
 
 const connection = (typeof global.it === 'function') ? 'test' : (process.env.NODE_ENV || 'development');
 const dbHost = connections[connection].host;
@@ -19,7 +16,6 @@ export const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
     host: dbHost,
     dialect: dbDialect,
     logging: false,
-    // models: [User],
     pool: {
         max: 5,
         min: 0,
@@ -28,6 +24,6 @@ export const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
     },
 });
 
-// sequelize.authenticate().catch(err: => errorHandler(err));
+sequelize.authenticate().catch(err => errorHandler(err));
 
 export default sequelize;

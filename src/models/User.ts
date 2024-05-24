@@ -1,21 +1,20 @@
+import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import sequelize from '../providers/db';
 import * as Sequelize from 'sequelize';
-import { Model, InferAttributes, InferCreationAttributes } from 'sequelize';
-
 
 interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
-    id: String,
-    email: String,
+    id: CreationOptional<string>,
+    email: string,
     password: string,
-    firstName: String,
-    lastName: String,
-    bio: String,
-    tos: String,
-    inviteKey: String,
-    passwordResetKey: String,
-    emailVerificationKey: String,
-    emailVerified: String,
-    lastLoginAt: String,
+    firstName: string,
+    lastName: string,
+    tos: string,
+    bio: CreationOptional<string>,
+    inviteKey: CreationOptional<string>,
+    passwordResetKey: CreationOptional<string> | null,
+    emailVerificationKey: CreationOptional<string> | null,
+    emailVerified: CreationOptional<boolean>,
+    lastLoginAt: CreationOptional<string>,
 }
 
 const User = sequelize.define<UserModel>('User', {
@@ -36,7 +35,11 @@ const User = sequelize.define<UserModel>('User', {
 
     firstName: Sequelize.STRING,
     lastName: Sequelize.STRING,
-    bio: Sequelize.TEXT,
+    bio: {
+        type: Sequelize.STRING,
+        defaultValue: '',
+        allowNull: false,
+    },
 
     tos: Sequelize.STRING,
     inviteKey: Sequelize.STRING,
@@ -63,7 +66,6 @@ const User = sequelize.define<UserModel>('User', {
         }
     },
 });
-
 
 export default User;
 

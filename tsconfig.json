@@ -10,7 +10,11 @@
     "strict": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+
+    "baseUrl": "src",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
   },
   "include": [
     "./*.js",

@@ -4,11 +4,10 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import express from 'express';
 import fileUpload from 'express-fileupload';
-import MessageResponse from './interfaces/MessageResponse';
 
 // Controllers
-import Auth from './routes/Auth';
-// import User from './routes/User';
+import { app as Auth } from './routes/Auth';
+import { app as User } from './routes/User';
 // import Groups from './routes/Groups';
 
 
@@ -17,7 +16,7 @@ console.log('* Express.ts API Boilerplate');
 console.log('*');
 console.log('* ENV');
 console.log(`* NODE_ENV: ${process.env.NODE_ENV}`);
-// (!process.env.H_CAPTCHA_SECRET) ? console.log(`* H_CAPTCHA_SECRET: null ⚠️  Login/Sign-up requests will not require captcha validadation!`) : console.log(`* H_CAPTCHA_SECRET: Enabled`);
+(process.env.H_CAPTCHA_SECRET === null) ? console.log(`* H_CAPTCHA_SECRET: null ⚠️  Login/Sign-up requests will not require captcha validadation!`) : console.log(`* H_CAPTCHA_SECRET: Enabled`);
 console.log('*');
 console.log('*');
 
@@ -40,8 +39,8 @@ app.use(fileUpload({
   useTempFiles: true,
   parseNested: true,
 }));
-app.get<String>('/_readiness', (req, res) => res.send('healthy'));
-app.get<MessageResponse>('/api/v1/_healthcheck', (req, res) => res.json({ messsage: 'healthy' }));
+app.get('/_readiness', (req, res) => res.send('healthy'));
+app.get('/api/v1/_healthcheck', (req, res) => res.json({ messsage: 'healthy' }));
 
 
 ////////////////////////////////////////////////
