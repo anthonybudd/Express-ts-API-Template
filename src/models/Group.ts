@@ -1,7 +1,15 @@
-import Sequelize from 'sequelize';
-// const db = require('./../providers/db');
+import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
+import sequelize from '../providers/db';
+import * as Sequelize from 'sequelize';
 
-export default db.define('Group', {
+interface GroupModel extends Model<InferAttributes<GroupModel>, InferCreationAttributes<GroupModel>> {
+    id: CreationOptional<string>,
+    name: string,
+    ownerID: string,
+    deletedAt: CreationOptional<string>,
+}
+
+const Group = sequelize.define<GroupModel>('Group', {
     id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -10,8 +18,12 @@ export default db.define('Group', {
         unique: true
     },
 
-    name: Sequelize.STRING,
-    ownerID: Sequelize.UUID,
+    name: {
+        type: Sequelize.STRING
+    },
+    ownerID: {
+        type: Sequelize.UUID
+    },
 
     deletedAt: {
         type: Sequelize.DATE,
@@ -19,5 +31,18 @@ export default db.define('Group', {
     },
 }, {
     tableName: 'Groups',
-    paranoid: true,
+    defaultScope: {
+        attributes: {
+            exclude: [
+
+            ]
+        }
+    },
 });
+
+export default Group;
+
+export {
+    GroupModel,
+    Group,
+};

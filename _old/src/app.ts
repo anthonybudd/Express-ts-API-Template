@@ -8,7 +8,7 @@ import fileUpload from 'express-fileupload';
 // Controllers
 import { app as Auth } from './routes/Auth';
 import { app as User } from './routes/User';
-import { app as Groups } from './routes/Groups';
+// import Groups from './routes/Groups';
 
 
 console.log('*************************************');
@@ -16,7 +16,9 @@ console.log('* Express.ts API Boilerplate');
 console.log('*');
 console.log('* ENV');
 console.log(`* NODE_ENV: ${process.env.NODE_ENV}`);
-(process.env.H_CAPTCHA_SECRET) ? console.log(`* H_CAPTCHA_SECRET: Enabled`) : console.log(`* ⚠️ H_CAPTCHA_SECRET not set. Login/Sign-up requests will not require captcha validadation!`);
+(process.env.H_CAPTCHA_SECRET === null) ? console.log(`* H_CAPTCHA_SECRET: null ⚠️  Login/Sign-up requests will not require captcha validadation!`) : console.log(`* H_CAPTCHA_SECRET: Enabled`);
+console.log('*');
+console.log('*');
 
 
 ////////////////////////////////////////////////
@@ -43,8 +45,9 @@ app.get('/api/v1/_healthcheck', (req, res) => res.json({ messsage: 'healthy' }))
 
 ////////////////////////////////////////////////
 // HTTP
+// app.use('/api/v1', api);
 app.use('/api/v1/', Auth);
-app.use('/api/v1/', User);
-app.use('/api/v1/', Groups);
+// app.use('/api/v1/', User);
+// app.use('/api/v1/', Groups);
 
 export default app;

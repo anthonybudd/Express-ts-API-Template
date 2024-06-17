@@ -21,5 +21,4 @@
     "src/**/*.ts",
     "test/**/*.ts",
   ],
-  "files":["src/types.d.ts"]  
 }

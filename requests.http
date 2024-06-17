@@ -2,7 +2,7 @@
 # URL: https://marketplace.visualstudio.com/items?itemName=humao.rest-client
 
 @Host=http://localhost:8888/api/v1
-@AccessToken=eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM0NjQ0NzMzLWRlZWEtNDdkOC1iMzVhLTg2ZjMwZmY5NjE4ZSIsImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSIsImZpcnN0TmFtZSI6IlVzZXIiLCJsYXN0TmFtZSI6Ik9uZSIsImlhdCI6MTcxNjU4NTYxNn0.RR-3LfX4uxoF-TXiLXB74viJj927y4Pt1Be-wELnLt8mMbdJdwWeUlzIe-kinZP-c_nu4xuH8O226NfuM2O6TwZYeIBqqlSg6PNrJFg7e6UAWQi_vpRqG9pksYigPC537fdxk85iP07ASErhwa0yGDdu-2XV5dpXuvcNsHfFYhbdJ0Vb_lL7Ve_r5imFCIygIahQ527qmpmiGkbBBwbP-nPmUYydk7k0YEjB-l2HaVJu5wvfis8IVXUlvs9XvaWOOdtucPmN1ZQcp14un2x19uzZTmAafPUCVrKslhFm3_lsrbXcw6DuWR2LGbSZFU2B7qQpExNQ7aK_kPBsjJd7Uw
+@AccessToken=eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM0NjQ0NzMzLWRlZWEtNDdkOC1iMzVhLTg2ZjMwZmY5NjE4ZSIsImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSIsImZpcnN0TmFtZSI6IlVzZXIiLCJsYXN0TmFtZSI6Ik9uZSIsImlhdCI6MTcxODY0Mzk4OH0.pjaZTi7GTxrDTN32pw-qPl9ZRNg2CUIQ2vlV0MPkC0SCznIOWibdlV4re14YorS-c_3sYXI3UEqwkBkYA2GYaPVxdethWz4Qf_JWPe6bqj5u7CroQP3DkoaqKDEKo04s6yh0ZF3WQsJtFUuNQ53J0JSCntHQ7YfSYVZpaZY2mJ3wI792PkAqULMBaUdO6rFWtg_Nh0kdhKqfkS7JO4fSiJUlNbeGOYre2YQ8IJ3n7aM4RNWtVxbUAlQG6Hnj99SO2QpF-KfLheRhnipHTXCjgX2RMCQIIlkVE6KdSyQ-pYxXTNj99YHdNNkc4BS5306EpnBJ4CorLGkWV46HK1sv9A
 
 ###########################################
 # Auth
@@ -37,8 +37,30 @@ content-type: application/json
 
 
 ###########################################
-# Auth
+# User
 
 ### /user
 GET {{Host}}/user
 Authorization: Bearer {{AccessToken}}
+
+
+### /user
+POST {{Host}}/user
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "firstName": "Alex",
+    "lastName": "Jones"
+}
+
+
+### /user/update-password
+POST {{Host}}/user/update-password
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "password": "Password@1234",
+    "newPassword": "NewPassword!4321"
+}

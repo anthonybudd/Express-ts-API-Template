@@ -1,12 +1,18 @@
-const { body, validationResult, matchedData } = require('express-validator');
-const { User, Group, GroupsUsers } = require('./../models');
-const errorHandler = require('./../providers/errorHandler');
-const middleware = require('./middleware');
-const passport = require('passport');
-const express = require('express');
-const crypto = require('crypto');
+import { body, validationResult, matchedData } from 'express-validator';
+import errorHandler from '../providers/errorHandler';
+import generateJWT from './../providers/generateJWT';
+import { User, UserModel } from './../models/User';
+import { Group } from './../models/Group';
+import { GroupUser } from './../models/GroupUser';
+import passport from './../providers/passport';
+import { ucFirst } from './../providers/helpers';
+import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcrypt-nodejs';
+import express from 'express';
+import moment from 'moment';
+import crypto from 'crypto';
 
-const app = (module.exports = express.Router());
+export const app = express.Router();
 
 
 /**
@@ -15,17 +21,17 @@ const app = (module.exports = express.Router());
  */
 app.get('/groups/:groupID', [
     passport.authenticate('jwt', { session: false }),
-    middleware.isInGroup,
-], async (req, res) => {
-    try {
-        const group = await Group.findByPk(req.params.groupID, {
-            include: (req.query.with === 'users') ? [User] : [],
-        });
+    // middleware.isInGroup,
+], async (req: express.Request, res: express.Response) => {
+    // try {
+    const group = await Group.findByPk(req.params.groupID, {
+        include: (req.query.with === 'users') ? [User] : [],
+    });
 
-        return res.json(group);
-    } catch (error) {
-        return errorHandler(error, res);
-    }
+    return res.json(group);
+    // } catch (error) {
+    //     return errorHandler(error, res);
+    // }
 });
 
 
@@ -35,26 +41,26 @@ app.get('/groups/:groupID', [
  */
 app.post('/groups/:groupID', [
     passport.authenticate('jwt', { session: false }),
-    middleware.isInGroup,
+    // middleware.isInGroup,
     body('name')
-], async (req, res) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-        const data = matchedData(req);
+], async (req: express.Request, res: express.Response) => {
+    // try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+    const data = matchedData(req);
 
-        await Group.update(data, {
-            where: {
-                id: req.params.groupID
-            }
-        });
+    await Group.update(data, {
+        where: {
+            id: req.params.groupID
+        }
+    });
 
-        return res.json(
-            await Group.findByPk(req.params.groupID)
-        );
-    } catch (error) {
-        return errorHandler(error, res);
-    }
+    return res.json(
+        await Group.findByPk(req.params.groupID)
+    );
+    // } catch (error) {
+    //     return errorHandler(error, res);
+    // }
 });
 
 
@@ -64,77 +70,80 @@ app.post('/groups/:groupID', [
  */
 app.post('/groups/:groupID/users/invite', [
     passport.authenticate('jwt', { session: false }),
-    middleware.isGroupOwner,
+    // middleware.isGroupOwner,
     body('email').isEmail().toLowerCase(),
-], async (req, res) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-        const { email } = matchedData(req);
+], async (req: express.Request, res: express.Response) => {
+    // try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+    const { email } = matchedData(req);
 
-        const groupID = req.params.groupID;
+    const groupID = req.params.groupID;
 
-        let user = await User.findOne({
-            where: { email }
+    let user = await User.findOne({
+        where: { email }
+    });
+
+    if (user) {
+        if (user.id === req.user.id) return res.status(401).json({
+            msg: 'You cannot add yourself to a group',
+            code: 98644,
         });
 
-        if (user) {
-            if (user.id === req.user.id) return res.status(401).json({
-                msg: 'You cannot add yourself to a group',
-                code: 98644,
-            });
-
-            // Check if relationship already exists
-            const relationship = await GroupsUsers.findOne({
-                where: {
-                    groupID,
-                    userID: user.id
-                }
-            });
-            if (relationship) return res.json({
-                groupID,
-                userID: user.id
-            });
-        } else {
-            try {
-                user = await User.create({
-                    email,
-                    inviteKey: crypto.randomBytes(20).toString('hex'),
-                    emailVerificationKey: crypto.randomBytes(20).toString('hex'),
-                });
-
-                //////////////////////////////////////////
-                // EMAIL THIS TO THE USER
-                const inviteLink = `${process.env.FRONTEND_URL}/invite/${user.inviteKey}`;
-                if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nINVITE LINK: ${inviteLink}\n\n`);
-                //
-                //////////////////////////////////////////
-
-            } catch (error) {
-                errorHandler(error);
-            }
-        }
-
-        // Delete all first
-        await GroupsUsers.destroy({
+        // Check if relationship already exists
+        const relationship = await GroupUser.findOne({
             where: {
                 groupID,
-                userID: user.id,
+                userID: user.id
             }
         });
-
-        await GroupsUsers.create({
+        if (relationship) return res.json({
             groupID,
-            userID: user.id,
+            userID: user.id
+        });
+    } else {
+        // try {
+        user = await User.create({
+            email,
+            password: bcrypt.hashSync(crypto.randomBytes(20).toString('hex'), bcrypt.genSaltSync(10)), // AB: Random password, will be updated by user
+            firstName: '',
+            lastName: '',
+            lastLoginAt: moment().format("YYYY-MM-DD HH:mm:ss"),
+            emailVerificationKey: crypto.randomBytes(20).toString('hex'),
         });
 
-        return res.json({
-            groupID,
-            userID: user.id,
-        });
-    } catch (error) {
-        return errorHandler(error, res);
+        //////////////////////////////////////////
+        // EMAIL THIS TO THE USER
+        const inviteLink = `${process.env.FRONTEND_URL}/invite/${user.inviteKey}`;
+        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nINVITE LINK: ${inviteLink}\n\n`);
+        //
+        //////////////////////////////////////////
+
+        // } catch (error) {
+        //     errorHandler(error);
+        // }
     }
+
+    // Delete all existing relationships first
+    await GroupUser.destroy({
+        where: {
+            groupID,
+            userID: user.id,
+        }
+    });
+
+    await GroupUser.create({
+        groupID,
+        userID: user.id,
+    });
+
+    return res.json({
+        groupID,
+        userID: user.id,
+    });
+    // } catch (error) {
+    //     return errorHandler(error, res);
+    // }
 });
 
 
@@ -144,11 +153,11 @@ app.post('/groups/:groupID/users/invite', [
  */
 app.delete('/groups/:groupID/users/:userID', [
     passport.authenticate('jwt', { session: false }),
-    middleware.isGroupOwner,
-    middleware.isNotSelf,
-], async (req, res) => {
+    // middleware.isGroupOwner,
+    // middleware.isNotSelf,
+], async (req: express.Request, res: express.Response) => {
 
-    await GroupsUsers.destroy({
+    await GroupUser.destroy({
         where: {
             groupID: req.params.groupID,
             userID: req.params.userID,
