@@ -1,5 +1,13 @@
 # Express.ts API Boilerplate
 
+<!-- 
+TODO:
+- ErrorHandler
+- Scripts
+- Middleware
+- K8s
+ -->
+
 <img height="75" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-boilerplate.png?v=1"/>
 
 # ⚠️ This project is still under-development
@@ -80,7 +88,7 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 
 
 
-### Deployment
+<!-- ### Deployment
 Full Kubernetes deployment instructions can be found in [k8s/Deploy.md](./k8s/Deploy.md).
 
 - [api.deployment.yml](./k8s/api.deployment.yml)
@@ -91,7 +99,7 @@ Full Kubernetes deployment instructions can be found in [k8s/Deploy.md](./k8s/De
 kubectl apply -f .k8s/api.deployment.yml \
   -f .k8s/api.ingress.yml \
   -f .k8s/api.service.yml 
-```
+``` -->
 
 ### Generate SDK Client Libraries
 There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported langauages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
