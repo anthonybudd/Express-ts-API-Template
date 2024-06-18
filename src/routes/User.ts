@@ -1,8 +1,8 @@
 import { body, validationResult, matchedData } from 'express-validator';
-import errorHandler from '../providers/errorHandler';
 import { User, UserModel } from './../models/User';
-// const middleware = require('./middleware');
-import passport from './../providers/passport';
+import passport from './../providers/Passport';
+import middleware from './middleware';
+import Group from './../models/Group';
 import bcrypt from 'bcrypt-nodejs';
 import express from 'express';
 
@@ -16,18 +16,13 @@ export const app = express.Router();
 app.get('/user', [
     passport.authenticate('jwt', { session: false })
 ], async (req: express.Request, res: express.Response) => {
-    // try {
     const user = await User.findByPk(req.user.id, {
-        // include: [Group],
+        include: [Group],
     });
 
     if (!user) return res.status(404).send('User not found');
 
     return res.json(user);
-
-    // } catch (error) {
-    //     errorHandler(error, res);
-    // }
 });
 
 
@@ -41,7 +36,6 @@ app.post('/user', [
     body('lastName').optional(),
     body('bio').optional(),
 ], async (req: express.Request, res: express.Response) => {
-    // try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
     const data = matchedData(req);
@@ -51,9 +45,6 @@ app.post('/user', [
     return res.json(
         await User.findByPk(req.user.id)
     );
-    // } catch (error) {
-    //     return errorHandler(error, res);
-    // }
 });
 
 
@@ -64,11 +55,10 @@ app.post('/user', [
  */
 app.post('/user/update-password', [
     passport.authenticate('jwt', { session: false }),
-    // middleware.checkPassword,
+    middleware.checkPassword,
     body('password').exists(),
     body('newPassword').exists().isLength({ min: 7 }),
 ], async (req: express.Request, res: express.Response) => {
-    // try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
     const data = matchedData(req);
@@ -82,7 +72,4 @@ app.post('/user/update-password', [
     });
 
     return res.json({ success: true });
-    // } catch (error) {
-    //     return errorHandler(error, res);
-    // }
 });

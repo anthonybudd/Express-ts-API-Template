@@ -7,4 +7,4 @@ WORKDIR /app
 COPY . /app
 RUN npm install
 
-ENTRYPOINT [ "ts-node ", "src/index.ts" ]
+ENTRYPOINT [ "ts-node", "src/index.ts" ]

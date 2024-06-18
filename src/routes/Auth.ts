@@ -1,11 +1,11 @@
 import { body, validationResult, matchedData } from 'express-validator';
-import errorHandler from '../providers/errorHandler';
-import generateJWT from './../providers/generateJWT';
+import generateJWT from './../providers/GenerateJWT';
 import { User, UserModel } from './../models/User';
-import { Group } from './../models/Group';
 import { GroupUser } from './../models/GroupUser';
-import passport from './../providers/passport';
-import { ucFirst } from './../providers/helpers';
+import { ucFirst } from './../providers/Helpers';
+import passport from './../providers/Passport';
+import { Group } from './../models/Group';
+import middleware from './middleware';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt-nodejs';
 import express from 'express';
@@ -35,17 +35,17 @@ app.get('/_authcheck', [
 app.post('/auth/login', [
     body('email').exists().toLowerCase(),
     body('password').exists(),
+    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response, next: Function) => {
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
 
     passport.authenticate('local', { session: false }, (err: Error | null, user: UserModel | null) => {
-        if (err) return errorHandler(err, res);
+        if (err) throw err;
         if (!user) return res.status(401).json({ message: 'Incorrect email or password', code: 401 });
 
         req.login(user, { session: false }, (err: Error) => {
-            if (err) return errorHandler(err, res);
+            if (err) throw err;
 
             res.json({
                 accessToken: generateJWT(user)
@@ -89,8 +89,8 @@ app.post('/auth/sign-up', [
     body('tos', 'You must accept the Terms of Service to use this platform')
         .exists()
         .notEmpty(),
+    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response) => {
-    // try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
     const data = matchedData(req);
@@ -131,19 +131,16 @@ app.post('/auth/sign-up', [
 
 
     return passport.authenticate('local', { session: false }, (err: Error, user: UserModel) => {
-        if (err) return errorHandler(err, res);
+        if (err) throw err;
 
         req.login(user, { session: false }, (err) => {
-            if (err) return errorHandler(err, res);
+            if (err) throw err;
 
             res.json({
                 accessToken: generateJWT(user)
             });
         });
     })(req, res);
-    // } catch (error) {
-    //     return errorHandler(error, res);
-    // }
 });
 
 
@@ -184,8 +181,8 @@ app.post('/auth/forgot', [
             const user = await User.findOne({ where: { email } });
             if (!user) throw new Error('This email address does not exist');
         }),
+    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response) => {
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
     const { email } = matchedData(req);
@@ -249,6 +246,7 @@ app.post('/auth/reset', [
             const user = await User.findOne({ where: { passwordResetKey } });
             if (!user) throw new Error('This link has expired');
         }),
+    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
@@ -266,10 +264,12 @@ app.post('/auth/reset', [
     });
 
     return passport.authenticate('local', { session: false }, (err: Error | null, user: UserModel | null) => {
-        if (err) return errorHandler(err, res);
+        if (err) throw err;
+
         if (!user) return res.status(401).json({ message: 'Error', code: 401 });
         req.login(user, { session: false }, (err) => {
-            if (err) return errorHandler(err, res);
+            if (err) throw err;
+
             return res.json({ accessToken: generateJWT(user) });
         });
     })(req, res);
@@ -312,8 +312,8 @@ app.post('/auth/invite', [
     body('tos', 'You must accept the Terms of Service to use this platform')
         .exists(),
     body('inviteKey').exists(),
+    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response) => {
-    // try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
     const data = matchedData(req);
@@ -332,14 +332,12 @@ app.post('/auth/invite', [
     });
 
     return passport.authenticate('local', { session: false }, (err: Error | null, user: UserModel | null) => {
-        if (err) return errorHandler(err, res);
+        if (err) throw err;
+
         if (!user) return res.status(401).json({ message: 'Error', code: 401 });
         req.login(user, { session: false }, (err) => {
-            if (err) return errorHandler(err, res);
+            if (err) throw err;
             return res.json({ accessToken: generateJWT(user) });
         });
     })(req, res);
-    // } catch (error) {
-    //     return errorHandler(error, res);
-    // }
 });

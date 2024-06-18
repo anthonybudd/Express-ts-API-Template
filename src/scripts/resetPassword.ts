@@ -1,22 +1,24 @@
 
 /**
- * node ./src/scripts/resetPassword.js --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"
- * docker exec -ti express-api node ./src/scripts/resetPassword.js --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"
+ * ts-node ./src/scripts/resetPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"
+ * docker exec -ti express-api ts-node ./src/scripts/resetPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"
  *
  */
 require('dotenv').config();
-const generateJWT = require('./../providers/generateJWT');
-const argv = require('minimist')(process.argv.slice(2));
-const { User, Group } = require('./../models');
-const db = require('./../providers/db');
-const bcrypt = require('bcrypt-nodejs');
+import User from './../models/User';
+import bcrypt from 'bcrypt-nodejs';
+import db from './../providers/db';
+import minimist from 'minimist';
 
+const argv = minimist(process.argv.slice(2));
 if (!argv['userID']) throw Error('You must provide --userID argument');
 if (!argv['password']) throw Error('You must provide --password argument');
 
 (async function Main() {
     try {
         const user = await User.findByPk(argv['userID']);
+
+        if (!user) return console.error('User not found');
 
         await user.update({
             password: bcrypt.hashSync(argv['password'], bcrypt.genSaltSync(10)),
@@ -30,3 +32,4 @@ if (!argv['password']) throw Error('You must provide --password argument');
         db.connectionManager.close();
     }
 })();
+

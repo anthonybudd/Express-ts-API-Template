@@ -1,11 +1,13 @@
-const checkPassword = require('./checkPassword');
-const isInGroup = require('./isInGroup');
-const isNotSelf = require('./isNotSelf');
-const isGroupOwner = require('./isGroupOwner');
+import isInGroup from './isInGroup';
+import isGroupOwner from './isGroupOwner';
+import checkPassword from './checkPassword';
+import isNotSelf from './isNotSelf';
+import hCaptcha from './hCaptcha';
 
-module.exports = {
-    checkPassword,
+export default {
     isInGroup,
-    isNotSelf,
     isGroupOwner,
+    checkPassword,
+    isNotSelf,
+    hCaptcha,
 };

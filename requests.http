@@ -3,6 +3,7 @@
 
 @Host=http://localhost:8888/api/v1
 @AccessToken=eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM0NjQ0NzMzLWRlZWEtNDdkOC1iMzVhLTg2ZjMwZmY5NjE4ZSIsImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSIsImZpcnN0TmFtZSI6IlVzZXIiLCJsYXN0TmFtZSI6Ik9uZSIsImlhdCI6MTcxODY0Mzk4OH0.pjaZTi7GTxrDTN32pw-qPl9ZRNg2CUIQ2vlV0MPkC0SCznIOWibdlV4re14YorS-c_3sYXI3UEqwkBkYA2GYaPVxdethWz4Qf_JWPe6bqj5u7CroQP3DkoaqKDEKo04s6yh0ZF3WQsJtFUuNQ53J0JSCntHQ7YfSYVZpaZY2mJ3wI792PkAqULMBaUdO6rFWtg_Nh0kdhKqfkS7JO4fSiJUlNbeGOYre2YQ8IJ3n7aM4RNWtVxbUAlQG6Hnj99SO2QpF-KfLheRhnipHTXCjgX2RMCQIIlkVE6KdSyQ-pYxXTNj99YHdNNkc4BS5306EpnBJ4CorLGkWV46HK1sv9A
+@GroupID=fdab7a99-2c38-444b-bcb3-f7cef61c275b
 
 ###########################################
 # Auth
@@ -64,3 +65,38 @@ content-type: application/json
     "password": "Password@1234",
     "newPassword": "NewPassword!4321"
 }
+
+
+###########################################
+# Group
+
+### /groups/:groupID
+GET {{Host}}/groups/{{GroupID}}?with=users
+Authorization: Bearer {{AccessToken}}
+
+
+### /groups/:groupID
+POST {{Host}}/groups/{{GroupID}}
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "name": "New Group Name"
+}
+
+
+### /groups/:groupID/users/invite
+POST {{Host}}/groups/{{GroupID}}/users/invite
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "email": "foobar@gamil.com"
+}   
+
+
+### /groups/:groupID/users/:userID  
+DELETE {{Host}}/groups/{{GroupID}}/users/d700932c-4a11-427f-9183-d6c4b69368f9
+Authorization: Bearer {{AccessToken}}
+
+

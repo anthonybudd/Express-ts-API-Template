@@ -1,12 +1,12 @@
-const axios = require('axios');
-const qs = require('qs');
+import axios from 'axios';
+import * as qs from 'qs';
 
 const hCaptcha = axios.create({
     baseURL: 'https://hcaptcha.com',
 });
 
-module.exports = {
-    verify: async (response) => await hCaptcha.post('/siteverify',
+export default {
+    verify: async (response: string) => await hCaptcha.post('/siteverify',
         qs.stringify({
             response,
             secret: process.env.H_CAPTCHA_SECRET,

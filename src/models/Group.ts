@@ -31,13 +31,7 @@ const Group = sequelize.define<GroupModel>('Group', {
     },
 }, {
     tableName: 'Groups',
-    defaultScope: {
-        attributes: {
-            exclude: [
-
-            ]
-        }
-    },
+    paranoid: true,
 });
 
 export default Group;

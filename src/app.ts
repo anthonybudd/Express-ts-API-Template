@@ -1,9 +1,11 @@
 require('dotenv').config();
-import cors from 'cors';
+import fileUpload from 'express-fileupload';
+import ErrorHandler from './providers/ErrorHandler';
+import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
-import express from 'express';
-import fileUpload from 'express-fileupload';
+import cors from 'cors';
+import './models/Relationships';
 
 // Controllers
 import { app as Auth } from './routes/Auth';
@@ -17,6 +19,7 @@ console.log('*');
 console.log('* ENV');
 console.log(`* NODE_ENV: ${process.env.NODE_ENV}`);
 (process.env.H_CAPTCHA_SECRET) ? console.log(`* H_CAPTCHA_SECRET: Enabled`) : console.log(`* ⚠️ H_CAPTCHA_SECRET not set. Login/Sign-up requests will not require captcha validadation!`);
+console.log('*');
 
 
 ////////////////////////////////////////////////
@@ -46,5 +49,6 @@ app.get('/api/v1/_healthcheck', (req, res) => res.json({ messsage: 'healthy' }))
 app.use('/api/v1/', Auth);
 app.use('/api/v1/', User);
 app.use('/api/v1/', Groups);
+app.use(ErrorHandler);
 
 export default app;

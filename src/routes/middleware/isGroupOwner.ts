@@ -1,10 +1,11 @@
-const { Group } = require('./../../models');
+import { NextFunction, Request, Response } from "express";
+import Group from './../../models/Group';
 
-module.exports = async (req, res, next) => {
+export default async (req: Request, res: Response, next: NextFunction) => {
     const groupID = (req.params.groupID || req.body.groupID);
     const group = await Group.findByPk(groupID);
 
-    if (group.ownerID === req.user.id) {
+    if (group && group.ownerID === req.user.id) {
         return next();
     } else {
         return res.status(401).json({

@@ -1,11 +1,19 @@
-import express from 'express';
-import crypto from 'crypto';
+import { NextFunction, Request, Response } from "express";
 
-export default (err: Error, res?: express.Response) => {
+export default (err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err);
 
-    if (res && !res.headersSent) res.status(500).json({
-        msg: `Error`,
-        code: crypto.randomBytes(32).toString('base64'),
-    });
+    if (process.env.NODE_ENV === "production") {
+        res.status(500).json({
+            msg: `Error`,
+            code: 500,
+        });
+    } else {
+        res.status(500).json({
+            msg: err.message,
+            code: 500,
+        });
+    }
+
+    return next();
 };

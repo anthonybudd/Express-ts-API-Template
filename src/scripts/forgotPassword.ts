@@ -1,16 +1,16 @@
 
 /**
- * node ./src/scripts/forgotPassword.js --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
- * docker exec -ti express-api node ./src/scripts/forgotPassword.js --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
+ * ts-node ./src/scripts/forgotPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
+ * docker exec -ti express-api ts-node ./src/scripts/forgotPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
  *
  */
 require('dotenv').config();
-const generateJWT = require('./../providers/generateJWT');
-const argv = require('minimist')(process.argv.slice(2));
-const { User, Group } = require('./../models');
-const db = require('./../providers/db');
-const crypto = require('crypto');
+import User from './../models/User';
+import db from './../providers/db';
+import minimist from 'minimist';
+import crypto from 'crypto';
 
+const argv = minimist(process.argv.slice(2));
 if (!argv['userID']) throw Error('You must provide --userID argument');
 
 (async function Main() {
@@ -28,3 +28,4 @@ if (!argv['userID']) throw Error('You must provide --userID argument');
         db.connectionManager.close();
     }
 })();
+

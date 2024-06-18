@@ -1,23 +1,20 @@
-const { User, Group } = require('./../../models');
+import { NextFunction, Request, Response } from "express";
+import GroupUser from './../../models/GroupUser';
 
-module.exports = async (req, res, next) => {
+export default async (req: Request, res: Response, next: NextFunction) => {
     const groupID = (req.params.groupID || req.body.groupID);
-    const user = await User.findByPk(req.user.id, {
-        include: [Group],
+    const groupUsers = await GroupUser.findOne({
+        where: {
+            userID: req.user.id,
+            groupID,
+        },
     });
 
-    if (!user) return res.status(401).json({
-        msg: `User not found`,
-        code: 40120,
-    });
-
-    const groups = user.Groups.map(({ id }) => (id));
-
-    if (Array.isArray(groups) && groups.includes(groupID)) {
+    if (groupUsers) {
         return next();
     } else {
         return res.status(401).json({
-            msg: `You do not have access to group ${groupID} in [${groups.join(', ')}]`,
+            msg: `You do not have access to group ${groupID}`,
             code: 65196,
         });
     }

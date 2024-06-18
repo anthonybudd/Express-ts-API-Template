@@ -7,7 +7,7 @@ interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttri
     email: string,
     password: string,
     firstName: string,
-    lastName: string,
+    lastName: CreationOptional<string> | null,
     tos: CreationOptional<string> | null,
     bio: CreationOptional<string> | null,
     inviteKey: CreationOptional<string> | null,
@@ -31,10 +31,20 @@ const User = sequelize.define<UserModel>('User', {
         allowNull: false,
         unique: true
     },
-    password: Sequelize.STRING,
+    password: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
 
-    firstName: Sequelize.STRING,
-    lastName: Sequelize.STRING,
+    firstName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    lastName: {
+        type: Sequelize.STRING,
+        defaultValue: '',
+        allowNull: false,
+    },
     bio: {
         type: Sequelize.STRING,
         defaultValue: '',

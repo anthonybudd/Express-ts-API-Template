@@ -1,6 +1,7 @@
-const hCaptcha = require('./../../providers/hCaptcha');
+import { NextFunction, Request, Response } from "express";
+import hCaptcha from './../../providers/hCaptcha';
 
-module.exports = async (req, res, next) => {
+export default async (req: Request, res: Response, next: NextFunction) => {
 
     // Skip hCaptcha validation if running tests
     if (typeof global.it === 'function') {

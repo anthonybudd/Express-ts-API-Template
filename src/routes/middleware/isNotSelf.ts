@@ -1,4 +1,6 @@
-module.exports = (req, res, next) => {
+import { NextFunction, Request, Response } from "express";
+
+export default async (req: Request, res: Response, next: NextFunction) => {
     if (!req.user || !req.user.id) return res.status(401).json({
         msg: 'Access error',
         code: 18196,
@@ -11,3 +13,4 @@ module.exports = (req, res, next) => {
 
     return next();
 };
+
