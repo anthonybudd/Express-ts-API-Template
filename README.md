@@ -14,7 +14,7 @@ This project is designed to work with [AnthonyBudd/Vuetify-SPA-Boilerplate](http
 
 
 - 🔐 Auth using JWT's with Passport.js
-- 👥 Simple DB: `Users` ∋- `GroupsUsers` -∈ `Groups`
+- 👥 Simple DB: `Users` -∈ `GroupsUsers` ∋- `Groups`
 - 🌐 Production-ready [OpenApiSpec.yml](./OpenApiSpec.yml) & [Kubernetes files](./k8s)
 - 🥇 Real-world tested, generated over $50M in revenue
 
