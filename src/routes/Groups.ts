@@ -34,7 +34,7 @@ app.get('/groups/:groupID', [
  */
 app.post('/groups/:groupID', [
     passport.authenticate('jwt', { session: false }),
-    middleware.isInGroup,
+    middleware.hasRole('Admin'),
     body('name')
 ], async (req: express.Request, res: express.Response) => {
     const errors = validationResult(req);
@@ -59,12 +59,13 @@ app.post('/groups/:groupID', [
  */
 app.post('/groups/:groupID/users/invite', [
     passport.authenticate('jwt', { session: false }),
-    middleware.isGroupOwner,
+    middleware.hasRole('Admin'),
     body('email').isEmail().toLowerCase(),
+    body('role').default('User').isIn(['User', 'Admin']),
 ], async (req: express.Request, res: express.Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const { email } = matchedData(req);
+    const { email, role } = matchedData(req);
 
     const groupID = req.params.groupID;
 
@@ -95,14 +96,13 @@ app.post('/groups/:groupID/users/invite', [
             password: bcrypt.hashSync(crypto.randomBytes(20).toString('hex'), bcrypt.genSaltSync(10)), // AB: Random password, will be updated by user
             firstName: '',
             lastLoginAt: moment().format("YYYY-MM-DD HH:mm:ss"),
-            emailVerificationKey: crypto.randomBytes(20).toString('hex'),
+            emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
         });
 
         //////////////////////////////////////////
         // EMAIL THIS TO THE USER
         const inviteLink = `${process.env.FRONTEND_URL}/invite/${user.inviteKey}`;
         if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nINVITE LINK: ${inviteLink}\n\n`);
-        //
         //////////////////////////////////////////
     }
 
@@ -117,12 +117,57 @@ app.post('/groups/:groupID/users/invite', [
     await GroupUser.create({
         groupID,
         userID: user.id,
+        role,
     });
 
     return res.json({
         groupID,
         userID: user.id,
+        role,
     });
+});
+
+
+/**
+ * POST /api/v1/groups/:groupID/users/:userID/set-role
+ *
+ */
+app.post('/groups/:groupID/users/:userID/set-role', [
+    passport.authenticate('jwt', { session: false }),
+    middleware.hasRole('Admin'),
+    body('role').default('User').isIn(['User', 'Admin']),
+], async (req: express.Request, res: express.Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+    const { role } = matchedData(req);
+    const groupID = req.params.groupID;
+    const userID = req.params.userID;
+
+    const group = await Group.findByPk(groupID);
+    if (!group) return res.status(400).json({
+        msg: `Group ${groupID} does not exist`,
+        code: 13386,
+    });
+
+    if (group.ownerID === userID) return res.status(400).json({
+        msg: 'You cannot remove the owner of the group',
+        code: 20330,
+    });
+
+    const groupUsers = await GroupUser.findOne({
+        where: {
+            groupID, userID
+        },
+    });
+
+    if (!groupUsers) return res.status(400).json({
+        msg: `User ${userID} does not exist in group ${groupID}`,
+        code: 10424,
+    });
+
+    await groupUsers.update({ role });
+
+    return res.json({ userID, groupID, role });
 });
 
 
@@ -132,18 +177,29 @@ app.post('/groups/:groupID/users/invite', [
  */
 app.delete('/groups/:groupID/users/:userID', [
     passport.authenticate('jwt', { session: false }),
-    middleware.isGroupOwner,
+    middleware.hasRole('Admin'),
     middleware.isNotSelf,
 ], async (req: express.Request, res: express.Response) => {
+    const groupID = req.params.groupID;
+    const userID = req.params.userID;
+
+    const group = await Group.findByPk(groupID);
+
+    if (!group) return res.status(400).json({
+        msg: `Group ${groupID} does not exist`,
+        code: 10486,
+    });
+
+    if (group.ownerID === userID) return res.status(400).json({
+        msg: 'You cannot remove the owner of the group',
+        code: 63930,
+    });
+
     await GroupUser.destroy({
         where: {
-            groupID: req.params.groupID,
-            userID: req.params.userID,
+            groupID, userID
         }
     });
 
-    return res.json({
-        userID: req.params.userID,
-        groupID: req.params.groupID
-    });
+    return res.json({ userID, groupID });
 });

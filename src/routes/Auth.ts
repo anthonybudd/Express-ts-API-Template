@@ -106,7 +106,7 @@ app.post('/auth/sign-up', [
         ownerID: userID,
     });
 
-    await GroupUser.create({ userID, groupID });
+    await GroupUser.create({ userID, groupID, role: 'Admin' });
 
     const user = await User.create({
         id: userID,
@@ -116,7 +116,7 @@ app.post('/auth/sign-up', [
         lastName: ucFirst(data.lastName),
         lastLoginAt: moment().format("YYYY-MM-DD HH:mm:ss"),
         tos: data.tos,
-        emailVerificationKey: crypto.randomBytes(20).toString('hex'),
+        emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
     });
 
 

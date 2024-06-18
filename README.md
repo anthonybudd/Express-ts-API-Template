@@ -1,5 +1,11 @@
 # Express.ts API Boilerplate
 
+<!--
+todo:
+- openapi spec
+- tests
+-->
+
 <img height="75" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-boilerplate.png?v=1"/>
 
 A very mimimal REST API boilerplate using Express.ts, Sequelize and MySQL. 
@@ -7,8 +13,8 @@ A very mimimal REST API boilerplate using Express.ts, Sequelize and MySQL.
 This project is designed to work with [AnthonyBudd/Vuetify-SPA-Boilerplate](https://github.com/anthonybudd/Vuetify-SPA-boilerplate)
 
 
-- 👥 Users, Groups and Roles
-- 🔐 Auth using JWT's with Passport
+- 🔐 Auth using JWT's with Passport.js
+- 👥 Simple DB: `Users` ∋- `GroupsUsers` -∈ `Groups`
 - 🌐 Production-ready [OpenApiSpec.yml](./OpenApiSpec.yml) & [Kubernetes files](./k8s)
 - 🥇 Real-world tested, generated over $50M in revenue
 
@@ -49,7 +55,7 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 +--------------+                      
 ```
 
-### Routes
+### Main Routes
 | Method      | Route                                                    | Description                           | Payload                               | Response          | 
 | ----------- | -------------------------------------------------------- | ------------------------------------- | ------------------------------------- | ----------------- |  
 | **DevOps**  |                                                          |                                       |                                       |                   |  
@@ -58,13 +64,13 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 | **Auth**    |                                                          |                                       |                                       |                   |  
 | POST        | `/api/v1/auth/login`                                     | Login                                 | {email, password}                     | {accessToken}     |  
 | POST        | `/api/v1/auth/sign-up`                                   | Sign-up                               | {email, password, firstName, tos}     | {accessToken}     |  
+| GET         | `/api/v1/_authcheck`                                     | Returns {auth: true} if has auth      | --                                    | {auth: true}      |  
 | GET         | `/api/v1/auth/verify-email/:emailVerificationKey`        | Verify Email                          | --                                    | {success: true}   |  
 | POST        | `/api/v1/auth/forgot`                                    | Forgot                                | {email}                               | {success: true}   |  
 | GET         | `/api/v1/auth/get-user-by-reset-key/:passwordResetKey`   | Get user for given `passwordResetKey` | --                                    | {id, email}       |  
 | POST        | `/api/v1/auth/reset`                                     | Reset Password                        | {email, password, passwordResetKey}   | {accessToken}     |  
 | GET         | `/api/v1/auth/get-user-by-invite-key/:inviteKey`         | Get user for given `inviteKey`        | --                                    | {id, email}       |  
 | POST        | `/api/v1/auth/invite`                                    | Complete user invite process          | {inviteKey, email, password, ...}     | {accessToken}     |   
-| GET         | `/api/v1/_authcheck`                                     | Returns {auth: true} if has auth      | --                                    | {auth: true}      |  
 | **User**    |                                                          |                                       |                                       |                   |  
 | GET         | `/api/v1/user`                                           | Get the current user                  |                                       | {User}            |  
 | POST        | `/api/v1/user`                                           | Update the current user               | {firstName, lastName}                 | {User}            |  
@@ -73,8 +79,8 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 | GET         | `/api/v1/groups/:groupID`                                | Returns group by ID                   | --                                    | {Group}           |  
 | POST        | `/api/v1/groups/:groupID`                                | Update group by ID                    | {name: 'New Name'}                    | {Group}           |  
 | POST        | `/api/v1/groups/:groupID/users/invite`                   | Invite user to group                  | {email}                               | {UserID, GroupID} |  
+| POST        | `/api/v1/groups/:groupID/users/:userID/set-role`         | Set user role                         | {role: User|Admin }                   | {UserID, role}    |  
 | DELETE      | `/api/v1/groups/:groupID/users/:userID`                  | Remove user from group                | --                                    | {UserID}          |  
-
 
 
 ### Deployment

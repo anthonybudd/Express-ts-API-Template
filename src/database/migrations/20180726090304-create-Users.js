@@ -13,11 +13,25 @@ module.exports = {
             allowNull: false,
             unique: true
         },
-        password: Sequelize.STRING,
+        password: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
 
-        firstName: Sequelize.STRING,
-        lastName: Sequelize.STRING,
-        bio: Sequelize.TEXT,
+        firstName: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+        lastName: {
+            type: Sequelize.STRING,
+            defaultValue: '',
+            allowNull: false,
+        },
+        bio: {
+            type: Sequelize.STRING,
+            defaultValue: '',
+            allowNull: false,
+        },
 
         tos: Sequelize.STRING,
         inviteKey: Sequelize.STRING,

@@ -3,6 +3,7 @@ import isGroupOwner from './isGroupOwner';
 import checkPassword from './checkPassword';
 import isNotSelf from './isNotSelf';
 import hCaptcha from './hCaptcha';
+import hasRole from './hasRole';
 
 export default {
     isInGroup,
@@ -10,4 +11,5 @@ export default {
     checkPassword,
     isNotSelf,
     hCaptcha,
+    hasRole,
 };

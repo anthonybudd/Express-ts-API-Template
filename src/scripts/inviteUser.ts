@@ -21,7 +21,7 @@ if (!argv['groupID']) throw Error('You must provide --groupID argument');
     try {
         const email = argv['email'];
         const groupID = argv['groupID'];
-
+        const role = argv['role'] || 'User';
 
         const group = await Group.findByPk(groupID);
         if (!group) return console.error('Group not found');
@@ -64,6 +64,7 @@ if (!argv['groupID']) throw Error('You must provide --groupID argument');
         await GroupUser.create({
             groupID,
             userID: user.id,
+            role,
         });
 
         console.log(`User ${user.email} invited`);

@@ -6,6 +6,7 @@ interface GroupUserModel extends Model<InferAttributes<GroupUserModel>, InferCre
     id: CreationOptional<string>,
     userID: string,
     groupID: string,
+    role: 'User' | 'Admin',
 }
 
 const GroupUser = sequelize.define<GroupUserModel>('GroupUser', {
@@ -22,6 +23,12 @@ const GroupUser = sequelize.define<GroupUserModel>('GroupUser', {
     },
     groupID: {
         type: Sequelize.UUID
+    },
+
+    role: {
+        type: Sequelize.STRING,
+        defaultValue: 'User',
+        allowNull: false,
     },
 }, {
     tableName: 'GroupsUsers',
