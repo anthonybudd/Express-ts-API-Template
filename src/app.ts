@@ -49,7 +49,6 @@ app.get('/api/v1/_healthcheck', (req, res) => res.json({ messsage: 'healthy' }))
 app.use('/api/v1/', Auth);
 app.use('/api/v1/', User);
 app.use('/api/v1/', Groups);
-app.use('/api/v1/', Books);
 app.use(ErrorHandler);
 
 export default app;
