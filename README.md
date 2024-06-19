@@ -35,11 +35,9 @@ openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 npm install
 docker compose up
 npm run _db:refresh
-npm run _test
 
-# Code generation
+# [Optional] Code generation
 npm run generate -- --model="Book"
-npm run _test
 ```
 
 ### DB Structure

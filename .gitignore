@@ -10,6 +10,8 @@ kubeconfig.yml
 sdk/dist
 todo.md
 bin/
+dist
+sdk/dist
 
 # Logs
 logs
@@ -84,5 +86,3 @@ typings/
 
 # Serverless directories
 .serverless
-
-dist

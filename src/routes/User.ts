@@ -57,7 +57,13 @@ app.post('/user/update-password', [
     passport.authenticate('jwt', { session: false }),
     middleware.checkPassword,
     body('password').exists(),
-    body('newPassword').exists().isLength({ min: 7 }),
+    body('newPassword').isStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+    }),
 ], async (req: express.Request, res: express.Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });

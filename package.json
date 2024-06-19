@@ -18,7 +18,8 @@
     "db:seed": "./src/scripts/seed",
     "db:refresh": "./src/scripts/refresh",
     "_db:refresh": "docker exec -ti express-api npm run db:refresh",
-    "test": "jest",
+    "test": "DOTENV_CONFIG_PATH=.env.test jest",
+    "_test": "docker exec -ti express-api npm run test",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],

@@ -2,7 +2,7 @@ const moment = require('moment');
 
 const insert = [{
     id: '{{ UUID }}',
-    name: 'Seeed {{ ModelName }}',
+    name: 'Seeded {{ ModelName }}',
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
 }];

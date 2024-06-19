@@ -76,8 +76,13 @@ app.post('/auth/sign-up', [
             const user = await User.findOne({ where: { email } });
             if (user) throw new Error('This email address is taken');
         }),
-    body('password')
-        .isLength({ min: 7 }),
+    body('password').isStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+    }),
     body('firstName', 'You must provide your first name')
         .notEmpty()
         .exists(),
@@ -239,7 +244,13 @@ app.post('/auth/reset', [
             const user = await User.findOne({ where: { email } });
             if (!user) throw new Error('This email address does not exist');
         }),
-    body('password').exists().isLength({ min: 7 }),
+    body('password').isStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+    }),
     body('passwordResetKey', 'This link has expired')
         .custom(async (passwordResetKey) => {
             if (!passwordResetKey) throw new Error('This link has expired');
@@ -304,8 +315,13 @@ app.post('/auth/invite', [
         .exists({ checkFalsy: true })
         .isEmail()
         .toLowerCase(),
-    body('password', 'Your password must be atleast 7 characters long')
-        .isLength({ min: 7 }),
+    body('password').isStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+    }),
     body('firstName', 'You must provide your first name')
         .exists(),
     body('lastName'),
