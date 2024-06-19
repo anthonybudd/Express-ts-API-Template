@@ -24,7 +24,7 @@ git clone git@github.com:anthonybudd/express-ts-api-boilerplate.git
 cd express-ts-api-boilerplate
 cp .env.example .env
 
-# Optional: Find & Replace (case-sensaive, whole repo): "express-api" => "your-api-name" 
+# [Optional] Find & Replace (case-sensaive, whole repo): "express-api" => "your-api-name" 
 LC_ALL=C find . -type f -name '*.*' -exec sed -i '' s/express-api/your-api-name/g {} +
 
 # Private RSA key for JWT signing
@@ -47,15 +47,15 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 |id            |           |id             |         |id            |  
 |email         |           |groupID        |         |name          |  
 |password      |           |userID         |         |ownerID       |  
-|firstName     |           |createdAt      |         |createdAt     |  
-|lastName      |           +---------------+         |updatedAt     |  
-|createdAt     |                                     +--------------+  
-|updatedAt     |                                                       
+|firstName     |           |role           |         |createdAt     |  
+|lastName      |           |createdAt      |         |updatedAt     |
+|createdAt     |           |updatedAt      |         +--------------+  
+|updatedAt     |           +---------------+                                            
 |...           |                                                      
 +--------------+                      
 ```
 
-### Main Routes
+### Routes
 | Method      | Route                                                    | Description                           | Payload                               | Response          | 
 | ----------- | -------------------------------------------------------- | ------------------------------------- | ------------------------------------- | ----------------- |  
 | **DevOps**  |                                                          |                                       |                                       |                   |  
@@ -79,7 +79,7 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 | GET         | `/api/v1/groups/:groupID`                                | Returns group by ID                   | --                                    | {Group}           |  
 | POST        | `/api/v1/groups/:groupID`                                | Update group by ID                    | {name: 'New Name'}                    | {Group}           |  
 | POST        | `/api/v1/groups/:groupID/users/invite`                   | Invite user to group                  | {email}                               | {UserID, GroupID} |  
-| POST        | `/api/v1/groups/:groupID/users/:userID/set-role`         | Set user role                         | {role: User|Admin }                   | {UserID, role}    |  
+| POST        | `/api/v1/groups/:groupID/users/:userID/set-role`         | Set user role                         | {role: 'User' | 'Admin' }                   | {UserID, role}    |  
 | DELETE      | `/api/v1/groups/:groupID/users/:userID`                  | Remove user from group                | --                                    | {UserID}          |  
 
 

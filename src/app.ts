@@ -11,6 +11,7 @@ import './models/Relationships';
 import { app as Auth } from './routes/Auth';
 import { app as User } from './routes/User';
 import { app as Groups } from './routes/Groups';
+import { app as Books } from './routes/Books';
 
 
 console.log('*************************************');
@@ -49,6 +50,7 @@ app.get('/api/v1/_healthcheck', (req, res) => res.json({ messsage: 'healthy' }))
 app.use('/api/v1/', Auth);
 app.use('/api/v1/', User);
 app.use('/api/v1/', Groups);
+app.use('/api/v1/', Books);
 app.use(ErrorHandler);
 
 export default app;

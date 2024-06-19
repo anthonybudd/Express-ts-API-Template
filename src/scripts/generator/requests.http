@@ -1,0 +1,35 @@
+{{=<% %>=}}
+###########################################
+# <%ModelName%>
+
+@<%modelName%>ID=<%UUID%>
+
+### GET /<%modelnames%>
+GET {{Host}}/<%modelnames%>
+Authorization: Bearer {{AccessToken}}
+
+### GET /<%modelnames%>/:<%modelName%>ID
+GET {{Host}}/<%modelnames%>/{{<%modelName%>ID}}
+Authorization: Bearer {{AccessToken}}
+
+### POST /<%modelnames%>
+POST {{Host}}/<%modelnames%>
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "name": "New Book"
+}
+
+### POST /<%modelnames%>/:<%modelName%>ID
+POST {{Host}}/<%modelnames%>/{{<%modelName%>ID}}
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "name": "Updated Book Name"
+}
+
+### DELETE /<%modelnames%>/:<%modelName%>ID
+DELETE {{Host}}/<%modelnames%>/{{<%modelName%>ID}}
+Authorization: Bearer {{AccessToken}}
