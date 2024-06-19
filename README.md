@@ -31,10 +31,15 @@ LC_ALL=C find . -type f -name '*.*' -exec sed -i '' s/express-api/your-api-name/
 openssl genrsa -out private.pem 2048
 openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 
-# Start the app
+# Start app
 npm install
 docker compose up
 npm run _db:refresh
+npm run _test
+
+# Code generation
+npm run generate -- --model="Book"
+npm run _test
 ```
 
 ### DB Structure
@@ -113,6 +118,7 @@ There are a few helper scripts and commands for interacting with the application
 Some commands need to be run inside the docker container, these commands have been aliased with an underscore prefix, for exmaple `npm run _db:refresh` is an alias for `docker exec -ti express-api npm run db:refresh` which actually runs `./src/scripts/refresh`
 | Command               | Description                   | Exmaple                          | 
 | --------------------- | ----------------------------- | -------------------------------- |
+| generate              | Code generation               | `npm run generate -- --model="book"` |
 | jwt.ts                | Generate JWT for a user       | `docker exec -ti express-api ts-node ./src/scripts/jwt.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | forgotPassword.ts     | Generate password reset link  | `docker exec -ti express-api ts-node ./src/scripts/forgotPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | resetPassword.ts      | Password user password        | `docker exec -ti express-api ts-node ./src/scripts/resetPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"` |

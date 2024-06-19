@@ -13,6 +13,7 @@
     "jwt": "node ./src/scripts/jwt.js",
     "_jwt": "docker exec -ti express-api npm run jwt",
     "env": "./src/scripts/env",
+    "generate": "docker exec -ti express-api ts-node ./src/scripts/generate.ts",
     "db:migrate": "sequelize db:migrate",
     "db:seed": "./src/scripts/seed",
     "db:refresh": "./src/scripts/refresh",
