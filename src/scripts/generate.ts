@@ -1,7 +1,8 @@
-
 /**
  * ts-node ./src/scripts/generate.ts --model="Book" -d
  * docker exec -ti express-api ts-node ./src/scripts/generate.ts --model="Book" -d
+ * 
+ * --force
 */
 import { lcFirst } from './../providers/Helpers';
 import * as inflection from 'inflection';
@@ -40,74 +41,49 @@ if (/^\d/.test(argv['model'])) throw Error('--model cannot start with a number')
     ////////////////////////////////////////////////
     // Model
     const pathModel = path.resolve(`./src/models/${params.ModelName}.ts`);
-    if (!argv['force'] && fs.existsSync(pathModel)) throw new Error(`File already exists at ${pathModel}`);
+    if (!isForce && fs.existsSync(pathModel)) throw new Error(`File already exists at ${pathModel}`);
     if (!isDryRun) fs.writeFileSync(pathModel, Mustache.render(fs.readFileSync(path.resolve('./src/scripts/generator/Model.ts'), 'utf8'), params));
     console.log(`Created: ${pathModel}`);
-
-    // const modelsIndex = path.resolve(`./src/models/index.js`);
-    // const fileContent = fs.readFileSync(modelsIndex, 'utf8');
-    // if (!fileContent.includes(`const ${params.ModelName}`)) {
-    //     const lines = fileContent.split('\n');
-    //     let lastLineWithClosingBracket;
-    //     let lastLineWithRequirePlusOne;
-    //     for (let i = lines.length - 1; i >= 0; i--) {
-    //         const line = lines[i].trim();
-    //         if (line.endsWith('};')) {
-    //             lastLineWithClosingBracket = (i + 1);
-    //         }
-
-    //         if (line.includes('require(') && !lastLineWithRequirePlusOne) {
-    //             lastLineWithRequirePlusOne = (i + 2);
-    //         }
-    //     }
-
-    //     if (lastLineWithRequirePlusOne) {
-    //         const requireLine = `const ${params.ModelName} = require('./${params.ModelName}');\n`;
-    //         lines.splice(lastLineWithRequirePlusOne - 1, 1, requireLine);
-    //     }
-
-    //     if (lastLineWithClosingBracket) {
-    //         const newLines = ([
-    //             `    ${params.ModelName},`,
-    //             '};',
-    //         ]).join('\n');
-    //         lines.splice(lastLineWithClosingBracket - 1, 1, newLines);
-    //     }
-    //     if (!isDryRun) fs.writeFileSync(modelsIndex, lines.join('\n'));
-    // }
 
 
     ////////////////////////////////////////////////
     // Route
-    const pathRoute = path.resolve(`./src/routes/${params.ModelNames}.ts`);
-    if (!argv['force'] && fs.existsSync(pathRoute)) throw new Error(`File already exists at ${pathRoute}`);
+    const pathRoute = path.resolve(`./src/routes/${params.ModelName}.ts`);
+    if (!isForce && fs.existsSync(pathRoute)) throw new Error(`File already exists at ${pathRoute}`);
     if (!isDryRun) fs.writeFileSync(pathRoute, Mustache.render(fs.readFileSync(path.resolve('./src/scripts/generator/Route.ts'), 'utf8'), params));
     console.log(`Created: ${pathRoute}`);
 
-    // const mainIndex = path.resolve(`./src/index.js`);
-    // const mainIndexContent = fs.readFileSync(mainIndex, 'utf8');
-    // if (!mainIndexContent.includes(`require('./routes/${params.ModelNames}'));`)) {
-    //     const mainIndexLines = mainIndexContent.split('\n');
-    //     let lastLineWithRouteRequirePlusOne;
-    //     for (let ii = mainIndexLines.length - 1; ii >= 0; ii--) {
-    //         const line = mainIndexLines[ii].trim();
-    //         if (line.includes(`require('./routes/`) && !lastLineWithRouteRequirePlusOne) {
-    //             lastLineWithRouteRequirePlusOne = (ii + 2);
-    //         }
-    //     }
+    const appPath = path.resolve(`./src/app.ts`);
+    const appContent = fs.readFileSync(appPath, 'utf8');
+    const routeImport = `import { app as ${params.ModelNames} } from './routes/${params.ModelNames}';`;
+    if (!appContent.includes(routeImport)) {
+        const appLines = appContent.split('\n');
+        let importLine;
+        let useLine;
 
-    //     if (lastLineWithRouteRequirePlusOne) {
-    //         const routeRequireLine = `app.use('/api/v1/', require('./routes/${params.ModelNames}'));\n`;
-    //         mainIndexLines.splice(lastLineWithRouteRequirePlusOne - 1, 1, routeRequireLine);
-    //         if (!isDryRun) fs.writeFileSync(mainIndex, mainIndexLines.join('\n'));
-    //     }
-    // }
+        for (let i = 0; i < appLines.length; i++) {
+            const line = appLines[i].trim();
+            if (appLines[i + 1] === undefined) break;
+            const nextLine = appLines[i + 1].trim();
+            if (line.includes(`import { app as `) && nextLine == '') {
+                importLine = i + 1;
+            }
+            if (line.includes(`app.use(ErrorHandler)`)) {
+                useLine = i;
+            }
+        }
+
+        if (importLine) appLines.splice(importLine, 1, `${routeImport}\n`);
+        if (useLine) appLines.splice(useLine, 1, `app.use('/api/v1/', ${params.ModelNames});\n${appLines[useLine]}`);
+        if (!isDryRun) fs.writeFileSync(appPath, appLines.join('\n'));
+    }
 
 
     ////////////////////////////////////////////////
     // Migration
     const pathMigration = path.resolve(`./src/database/migrations/${moment().format('YYYYMMDDHHmmss')}-create-${params.ModelNames}.js`);
-    if (!argv['force'] && fs.existsSync(pathMigration)) throw new Error(`File already exists at ${pathMigration}`);
+    const migrations = fs.readdirSync(path.resolve(`./src/database/migrations/`)).map((str) => (str.replaceAll(/[0-9]/g, '')));
+    if (!isForce && migrations.includes(`-create-${params.ModelNames}.js`)) throw new Error(`File already exists at ${pathMigration}`);
     if (!isDryRun) fs.writeFileSync(pathMigration, Mustache.render(fs.readFileSync(path.resolve('./src/scripts/generator/Migration.js'), 'utf8'), params));
     console.log(`Created: ${pathMigration}`);
 
@@ -115,7 +91,8 @@ if (/^\d/.test(argv['model'])) throw Error('--model cannot start with a number')
     ////////////////////////////////////////////////
     // Seeder
     const pathSeeder = path.resolve(`./src/database/seeders/${moment().format('YYYYMMDDHHmmss')}-${params.ModelNames}.js`);
-    if (!argv['force'] && fs.existsSync(pathSeeder)) throw new Error(`File already exists at ${pathSeeder}`);
+    const seeders = fs.readdirSync(path.resolve(`./src/database/seeders/`)).map((str) => (str.replaceAll(/[0-9]/g, '')));
+    if (!isForce && seeders.includes(`-${params.ModelNames}.js`)) throw new Error(`File already exists at ${pathSeeder}`);
     if (!isDryRun) fs.writeFileSync(pathSeeder, Mustache.render(fs.readFileSync(path.resolve('./src/scripts/generator/Seeder.js'), 'utf8'), params));
     console.log(`Created: ${pathSeeder}`);
 
@@ -123,7 +100,7 @@ if (/^\d/.test(argv['model'])) throw Error('--model cannot start with a number')
     ////////////////////////////////////////////////
     // Test
     // const pathTest = path.resolve(`./tests/${params.ModelName}.js`);
-    // if (!argv['force'] && fs.existsSync(pathTest)) throw new Error(`File already exists at ${pathTest}`);
+    // if (isForce && fs.existsSync(pathTest)) throw new Error(`File already exists at ${pathTest}`);
     // if (!isDryRun) fs.writeFileSync(pathTest, Mustache.render(fs.readFileSync(path.resolve('./src/scripts/generator/Test.js'), 'utf8'), params));
     // console.log(`Created: ${pathTest}`);
 
@@ -133,7 +110,7 @@ if (/^\d/.test(argv['model'])) throw Error('--model cannot start with a number')
     const pathRequests = path.resolve(`./requests.http`);
     const requestContent = fs.readFileSync(pathRequests, 'utf8');
     const newRequest = Mustache.render(fs.readFileSync(path.resolve('./src/scripts/generator/requests.http'), 'utf8'), params);
-    if (!requestContent.includes(`### ${params.ModelName}`)) {
+    if (!requestContent.includes(`# ${params.ModelName}`)) {
         if (!isDryRun) fs.writeFileSync(pathRequests, requestContent + '\n' + newRequest);
         console.log(`Updated: ${pathRequests}`);
     }
