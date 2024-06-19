@@ -79,10 +79,10 @@ if (/^\d/.test(argv['model'])) throw Error('--model cannot start with a number')
 
     ////////////////////////////////////////////////
     // Route
-    // const pathRoute = path.resolve(`./src/routes/${params.ModelNames}.ts`);
-    // if (!argv['force'] && fs.existsSync(pathRoute)) throw new Error(`File already exists at ${pathRoute}`);
-    // if (!isDryRun) fs.writeFileSync(pathRoute, Mustache.render(fs.readFileSync(path.resolve('./src/scripts/generator/Route.ts'), 'utf8'), params));
-    // console.log(`Created: ${pathRoute}`);
+    const pathRoute = path.resolve(`./src/routes/${params.ModelNames}.ts`);
+    if (!argv['force'] && fs.existsSync(pathRoute)) throw new Error(`File already exists at ${pathRoute}`);
+    if (!isDryRun) fs.writeFileSync(pathRoute, Mustache.render(fs.readFileSync(path.resolve('./src/scripts/generator/Route.ts'), 'utf8'), params));
+    console.log(`Created: ${pathRoute}`);
 
     // const mainIndex = path.resolve(`./src/index.js`);
     // const mainIndexContent = fs.readFileSync(mainIndex, 'utf8');
