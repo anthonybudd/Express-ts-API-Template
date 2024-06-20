@@ -49,6 +49,35 @@ app.post('/user', [
 
 
 /**
+ * GET /api/v1/user/resend-verification-email
+ * 
+ */
+app.post('/user/resend-verification-email', [
+    passport.authenticate('jwt', { session: false }),
+], async (req: express.Request, res: express.Response) => {
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) return res.status(404).json({
+        msg: 'User not found',
+        code: 40403
+    });
+
+    await user.update({
+        emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
+    });
+
+
+    //////////////////////////////////////////
+    // EMAIL THIS TO THE USER
+    const emailVerificationLink = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`;
+    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nEMAIL VERIFICATION LINK: ${emailVerificationLink}\n\n`);
+    //////////////////////////////////////////
+
+    return res.json({ email: user.email });
+});
+
+
+/**
  * POST /api/v1/user/update-password
  * 
  * Update Password

@@ -127,11 +127,8 @@ app.post('/auth/sign-up', [
 
     //////////////////////////////////////////
     // EMAIL THIS TO THE USER
-    const emailVerificationLink = `${process.env.FRONTEND_URL}/validate-email/${user.emailVerificationKey}`;
+    const emailVerificationLink = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`;
     if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nEMAIL VERIFICATION LINK: ${emailVerificationLink}\n\n`);
-
-    // Delete this line when you're ready to send emails
-    user.update({ emailVerified: true });
     //////////////////////////////////////////
 
 
@@ -170,6 +167,7 @@ app.get('/auth/verify-email/:emailVerificationKey', async (req: express.Request,
         emailVerificationKey: null,
     });
 
+    if (req.query.redirect === '1') return res.redirect(`${process.env.FRONTEND_URL}?email_verified=1`);
     return res.json({ id: user.id });
 });
 

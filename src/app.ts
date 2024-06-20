@@ -1,4 +1,4 @@
-require('dotenv').config();
+import 'dotenv/config';
 import fileUpload from 'express-fileupload';
 import ErrorHandler from './providers/ErrorHandler';
 import express from 'express';
@@ -13,13 +13,14 @@ import { app as User } from './routes/User';
 import { app as Groups } from './routes/Groups';
 
 
-console.log('*************************************');
-console.log('* Express.ts API Boilerplate');
-console.log('*');
-console.log('* ENV');
-console.log(`* NODE_ENV: ${process.env.NODE_ENV}`);
-(process.env.H_CAPTCHA_SECRET) ? console.log(`* H_CAPTCHA_SECRET: Enabled`) : console.log(`* ⚠️ H_CAPTCHA_SECRET not set. Login/Sign-up requests will not require captcha validadation!`);
-console.log('*');
+const isTest = (process.env.NODE_ENV === 'test');
+if (!isTest) console.log('*************************************');
+if (!isTest) console.log('* Express.ts API Boilerplate');
+if (!isTest) console.log('*');
+if (!isTest) console.log('* ENV');
+if (!isTest) console.log(`* NODE_ENV: ${process.env.NODE_ENV}`);
+if (!isTest) console.log((process.env.H_CAPTCHA_SECRET) ? `* H_CAPTCHA_SECRET: Enabled` : `* ⚠️ H_CAPTCHA_SECRET not set. Login/Sign-up requests will not require captcha validadation!`);
+if (!isTest) console.log('*');
 
 
 ////////////////////////////////////////////////
