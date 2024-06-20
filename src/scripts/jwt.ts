@@ -4,7 +4,7 @@
  * docker exec -ti express-api ts-node ./src/scripts/jwt.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
  *
  */
-require('dotenv').config();
+import 'dotenv/config';
 import generateJWT from './../providers/GenerateJWT';
 import User from './../models/User';
 import db from './../providers/db';

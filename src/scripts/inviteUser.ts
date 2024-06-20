@@ -4,7 +4,7 @@
  * docker exec -ti express-api ts-node ./src/scripts/inviteUser.ts --email="newuser@example.com" --groupID="fdab7a99-2c38-444b-bcb3-f7cef61c275b"
  *
  */
-require('dotenv').config();
+import 'dotenv/config';
 import GroupUser from './../models/GroupUser';
 import Group from './../models/Group';
 import User from './../models/User';

@@ -36,8 +36,14 @@ npm install
 docker compose up
 npm run _db:refresh
 
-# [Optional] Code generation
+# [Optional] Code generation command
 npm run generate -- --model="Book"
+
+# [Optional] Interactive CRUD commands
+npm run create --model="Book"
+npm run index --model="Book" --prop="id" --value="name"
+npm run edit --model="Book" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
+npm run delete --model="Book" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
 ```
 
 ### DB Structure
@@ -117,7 +123,12 @@ There are a few helper scripts and commands for interacting with the application
 Some commands need to be run inside the docker container, these commands have been aliased with an underscore prefix, for exmaple `npm run _db:refresh` is an alias for `docker exec -ti express-api npm run db:refresh` which actually runs `./src/scripts/refresh`
 | Command               | Description                   | Exmaple                          | 
 | --------------------- | ----------------------------- | -------------------------------- |
-| generate              | Code generation               | `npm run generate -- --model="book"` |
+| modelCreate.ts        | Create model                  | `npm run create --model="User"` |
+| modelIndex.ts         | Returns models as key:value pair | `npm run index --model="User" --prop="id" --value="email"` |
+| modelEdit.ts          | Edit model interactivly       | `npm run edit --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"` |
+| modelGet.ts           | Get model                     | `npm run get --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"` |
+| modelDelete.ts        | Delete model                  | `npm run delete --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"` |
+| generate.ts           | Code generation               | `npm run generate -- --model="book"` |
 | jwt.ts                | Generate JWT for a user       | `docker exec -ti express-api ts-node ./src/scripts/jwt.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | forgotPassword.ts     | Generate password reset link  | `docker exec -ti express-api ts-node ./src/scripts/forgotPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | resetPassword.ts      | Password user password        | `docker exec -ti express-api ts-node ./src/scripts/resetPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"` |

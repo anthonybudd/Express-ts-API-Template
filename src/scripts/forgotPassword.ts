@@ -4,10 +4,10 @@
  * docker exec -ti express-api ts-node ./src/scripts/forgotPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
  *
  */
-require('dotenv').config();
+import 'dotenv/config';
 import User from './../models/User';
-import db from './../providers/db';
 import minimist from 'minimist';
+import db from './../providers/db';
 import crypto from 'crypto';
 
 const argv = minimist(process.argv.slice(2));

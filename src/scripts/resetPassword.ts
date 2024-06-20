@@ -4,7 +4,7 @@
  * docker exec -ti express-api ts-node ./src/scripts/resetPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"
  *
  */
-require('dotenv').config();
+import 'dotenv/config';
 import User from './../models/User';
 import bcrypt from 'bcrypt-nodejs';
 import db from './../providers/db';

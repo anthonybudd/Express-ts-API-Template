@@ -18,6 +18,11 @@
     "db:seed": "./src/scripts/seed",
     "db:refresh": "./src/scripts/refresh",
     "_db:refresh": "docker exec -ti express-api npm run db:refresh",
+    "index": "docker exec -ti express-api /bin/bash -c \"ts-node ./src/scripts/modelIndex.ts --model=\"${npm_config_model}\" --prop=\"${npm_config_prop}\" --value=\"${npm_config_value}\"\"",
+    "create": "docker exec -ti express-api /bin/bash -c \"ts-node ./src/scripts/modelNew.ts --model=\"${npm_config_model}\" | vipe | base64 | ts-node ./src/scripts/modelCreate.ts --model=\"${npm_config_model}\"\"",
+    "get": "docker exec -ti express-api /bin/bash -c \"ts-node ./src/scripts/modelGet.ts --model=\"${npm_config_model}\" --id=\"${npm_config_id}\"\"",
+    "edit": "docker exec -ti express-api /bin/bash -c \"ts-node ./src/scripts/modelGet.ts --model=\"${npm_config_model}\" --id=\"${npm_config_id}\" | vipe | base64 | ts-node ./src/scripts/modelUpdate.ts --model=\"${npm_config_model}\" --id=\"${npm_config_id}\"\"",
+    "delete": "docker exec -ti express-api /bin/bash -c \"ts-node ./src/scripts/modelDelete.ts --model=\"${npm_config_model}\" --id=\"${npm_config_id}\"\"",
     "test": "DOTENV_CONFIG_PATH=.env.test jest",
     "_test": "docker exec -ti express-api npm run test",
     "typecheck": "tsc --noEmit"

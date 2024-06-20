@@ -76,13 +76,9 @@ app.post('/auth/sign-up', [
             const user = await User.findOne({ where: { email } });
             if (user) throw new Error('This email address is taken');
         }),
-    body('password').isStrongPassword({
-        minLength: 8,
-        minLowercase: 1,
-        minUppercase: 1,
-        minNumbers: 1,
-        minSymbols: 1,
-    }),
+    body('password')
+        .notEmpty()
+        .exists(),
     body('firstName', 'You must provide your first name')
         .notEmpty()
         .exists(),
@@ -94,6 +90,7 @@ app.post('/auth/sign-up', [
     body('tos', 'You must accept the Terms of Service to use this platform')
         .exists()
         .notEmpty(),
+    middleware.isStrongPassword,
     middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response) => {
     const errors = validationResult(req);
@@ -242,19 +239,16 @@ app.post('/auth/reset', [
             const user = await User.findOne({ where: { email } });
             if (!user) throw new Error('This email address does not exist');
         }),
-    body('password').isStrongPassword({
-        minLength: 8,
-        minLowercase: 1,
-        minUppercase: 1,
-        minNumbers: 1,
-        minSymbols: 1,
-    }),
+    body('password')
+        .notEmpty()
+        .exists(),
     body('passwordResetKey', 'This link has expired')
         .custom(async (passwordResetKey) => {
             if (!passwordResetKey) throw new Error('This link has expired');
             const user = await User.findOne({ where: { passwordResetKey } });
             if (!user) throw new Error('This link has expired');
         }),
+    middleware.isStrongPassword,
     middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response) => {
     const errors = validationResult(req);
@@ -313,19 +307,16 @@ app.post('/auth/invite', [
         .exists({ checkFalsy: true })
         .isEmail()
         .toLowerCase(),
-    body('password').isStrongPassword({
-        minLength: 8,
-        minLowercase: 1,
-        minUppercase: 1,
-        minNumbers: 1,
-        minSymbols: 1,
-    }),
+    body('password')
+        .notEmpty()
+        .exists(),
     body('firstName', 'You must provide your first name')
         .exists(),
     body('lastName'),
     body('tos', 'You must accept the Terms of Service to use this platform')
         .exists(),
     body('inviteKey').exists(),
+    middleware.isStrongPassword,
     middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response) => {
     const errors = validationResult(req);
