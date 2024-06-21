@@ -65,32 +65,33 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 ```
 
 ### Routes
-| Method      | Route                                                    | Description                           | Payload                               | Response          | 
-| ----------- | -------------------------------------------------------- | ------------------------------------- | ------------------------------------- | ----------------- |  
-| **DevOps**  |                                                          |                                       |                                       |                   |  
-| GET         | `/_readiness`                                            | Kuber readiness check                 | --                                    | "healthy"         |  
-| GET         | `/api/v1/_healthcheck`                                   | Returns {status: 'ok'} if healthy     | --                                    | {status: 'ok'}    |  
-| **Auth**    |                                                          |                                       |                                       |                   |  
-| POST        | `/api/v1/auth/login`                                     | Login                                 | {email, password}                     | {accessToken}     |  
-| POST        | `/api/v1/auth/sign-up`                                   | Sign-up                               | {email, password, firstName, tos}     | {accessToken}     |  
-| GET         | `/api/v1/_authcheck`                                     | Returns {auth: true} if has auth      | --                                    | {auth: true}      |  
-| GET         | `/api/v1/auth/verify-email/:emailVerificationKey`        | Verify email                          | --                                    | {success: true}   |  
-| GET         | `/api/v1/auth/resend-verification-email`                 | Resend verification email             | --                                    | {email}           |  
-| POST        | `/api/v1/auth/forgot`                                    | Forgot                                | {email}                               | {success: true}   |  
-| GET         | `/api/v1/auth/get-user-by-reset-key/:passwordResetKey`   | Get user for given `passwordResetKey` | --                                    | {id, email}       |  
-| POST        | `/api/v1/auth/reset`                                     | Reset password                        | {email, password, passwordResetKey}   | {accessToken}     |  
-| GET         | `/api/v1/auth/get-user-by-invite-key/:inviteKey`         | Get user for given `inviteKey`        | --                                    | {id, email}       |  
-| POST        | `/api/v1/auth/invite`                                    | Complete user invite process          | {inviteKey, email, password, ...}     | {accessToken}     |   
-| **User**    |                                                          |                                       |                                       |                   |  
-| GET         | `/api/v1/user`                                           | Get the current user                  |                                       | {User}            |  
-| POST        | `/api/v1/user`                                           | Update the current user               | {firstName, lastName}                 | {User}            |  
-| POST        | `/api/v1/user/update-password`                           | Update password                       | {password, newPassword}               | {success: true}   |
-| **Groups**  |                                                          |                                       |                                       |                   |  
-| GET         | `/api/v1/groups/:groupID`                                | Returns group by ID                   | --                                    | {Group}           |  
-| POST        | `/api/v1/groups/:groupID`                                | Update group by ID                    | {name: 'New Name'}                    | {Group}           |  
-| POST        | `/api/v1/groups/:groupID/users/invite`                   | Invite user to group                  | {email}                               | {UserID, GroupID} |  
-| POST        | `/api/v1/groups/:groupID/users/:userID/set-role`         | Set user role                         | {role: 'User' | 'Admin' }             | {UserID, role}    |  
-| DELETE      | `/api/v1/groups/:groupID/users/:userID`                  | Remove user from group                | --                                    | {UserID}          |  
+| Method      | Route                                                           | Description                           | Payload                               | Response          | 
+| ----------- | --------------------------------------------------------------- | ------------------------------------- | ------------------------------------- | ----------------- |  
+| **DevOps**  |                                                                 |                                       |                                       |                   |  
+| GET         | `/_readiness`                                                   | Kuber readiness check                 | --                                    | "healthy"         |  
+| GET         | `/api/v1/_healthcheck`                                          | Returns {status: 'ok'} if healthy     | --                                    | {status: 'ok'}    |  
+| **Auth**    |                                                                 |                                       |                                       |                   |  
+| POST        | `/api/v1/auth/login`                                            | Login                                 | {email, password}                     | {accessToken}     |  
+| POST        | `/api/v1/auth/sign-up`                                          | Sign-up                               | {email, password, firstName, tos}     | {accessToken}     |  
+| GET         | `/api/v1/_authcheck`                                            | Returns {auth: true} if has auth      | --                                    | {auth: true}      |  
+| GET         | `/api/v1/auth/verify-email/:emailVerificationKey`               | Verify email                          | --                                    | {success: true}   |  
+| GET         | `/api/v1/auth/resend-verification-email`                        | Resend verification email             | --                                    | {email}           |  
+| POST        | `/api/v1/auth/forgot`                                           | Forgot                                | {email}                               | {success: true}   |  
+| GET         | `/api/v1/auth/get-user-by-reset-key/:passwordResetKey`          | Get user for given `passwordResetKey` | --                                    | {id, email}       |  
+| POST        | `/api/v1/auth/reset`                                            | Reset password                        | {email, password, passwordResetKey}   | {accessToken}     |  
+| GET         | `/api/v1/auth/get-user-by-invite-key/:inviteKey`                | Get user for given `inviteKey`        | --                                    | {id, email}       |  
+| POST        | `/api/v1/auth/invite`                                           | Complete user invite process          | {inviteKey, email, password, ...}     | {accessToken}     |   
+| **User**    |                                                                 |                                       |                                       |                   |  
+| GET         | `/api/v1/user`                                                  | Get the current user                  |                                       | {User}            |  
+| POST        | `/api/v1/user`                                                  | Update the current user               | {firstName, lastName}                 | {User}            |  
+| POST        | `/api/v1/user/update-password`                                  | Update password                       | {password, newPassword}               | {success: true}   |
+| **Groups**  |                                                                 |                                       |                                       |                   |  
+| GET         | `/api/v1/groups/:groupID`                                       | Returns group by ID                   | --                                    | {Group}           |  
+| POST        | `/api/v1/groups/:groupID`                                       | Update group by ID                    | {name: 'New Name'}                    | {Group}           |  
+| POST        | `/api/v1/groups/:groupID/users/invite`                          | Invite user to group                  | {email}                               | {UserID, GroupID} |  
+| POST        | `/api/v1/groups/:groupID/users/:userID/resend-invitation-email` | Resend invitation email               | {}                                    | {email}           |  
+| POST        | `/api/v1/groups/:groupID/users/:userID/set-role`                | Set user role                         | {role: 'User' | 'Admin' }             | {UserID, role}    |  
+| DELETE      | `/api/v1/groups/:groupID/users/:userID`                         | Remove user from group                | --                                    | {UserID}          |  
 
 
 ### Deployment

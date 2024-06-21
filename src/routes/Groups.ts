@@ -86,17 +86,18 @@ app.post('/groups/:groupID/users/invite', [
                 userID: user.id
             }
         });
-        if (relationship) return res.json({
-            groupID,
-            userID: user.id
+
+        if (relationship) return res.status(401).json({
+            msg: 'User is already in this group',
+            code: 98645,
         });
     } else {
         user = await User.create({
             email,
             password: bcrypt.hashSync(crypto.randomBytes(20).toString('hex'), bcrypt.genSaltSync(10)), // AB: Random password, will be updated by user
             firstName: '',
-            lastLoginAt: moment().format("YYYY-MM-DD HH:mm:ss"),
             emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
+            inviteKey: crypto.randomBytes(10).toString('hex'),
         });
 
         //////////////////////////////////////////
@@ -125,6 +126,35 @@ app.post('/groups/:groupID/users/invite', [
         userID: user.id,
         role,
     });
+});
+
+
+/**
+ * POST /api/v1/groups/:groupID/users/:userID/resend-invitation-email
+ * 
+ */
+app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
+    passport.authenticate('jwt', { session: false }),
+    middleware.hasRole('Admin'),
+], async (req: express.Request, res: express.Response) => {
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) return res.status(404).json({
+        msg: 'User not found',
+        code: 40403
+    });
+
+    await user.update({
+        inviteKey: crypto.randomBytes(10).toString('hex'),
+    });
+
+    //////////////////////////////////////////
+    // EMAIL THIS TO THE USER
+    const inviteLink = `${process.env.FRONTEND_URL}/invite/${user.inviteKey}`;
+    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nINVITE LINK: ${inviteLink}\n\n`);
+    //////////////////////////////////////////
+
+    return res.json({ email: user.email });
 });
 
 
