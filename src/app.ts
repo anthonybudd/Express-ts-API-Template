@@ -27,7 +27,7 @@ if (!isTest) console.log('*');
 // Express
 const app = express();
 app.disable('x-powered-by');
-app.use(morgan('dev'));
+if (!isTest) app.use(morgan('dev'));
 app.use(helmet());
 app.use(cors({
   origin: '*',

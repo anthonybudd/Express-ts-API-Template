@@ -4,7 +4,6 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     try {
         let password = req.body.password;
         if (req.body.newPassword) password = req.body.newPassword;
-        if (req.body.newPassword && req.body.password === req.body.newPassword) throw new Error('New password cannot be the same as your old password');
         if (password.length < 7) throw new Error('Password must be at least 8 characters');
         if (!(/[^A-Za-z0-9]/).test(password)) throw new Error('Password must contain at least one special character');
         if (!(/[A-Z]/).test(password)) throw new Error('Password must contain at least one uppercase character');

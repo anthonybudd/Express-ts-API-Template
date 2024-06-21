@@ -2,7 +2,7 @@
   "name": "express-api-boilerplate",
   "version": "1.0.0",
   "author": "Anthony Budd",
-  "description": "",
+  "description": "Production-ready minimal REST API boilerplate using Express.js, Sequelize and MySQL.",
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
@@ -23,7 +23,7 @@
     "get": "docker exec -ti express-api /bin/bash -c \"ts-node ./src/scripts/modelGet.ts --model=\"${npm_config_model}\" --id=\"${npm_config_id}\"\"",
     "edit": "docker exec -ti express-api /bin/bash -c \"ts-node ./src/scripts/modelGet.ts --model=\"${npm_config_model}\" --id=\"${npm_config_id}\" | vipe | base64 | ts-node ./src/scripts/modelUpdate.ts --model=\"${npm_config_model}\" --id=\"${npm_config_id}\"\"",
     "delete": "docker exec -ti express-api /bin/bash -c \"ts-node ./src/scripts/modelDelete.ts --model=\"${npm_config_model}\" --id=\"${npm_config_id}\"\"",
-    "test": "DOTENV_CONFIG_PATH=.env.test jest",
+    "test": "DOTENV_CONFIG_PATH=.env.test jest --forceExit",
     "_test": "docker exec -ti express-api npm run test",
     "typecheck": "tsc --noEmit"
   },
