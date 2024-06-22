@@ -42,6 +42,7 @@ npm run generate -- --model="Book"
 # [Optional] Interactive CRUD commands
 npm run create --model="Book"
 npm run index --model="Book" --prop="id" --value="name"
+npm run get --model="Book" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
 npm run edit --model="Book" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
 npm run delete --model="Book" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
 ```

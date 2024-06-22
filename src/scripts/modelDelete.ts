@@ -1,4 +1,3 @@
-
 /**
  * ts-node ./src/scripts/modelDelete.ts --model="User" --id="d700932c-4a11-427f-9183-d6c4b69368f9"
  * docker exec -ti express-api ts-node ./src/scripts/modelDelete.ts --model="User" --id="d700932c-4a11-427f-9183-d6c4b69368f9"

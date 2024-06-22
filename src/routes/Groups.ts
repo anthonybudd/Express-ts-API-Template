@@ -6,7 +6,6 @@ import { Group } from './../models/Group';
 import middleware from './middleware';
 import bcrypt from 'bcrypt-nodejs';
 import express from 'express';
-import moment from 'moment';
 import crypto from 'crypto';
 
 export const app = express.Router();
@@ -142,6 +141,11 @@ app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
     if (!user) return res.status(404).json({
         msg: 'User not found',
         code: 40403
+    });
+
+    if (!user.inviteKey) return res.status(400).json({
+        msg: 'This user has already accepted their invitation',
+        code: 40422
     });
 
     await user.update({

@@ -1,4 +1,3 @@
-
 /**
  * npm run update --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
  * ts-node ./src/scripts/modelUpdate.ts --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"

@@ -1,3 +1,5 @@
+// AB: I will convert to TS when I get jest working with Sequelize
+
 require('dotenv').config();
 
 module.exports = {

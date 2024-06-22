@@ -1,8 +1,8 @@
-# Install VS Code extension rest-client 
+# Install VS Code extension: rest-client 
 # URL: https://marketplace.visualstudio.com/items?itemName=humao.rest-client
 
 @Host=http://localhost:8888/api/v1
-@AccessToken=eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM0NjQ0NzMzLWRlZWEtNDdkOC1iMzVhLTg2ZjMwZmY5NjE4ZSIsImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSIsImlhdCI6MTcxODY3NjgxMiwiZXhwIjozNDM3NDQwMDI0fQ.cq12bT9KilP-uZr7pZDpM6ruofQr6YMINpQUAp-UzKs3qGY9V67nRSJCPGuBnyK0SNIUlACUCxCvLFGMH44lJSusUt5QyRaOyyySFc7AuWYutFgSUTQQ_azqnCWgVRLciwuUQ_GKNCvrA0g_ufibof3c7bLBilrXPhchn626oypFygozlsEoBK9b93BY7NWHa-JyDAwxvcn9aZ_9mqUhKekee5jnapJOpfcSR267gkRpy8o-SV4xmifkXNF2lAr0DZ8pUb9G_BxEsR4mqqzPzTQ51erLri3fyWI--aJeulih7P4cHwCxEuOMqcCaN2z66YgjZq22VGTqyO03mZ0ftw
+@AccessToken=null
 @GroupA=fdab7a99-2c38-444b-bcb3-f7cef61c275b
 @GroupB=be1fcb4e-caf9-41c2-ac27-c06fa24da36a
 @User1=c4644733-deea-47d8-b35a-86f30ff9618e
@@ -145,7 +145,6 @@ content-type: application/json
 {
     "email": "foobar@gamil.com"
 }   
-
 
 
 ### /groups/:groupID/users/:userID/set-role

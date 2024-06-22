@@ -48,7 +48,7 @@ app.post('/auth/login', [
             if (err) throw err;
 
             res.json({
-                accessToken: generateJWT(user)
+                accessToken: generateJWT(user, { expiresIn: "24h" })
             });
 
             User.update({
@@ -136,7 +136,7 @@ app.post('/auth/sign-up', [
             if (err) throw err;
 
             res.json({
-                accessToken: generateJWT(user)
+                accessToken: generateJWT(user, { expiresIn: "24h" })
             });
         });
     })(req, res);
@@ -273,7 +273,7 @@ app.post('/auth/reset', [
         req.login(user, { session: false }, (err) => {
             if (err) throw err;
 
-            return res.json({ accessToken: generateJWT(user) });
+            return res.json({ accessToken: generateJWT(user, { expiresIn: "24h" }) });
         });
     })(req, res);
 });
@@ -342,7 +342,7 @@ app.post('/auth/invite', [
         if (!user) return res.status(401).json({ message: 'Error', code: 401 });
         req.login(user, { session: false }, (err) => {
             if (err) throw err;
-            return res.json({ accessToken: generateJWT(user) });
+            return res.json({ accessToken: generateJWT(user, { expiresIn: "24h" }) });
         });
     })(req, res);
 });

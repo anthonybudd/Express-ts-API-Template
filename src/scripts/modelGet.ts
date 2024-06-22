@@ -1,4 +1,3 @@
-
 /**
  * ts-node ./src/scripts/modelGet.ts --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
  * docker exec -ti express-api ts-node ./src/scripts/modelGet.ts --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
