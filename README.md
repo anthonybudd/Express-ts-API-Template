@@ -22,7 +22,6 @@ This project is designed to work with [AnthonyBudd/Vuetify-SPA-Boilerplate](http
 ```sh
 git clone git@github.com:anthonybudd/express-ts-api-boilerplate.git
 cd express-ts-api-boilerplate
-cp .env.example .env
 
 # [Optional] Find & Replace (case-sensaive, whole repo): "express-api" => "your-api-name" 
 LC_ALL=C find . -type f -name '*.*' -exec sed -i '' s/express-api/your-api-name/g {} +
@@ -32,6 +31,7 @@ openssl genrsa -out private.pem 2048
 openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 
 # Start app
+cp .env.example .env
 npm install
 docker compose up
 npm run _db:refresh

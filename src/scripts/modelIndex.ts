@@ -1,4 +1,3 @@
-
 /**
  * npm run index --model="User" --prop="id" --value="email"
  * ts-node ./src/scripts/modelIndex.ts --model="User" --prop="id" --value="email"
