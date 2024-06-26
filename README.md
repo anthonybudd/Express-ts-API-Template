@@ -1,4 +1,4 @@
-# Express.ts API Boilerplate
+# Express.ts API Template
 
 <!--
 todo:
@@ -6,11 +6,11 @@ todo:
 - tests
 -->
 
-<img height="75" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-boilerplate.png?v=1"/>
+<img height="75" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-template.png?v=1"/>
 
-A very mimimal REST API boilerplate using Express.ts, Sequelize and MySQL. 
+A very mimimal REST API template using Express.ts, Sequelize and MySQL. 
 
-This project is designed to work with [AnthonyBudd/Vuetify-SPA-Boilerplate](https://github.com/anthonybudd/Vuetify-SPA-boilerplate)
+This project is designed to work with [AnthonyBudd/Vuetify-SPA-Template](https://github.com/anthonybudd/Vuetify-SPA-template)
 
 
 - 🔐 Auth using JWT's with Passport.js
@@ -20,8 +20,8 @@ This project is designed to work with [AnthonyBudd/Vuetify-SPA-Boilerplate](http
 
 
 ```sh
-git clone git@github.com:anthonybudd/express-ts-api-boilerplate.git
-cd express-ts-api-boilerplate
+git clone git@github.com:anthonybudd/express-ts-api-template.git
+cd express-ts-api-template
 
 # [Optional] Find & Replace (case-sensaive, whole repo): "express-api" => "your-api-name" 
 LC_ALL=C find . -type f -name '*.*' -exec sed -i '' s/express-api/your-api-name/g {} +

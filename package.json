@@ -1,8 +1,8 @@
 {
-  "name": "express-api-boilerplate",
+  "name": "express-api-template",
   "version": "1.0.0",
   "author": "Anthony Budd",
-  "description": "Production-ready minimal REST API boilerplate using Express.js, Sequelize and MySQL.",
+  "description": "Production-ready minimal REST API template using Express.js, Sequelize and MySQL.",
   "main": "src/index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
@@ -30,7 +30,7 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/anthonybudd/express-api-boilerplate.git"
+    "url": "https://github.com/anthonybudd/express-api-template.git"
   },
   "license": "MIT",
   "dependencies": {

@@ -15,7 +15,7 @@ import { app as Groups } from './routes/Groups';
 
 const isTest = (process.env.NODE_ENV === 'test');
 if (!isTest) console.log('*************************************');
-if (!isTest) console.log('* Express.ts API Boilerplate');
+if (!isTest) console.log('* Express.ts API Template');
 if (!isTest) console.log('*');
 if (!isTest) console.log('* ENV');
 if (!isTest) console.log(`* NODE_ENV: ${process.env.NODE_ENV}`);
