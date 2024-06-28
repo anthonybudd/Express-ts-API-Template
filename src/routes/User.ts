@@ -88,6 +88,9 @@ app.post('/user/resend-verification-email', [
 app.post('/user/update-password', [
     passport.authenticate('jwt', { session: false }),
     middleware.checkPassword,
+    body('newPassword')
+        .notEmpty()
+        .exists(),
     body('password')
         .notEmpty()
         .exists(),
