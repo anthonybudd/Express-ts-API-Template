@@ -2,6 +2,7 @@ import { body, validationResult, matchedData } from 'express-validator';
 import { User, UserModel } from './../models/User';
 import { GroupUser } from './../models/GroupUser';
 import passport from './../providers/Passport';
+import Email from './../providers/Email';
 import { Group } from './../models/Group';
 import middleware from './middleware';
 import bcrypt from 'bcrypt-nodejs';
@@ -67,6 +68,12 @@ app.post('/groups/:groupID/users/invite', [
     const { email, role } = matchedData(req);
 
     const groupID = req.params.groupID;
+    const group = await Group.findByPk(groupID);
+
+    if (!group) return res.status(404).json({
+        msg: 'Group not found',
+        code: 40403
+    });
 
     let user = await User.findOne({
         where: { email }
@@ -101,8 +108,10 @@ app.post('/groups/:groupID/users/invite', [
 
         //////////////////////////////////////////
         // EMAIL THIS TO THE USER
-        const inviteLink = `${process.env.FRONTEND_URL}/invite/${user.inviteKey}`;
-        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nINVITE LINK: ${inviteLink}\n\n`);
+        const link = `${process.env.FRONTEND_URL}/invite/${user.inviteKey}`;
+        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nINVITE LINK: ${link}\n\n`);
+
+        // const html = Email.generate('Invite', { link, groupName: group.name });
         //////////////////////////////////////////
     }
 
@@ -143,6 +152,13 @@ app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
         code: 40403
     });
 
+    const group = await Group.findByPk(req.params.groupID);
+
+    if (!group) return res.status(404).json({
+        msg: 'Group not found',
+        code: 40403
+    });
+
     if (!user.inviteKey) return res.status(400).json({
         msg: 'This user has already accepted their invitation',
         code: 40422
@@ -154,8 +170,10 @@ app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
 
     //////////////////////////////////////////
     // EMAIL THIS TO THE USER
-    const inviteLink = `${process.env.FRONTEND_URL}/invite/${user.inviteKey}`;
-    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nINVITE LINK: ${inviteLink}\n\n`);
+    const link = `${process.env.FRONTEND_URL}/invite/${user.inviteKey}`;
+    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nINVITE LINK: ${link}\n\n`);
+
+    // const html = Email.generate('Invite', { link, groupName: group.name })
     //////////////////////////////////////////
 
     return res.json({ email: user.email });

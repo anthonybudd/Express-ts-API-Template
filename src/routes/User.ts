@@ -1,6 +1,7 @@
 import { body, validationResult, matchedData } from 'express-validator';
 import { User, UserModel } from './../models/User';
 import passport from './../providers/Passport';
+import Email from './../providers/Email';
 import middleware from './middleware';
 import Group from './../models/Group';
 import bcrypt from 'bcrypt-nodejs';
@@ -69,8 +70,10 @@ app.post('/user/resend-verification-email', [
 
     //////////////////////////////////////////
     // EMAIL THIS TO THE USER
-    const emailVerificationLink = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`;
-    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nEMAIL VERIFICATION LINK: ${emailVerificationLink}\n\n`);
+    const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`;
+    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nEMAIL VERIFICATION LINK: ${link}\n\n`);
+
+    // const html = Email.generate('Verify', { link, code: user.emailVerificationKey });
     //////////////////////////////////////////
 
     return res.json({ email: user.email });

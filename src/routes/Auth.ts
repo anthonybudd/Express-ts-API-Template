@@ -4,6 +4,7 @@ import { User, UserModel } from './../models/User';
 import { GroupUser } from './../models/GroupUser';
 import { ucFirst } from './../providers/Helpers';
 import passport from './../providers/Passport';
+import Email from './../providers/Email';
 import { Group } from './../models/Group';
 import middleware from './middleware';
 import { v4 as uuidv4 } from 'uuid';
@@ -124,8 +125,10 @@ app.post('/auth/sign-up', [
 
     //////////////////////////////////////////
     // EMAIL THIS TO THE USER
-    const emailVerificationLink = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`;
-    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nEMAIL VERIFICATION LINK: ${emailVerificationLink}\n\n`);
+    const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`;
+    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nEMAIL VERIFICATION LINK: ${link}\n\n`);
+
+    // const html = Email.generate('Verify', { link, code: user.emailVerificationKey });
     //////////////////////////////////////////
 
 
@@ -199,9 +202,10 @@ app.post('/auth/forgot', [
 
     //////////////////////////////////////////
     // EMAIL THIS TO THE USER
-    const passwordResetLink = `${process.env.FRONTEND_URL}/reset/${passwordResetKey}`;
-    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nPASSWORD RESET LINK: ${passwordResetLink}\n\n`);
-    //
+    const link = `${process.env.FRONTEND_URL}/reset/${passwordResetKey}`;
+    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nPASSWORD RESET LINK: ${link}\n\n`);
+
+    // const html = Email.generate('Reset', { link })
     //////////////////////////////////////////
 
     return res.json({ success: true });

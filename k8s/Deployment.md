@@ -21,16 +21,13 @@ rm ./private.pem ./public.pem
 
 
 ### Env Secrets
-Make a new secrets config file
+Make a new secrets config file and add your secrets
 
 ```sh
 cp secrets.example.yml secrets.yml
 ```
 
-__Add Secrets in Base64__
-Hint: `echo -n 'my-secret-string' | base64`
-
-Create the secrets
+Create the secrets using
 
 ```sh
 kubectl --kubeconfig=./kubeconfig.yml apply -f ./k8s/secrets.yml
