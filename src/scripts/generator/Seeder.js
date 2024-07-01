@@ -5,6 +5,12 @@ const insert = [{
     name: 'Seeded {{ ModelName }}',
     createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+    {{#userID}}
+    userID: '{{ userID }}',
+    {{/userID}}
+    {{#groupID}}
+    groupID: '{{ groupID }}',
+    {{/groupID}}
 }];
 
 module.exports = {

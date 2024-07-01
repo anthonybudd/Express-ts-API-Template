@@ -46,7 +46,13 @@ app.post('/{{modelnames}}', [
     const data = matchedData(req);
 
     const {{modelName}} = await {{ModelName}}.create({
-        name: data.name
+        name: data.name,
+        {{#userID}}
+        userID: '{{userID}}',
+        {{/userID}}
+        {{#groupID}}
+        groupID: '{{groupID}}',
+        {{/groupID}}
     });
 
     return res.json({{modelName}});

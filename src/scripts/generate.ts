@@ -3,6 +3,8 @@
  * docker exec -ti express-api ts-node ./src/scripts/generate.ts --model="Book" -d
  * 
  * --force
+ * --userID
+ * --groupID
 */
 import { lcFirst } from './../providers/Helpers';
 import * as inflection from 'inflection';
@@ -32,6 +34,9 @@ if (/^\d/.test(argv['model'])) throw Error('--model cannot start with a number')
         modelNames: inflection.pluralize(lcFirst(ModelName)),
         ModelNames: inflection.pluralize(ModelName),
         UUID: uuidv4(),
+
+        userID: (argv['userID']) ? 'c4644733-deea-47d8-b35a-86f30ff9618e' : false, // user@exmaple.com
+        groupID: (argv['groupID']) ? 'fdab7a99-2c38-444b-bcb3-f7cef61c275b' : false, // Group A
     };
 
     if (argv['v']) console.log(params);

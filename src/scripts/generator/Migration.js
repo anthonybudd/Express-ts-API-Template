@@ -8,6 +8,21 @@ module.exports = {
             unique: true
         },
 
+        {{#userID}}
+        userID: {
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
+            allowNull: false,
+        },
+        {{/userID}}
+        {{#groupID}}
+        groupID: {
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
+            allowNull: false,
+        },
+        {{/groupID}}
+
         name: {
             type: Sequelize.STRING,
             allowNull: false,

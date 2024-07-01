@@ -8,6 +8,13 @@ interface {{ ModelName }}Model extends Model<InferAttributes<{{ ModelName }}Mode
     name: string,
     createdAt: CreationOptional<string>,
     updatedAt: CreationOptional<string>,
+    
+    {{#userID}}
+    userID: string,
+    {{/userID}}
+    {{#groupID}}
+    groupID: string,
+    {{/groupID}}
 }
 
 const {{ ModelName }} = sequelize.define<{{ ModelName }}Model>('{{ ModelName }}', {
@@ -18,6 +25,21 @@ const {{ ModelName }} = sequelize.define<{{ ModelName }}Model>('{{ ModelName }}'
         allowNull: false,
         unique: true,
     },
+
+    {{#userID}}
+    userID: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+    },
+    {{/userID}}
+    {{#groupID}}
+    groupID: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+    },
+    {{/groupID}}
 
     name: {
         type: Sequelize.STRING,
