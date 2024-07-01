@@ -131,6 +131,7 @@ Some commands need to be run inside the docker container, these commands have be
 | modelGet.ts           | Get model                     | `npm run get --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | modelDelete.ts        | Delete model                  | `npm run delete --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | generate.ts           | Code generation               | `npm run generate -- --model="book"` |
+| renderEmail.ts        | Generate an email locally     | `docker exec -ti express-api ts-node ./src/scripts/renderEmail.ts --template="Verify" --code="512616" --link="https://google.com"` |
 | jwt.ts                | Generate JWT for a user       | `docker exec -ti express-api ts-node ./src/scripts/jwt.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | forgotPassword.ts     | Generate password reset link  | `docker exec -ti express-api ts-node ./src/scripts/forgotPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | resetPassword.ts      | Password user password        | `docker exec -ti express-api ts-node ./src/scripts/resetPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"` |

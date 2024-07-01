@@ -1,7 +1,7 @@
 /**
- * npm run email --template="Forgot" --link="https://google.com"
- * ts-node ./src/scripts/renderEmail.ts --template="Forgot" --link="https://google.com"
- * docker exec -ti express-api ts-node ./src/scripts/renderEmail.ts --template="Forgot" --link="https://google.com"
+ * npm run email -- --template="Forgot" --link="https://google.com"
+ * ts-node ./src/scripts/renderEmail.ts --template="Verify" --code="512616" --link="https://google.com"
+ * docker exec -ti express-api ts-node ./src/scripts/renderEmail.ts --template="Verify" --code="512616" --link="https://google.com"
  */
 import 'dotenv/config';
 import Email from './../providers/Email';
