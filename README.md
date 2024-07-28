@@ -1,11 +1,5 @@
 # Express.ts API Template
 
-<!--
-todo:
-- openapi spec
-- tests
--->
-
 <img height="75" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-template.png?v=1"/>
 
 A very mimimal REST API template using Express.ts, Sequelize and MySQL. 
@@ -38,6 +32,7 @@ npm run _db:refresh
 
 # [Optional] Code generation command
 npm run generate -- --model="Book"
+npm run _db:refresh
 
 # [Optional] Interactive CRUD commands
 npm run create --model="Book"
@@ -68,7 +63,6 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 ### Routes
 | Method      | Route                                                           | Description                           | Payload                               | Response          | 
 | ----------- | --------------------------------------------------------------- | ------------------------------------- | ------------------------------------- | ----------------- |  
-| **DevOps**  |                                                                 |                                       |                                       |                   |  
 | GET         | `/_readiness`                                                   | Kuber readiness check                 | --                                    | "healthy"         |  
 | GET         | `/api/v1/_healthcheck`                                          | Returns {status: 'ok'} if healthy     | --                                    | {status: 'ok'}    |  
 | **Auth**    |                                                                 |                                       |                                       |                   |  
