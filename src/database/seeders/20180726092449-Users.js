@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt-nodejs');
-const moment = require('moment');
+const day = require('dayjs');
 
 const insert = [{
     id: 'c4644733-deea-47d8-b35a-86f30ff9618e',
@@ -9,9 +9,9 @@ const insert = [{
     lastName: 'One',
     bio: 'I am a user',
     tos: 'tos-version-2023-07-13',
-    createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-    lastLoginAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+    createdAt: day().format('YYYY-MM-DD HH:mm:ss'),
+    updatedAt: day().format('YYYY-MM-DD HH:mm:ss'),
+    lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
 }, {
     id: 'd700932c-4a11-427f-9183-d6c4b69368f9',
     email: 'other.user@foobar.com',
@@ -21,9 +21,9 @@ const insert = [{
     bio: 'I am a user',
     tos: 'tos-version-2023-07-13',
     inviteKey: '86f30ff9618e',
-    createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-    lastLoginAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+    createdAt: day().format('YYYY-MM-DD HH:mm:ss'),
+    updatedAt: day().format('YYYY-MM-DD HH:mm:ss'),
+    lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
 }];
 
 

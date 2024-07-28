@@ -11,7 +11,7 @@ import * as inflection from 'inflection';
 import { v4 as uuidv4 } from 'uuid';
 import Mustache from 'Mustache';
 import minimist from 'minimist';
-import moment from 'moment';
+import day from 'dayjs';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -86,7 +86,7 @@ if (/^\d/.test(argv['model'])) throw Error('--model cannot start with a number')
 
     ////////////////////////////////////////////////
     // Migration
-    const pathMigration = path.resolve(`./src/database/migrations/${moment().format('YYYYMMDDHHmmss')}-create-${params.ModelNames}.js`);
+    const pathMigration = path.resolve(`./src/database/migrations/${day().format('YYYYMMDDHHmmss')}-create-${params.ModelNames}.js`);
     const migrations = fs.readdirSync(path.resolve(`./src/database/migrations/`)).map((str) => (str.replaceAll(/[0-9]/g, '')));
     if (!isForce && migrations.includes(`-create-${params.ModelNames}.js`)) throw new Error(`File already exists at ${pathMigration}`);
     if (!isDryRun) fs.writeFileSync(pathMigration, Mustache.render(fs.readFileSync(path.resolve('./src/scripts/generator/Migration.js'), 'utf8'), params));
@@ -95,7 +95,7 @@ if (/^\d/.test(argv['model'])) throw Error('--model cannot start with a number')
 
     ////////////////////////////////////////////////
     // Seeder
-    const pathSeeder = path.resolve(`./src/database/seeders/${moment().format('YYYYMMDDHHmmss')}-${params.ModelNames}.js`);
+    const pathSeeder = path.resolve(`./src/database/seeders/${day().format('YYYYMMDDHHmmss')}-${params.ModelNames}.js`);
     const seeders = fs.readdirSync(path.resolve(`./src/database/seeders/`)).map((str) => (str.replaceAll(/[0-9]/g, '')));
     if (!isForce && seeders.includes(`-${params.ModelNames}.js`)) throw new Error(`File already exists at ${pathSeeder}`);
     if (!isDryRun) fs.writeFileSync(pathSeeder, Mustache.render(fs.readFileSync(path.resolve('./src/scripts/generator/Seeder.js'), 'utf8'), params));

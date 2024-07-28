@@ -1,10 +1,10 @@
-const moment = require('moment');
+const day = require('dayjs');
 
 const insert = [{
     id: '{{ UUID }}',
     name: 'Seeded {{ ModelName }}',
-    createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-    updatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+    createdAt: day().format('YYYY-MM-DD HH:mm:ss'),
+    updatedAt: day().format('YYYY-MM-DD HH:mm:ss'),
     {{#userID}}
     userID: '{{ userID }}',
     {{/userID}}

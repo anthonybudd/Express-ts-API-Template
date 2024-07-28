@@ -10,7 +10,7 @@ import middleware from './middleware';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt-nodejs';
 import express from 'express';
-import moment from 'moment';
+import day from 'dayjs';
 import crypto from 'crypto';
 
 export const app = express.Router();
@@ -53,7 +53,7 @@ app.post('/auth/login', [
             });
 
             User.update({
-                lastLoginAt: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+                lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
             }, {
                 where: {
                     id: user.get('id')
@@ -117,7 +117,7 @@ app.post('/auth/sign-up', [
         password: bcrypt.hashSync(data.password, bcrypt.genSaltSync(10)),
         firstName: ucFirst(data.firstName),
         lastName: ucFirst(data.lastName),
-        lastLoginAt: moment().format("YYYY-MM-DD HH:mm:ss"),
+        lastLoginAt: day().format("YYYY-MM-DD HH:mm:ss"),
         tos: data.tos,
         emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
     });
@@ -333,7 +333,7 @@ app.post('/auth/invite', [
         password: bcrypt.hashSync(data.password, bcrypt.genSaltSync(10)),
         firstName: ucFirst(data.firstName),
         lastName: ucFirst(data.lastName),
-        lastLoginAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+        lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
         tos: data.tos,
         inviteKey: null,
         emailVerified: true,
