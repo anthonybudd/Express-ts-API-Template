@@ -42,7 +42,7 @@ app.use(fileUpload({
   parseNested: true,
 }));
 app.get('/_readiness', (req, res) => res.send('healthy'));
-app.get('/api/v1/_healthcheck', (req, res) => res.json({ messsage: 'healthy' }));
+app.get('/api/v1/_healthcheck', (req, res) => res.json({ message: 'healthy' }));
 
 
 ////////////////////////////////////////////////

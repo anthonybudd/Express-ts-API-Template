@@ -16,7 +16,7 @@
     "resolveJsonModule": true,
   },
   "include": [
-    // "./*.js",
+    "./*.js",
     "src/**/*.ts",
     "tests/**/*.ts",
   ],

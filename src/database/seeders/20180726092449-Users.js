@@ -8,6 +8,7 @@ const insert = [{
     firstName: 'User',
     lastName: 'One',
     bio: 'I am a user',
+    emailVerificationKey: 'd6c4b69368f9',
     tos: 'tos-version-2023-07-13',
     createdAt: day().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: day().format('YYYY-MM-DD HH:mm:ss'),

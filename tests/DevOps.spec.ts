@@ -1,22 +1,21 @@
-import Chai from 'chai';
-// import chaiHttp from 'chai-http';
-import server from '../src/app';
+import 'dotenv/config';
+import { expect } from 'chai';
+import axios from 'axios';
 
-// const chai = Chai.use(chaiHttp);
+// const chai = Chai.use(chaiHttp); // AB: Does not work. "Error: TypeError: Unknown file extension .ts"
 
 describe('DevOps', () => {
-    describe('GET  /api/v1/_healthcheck', () => {
-        it('Should return system status', (done) => {
-            done();
-            // chai.request.execute(server)
-            //     .get('/api/v1/_healthcheck')
-            //     .end((err, res) => {
-            //         res.should.have.status(200);
-            //         res.should.be.json;
-            //         res.body.should.be.a('object');
-            //         res.body.status.should.equal('ok');
-            //         done();
-            //     });
+    describe('GET /api/v1/_healthcheck', () => {
+        it('Should return system status', async () => {
+            const { data } = await axios.get(`${process.env.TEST_URL}/api/v1/_healthcheck`);
+            expect(data.message).to.equal('healthy');
+        });
+    });
+
+    describe('GET /_readiness', () => {
+        it('Should return system readiness', async () => {
+            const { data } = await axios.get(`${process.env.TEST_URL}/_readiness`);
+            expect(data).to.equal('healthy');
         });
     });
 });

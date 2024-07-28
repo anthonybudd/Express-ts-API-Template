@@ -16,14 +16,15 @@ export const app = express.Router();
  */
 app.get('/user', [
     passport.authenticate('jwt', { session: false })
-], async (req: express.Request, res: express.Response) => {
-    const user = await User.findByPk(req.user.id, {
-        include: [Group],
-    });
-
-    if (!user) return res.status(404).send('User not found');
-
-    return res.json(user);
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        return res.json(await User.findByPk(req.user.id, {
+            include: [Group],
+            rejectOnEmpty: true,
+        }));
+    } catch (error) {
+        next(error);
+    }
 });
 
 
@@ -36,16 +37,17 @@ app.post('/user', [
     body('firstName').optional(),
     body('lastName').optional(),
     body('bio').optional(),
-], async (req: express.Request, res: express.Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const data = matchedData(req);
-
-    await User.update(data, { where: { id: req.user.id } });
-
-    return res.json(
-        await User.findByPk(req.user.id)
-    );
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const data = matchedData(req);
+        const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
+        await user.update(data);
+        return res.json(user);
+    } catch (error) {
+        next(error);
+    }
 });
 
 
@@ -55,28 +57,24 @@ app.post('/user', [
  */
 app.post('/user/resend-verification-email', [
     passport.authenticate('jwt', { session: false }),
-], async (req: express.Request, res: express.Response) => {
-    const user = await User.findByPk(req.user.id);
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
+        await user.update({
+            emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
+        });
 
-    if (!user) return res.status(404).json({
-        msg: 'User not found',
-        code: 40403
-    });
+        //////////////////////////////////////////
+        // EMAIL THIS LINK TO THE USER
+        const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`;
+        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nEMAIL VERIFICATION LINK: ${link}\n\n`);
+        // const html = Email.generate('Verify', { link, code: user.emailVerificationKey });
+        //////////////////////////////////////////
 
-    await user.update({
-        emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
-    });
-
-
-    //////////////////////////////////////////
-    // EMAIL THIS TO THE USER
-    const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`;
-    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nEMAIL VERIFICATION LINK: ${link}\n\n`);
-
-    // const html = Email.generate('Verify', { link, code: user.emailVerificationKey });
-    //////////////////////////////////////////
-
-    return res.json({ email: user.email });
+        return res.json({ email: user.email });
+    } catch (error) {
+        next(error);
+    }
 });
 
 
@@ -95,18 +93,22 @@ app.post('/user/update-password', [
         .notEmpty()
         .exists(),
     middleware.isStrongPassword,
-], async (req: express.Request, res: express.Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const data = matchedData(req);
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const data = matchedData(req);
 
-    await User.unscoped().update({
-        password: bcrypt.hashSync(data.newPassword, bcrypt.genSaltSync(10)),
-    }, {
-        where: {
-            id: req.user.id,
-        }
-    });
+        await User.unscoped().update({
+            password: bcrypt.hashSync(data.newPassword, bcrypt.genSaltSync(10)),
+        }, {
+            where: {
+                id: req.user.id,
+            }
+        });
 
-    return res.json({ success: true });
+        return res.json({ success: true });
+    } catch (error) {
+        next(error);
+    }
 });
