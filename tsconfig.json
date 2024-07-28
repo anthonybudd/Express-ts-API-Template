@@ -11,15 +11,14 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-
     "baseUrl": "src",
     "moduleResolution": "node",
     "resolveJsonModule": true,
   },
   "include": [
-    "./*.js",
+    // "./*.js",
     "src/**/*.ts",
-    "test/**/*.ts",
+    "tests/**/*.ts",
   ],
   "files":["src/types.d.ts"]  
 }

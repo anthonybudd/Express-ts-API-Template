@@ -160,3 +160,39 @@ content-type: application/json
 ### /groups/:groupID/users/:userID  
 DELETE {{Host}}/groups/{{GroupA}}/users/{{User2}}
 Authorization: Bearer {{AccessToken}}
+
+
+###########################################
+# Book
+
+@bookID=06f9cab8-8422-40dc-b074-07e419ff4cf9
+
+### GET /books
+GET {{Host}}/books
+Authorization: Bearer {{AccessToken}}
+
+### GET /books/:bookID
+GET {{Host}}/books/{{bookID}}
+Authorization: Bearer {{AccessToken}}
+
+### POST /books
+POST {{Host}}/books
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "name": "New Book"
+}
+
+### POST /books/:bookID
+POST {{Host}}/books/{{bookID}}
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "name": "Updated Book Name"
+}
+
+### DELETE /books/:bookID
+DELETE {{Host}}/books/{{bookID}}
+Authorization: Bearer {{AccessToken}}

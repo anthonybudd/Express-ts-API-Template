@@ -1,8 +1,6 @@
-// AB: Cannot be .ts because of the https://github.com/sequelize/cli/blob/2571924a9ed4e8d2f8bbb1ba606d72e8a9debe35/src/helpers/config-helper.js#L51C51-L51C55
+import 'dotenv/config';
 
-require('dotenv').config();
-
-module.exports = {
+export default {
     development: {
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
