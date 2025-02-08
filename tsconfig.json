@@ -18,7 +18,7 @@
   "include": [
     "./*.js",
     "src/**/*.ts",
-    "tests/**/*.ts",
   ],
+  "exclude": ["./src/scripts/**/*"],
   "files":["src/types.d.ts"]  
 }

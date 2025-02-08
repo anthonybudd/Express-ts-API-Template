@@ -28,18 +28,19 @@ openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 cp .env.example .env
 npm install
 docker compose up
-npm run _db:refresh
+npm run exec:db:refresh
+npm run exec:test
+
+# [Optional] Interactive CRUD commands
+npm run create --model="User"
+npm run index --model="User" --prop="id" --value="email"
+npm run get --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
+npm run edit --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
+npm run delete --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
 
 # [Optional] Code generation command
 npm run generate -- --model="Book"
-npm run _db:refresh
-
-# [Optional] Interactive CRUD commands
-npm run create --model="Book"
-npm run index --model="Book" --prop="id" --value="name"
-npm run get --model="Book" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
-npm run edit --model="Book" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
-npm run delete --model="Book" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
+npm run exec:db:refresh
 ```
 
 ### DB Structure
@@ -116,7 +117,7 @@ docker run --rm \
 ### Commands
 There are a few helper scripts and commands for interacting with the application.
 
-Some commands need to be run inside the docker container, these commands have been aliased with an underscore prefix, for exmaple `npm run _db:refresh` is an alias for `docker exec -ti express-api npm run db:refresh` which actually runs `./src/scripts/refresh`
+Some commands need to be run inside the docker container, these commands have been aliased with an underscore prefix, for exmaple `npm run exec:db:refresh` is an alias for `docker exec -ti express-api npm run db:refresh` which actually runs `./src/scripts/refresh`
 | Command               | Description                   | Exmaple                          | 
 | --------------------- | ----------------------------- | -------------------------------- |
 | modelCreate.ts        | Create model                  | `npm run create --model="User"` |

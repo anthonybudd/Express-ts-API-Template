@@ -22,7 +22,7 @@ if (!argv['value']) throw Error('You must provide --value argument');
         const models = await Model.default.unscoped().findAll();
 
         for (let i = 0; i < models.length; i++) {
-            console.log(models[i][prop], models[i][value]);
+            console.log(`${models[i][prop]}: ${models[i][value]}`);
         }
     } catch (err) {
         console.error(err);
