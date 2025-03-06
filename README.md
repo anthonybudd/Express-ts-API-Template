@@ -31,13 +31,6 @@ docker compose up
 npm run exec:db:refresh
 npm run exec:test
 
-# [Optional] Interactive CRUD commands
-npm run create --model="User"
-npm run index --model="User" --prop="id" --value="email"
-npm run get --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
-npm run edit --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
-npm run delete --model="User" --id="c4644733-deea-47d8-b35a-86f30ff9618e"
-
 # [Optional] Code generation command
 npm run generate -- --model="Book"
 npm run exec:db:refresh
