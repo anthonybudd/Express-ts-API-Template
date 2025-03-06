@@ -17,7 +17,7 @@ interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttri
     lastLoginAt: CreationOptional<string>,
 }
 
-const User = sequelize.define<UserModel>('User', {
+const User = sequelize.define<UserModel>('user', {
     id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,

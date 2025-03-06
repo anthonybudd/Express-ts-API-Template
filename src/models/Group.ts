@@ -9,7 +9,7 @@ interface GroupModel extends Model<InferAttributes<GroupModel>, InferCreationAtt
     deletedAt: CreationOptional<string>,
 }
 
-const Group = sequelize.define<GroupModel>('Group', {
+const Group = sequelize.define<GroupModel>('group', {
     id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
