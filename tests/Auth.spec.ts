@@ -8,10 +8,10 @@ describe('Auth', () => {
 
     describe('GET /api/v1/_authcheck', () => {
         it('Should check auth status', (done) => {
-            axios.post(`${process.env.TEST_URL}/api/v1/auth/login`, {
+            axios.post(`http://127.0.0.1/api/v1/auth/login`, {
                 email: process.env.TEST_EMAIL,
                 password: process.env.TEST_PASSWORD,
-            }).then((res) => axios.get(`${process.env.TEST_URL}/api/v1/_authcheck`, {
+            }).then((res) => axios.get(`http://127.0.0.1/api/v1/_authcheck`, {
                 headers: {
                     'Authorization': `Bearer ${res.data.accessToken}`,
                 }
@@ -24,7 +24,7 @@ describe('Auth', () => {
 
     describe('POST /api/v1/auth/login', () => {
         it('Should return AccessToken', (done) => {
-            axios.post(`${process.env.TEST_URL}/api/v1/auth/login`, {
+            axios.post(`http://127.0.0.1/api/v1/auth/login`, {
                 email: process.env.TEST_EMAIL,
                 password: process.env.TEST_PASSWORD,
             }).then((res) => {
@@ -36,7 +36,7 @@ describe('Auth', () => {
 
     describe('POST /api/v1/auth/sign-up', () => {
         it('Should create a new user', (done) => {
-            axios.post(`${process.env.TEST_URL}/api/v1/auth/sign-up`, {
+            axios.post(`http://127.0.0.1/api/v1/auth/sign-up`, {
                 email: 'test@example.com',
                 password: 'Password@1234',
                 firstName: 'Test User',
@@ -52,7 +52,7 @@ describe('Auth', () => {
     describe('GET /api/v1/auth/verify-email/:emailVerificationKey', () => {
         it('Should verify email address', (done) => {
             const emailVerificationKey = 'd6c4b69368f9';
-            axios.get(`${process.env.TEST_URL}/api/v1/auth/verify-email/${emailVerificationKey}`)
+            axios.get(`http://127.0.0.1/api/v1/auth/verify-email/${emailVerificationKey}`)
                 .then((res) => {
                     expect(res.status).to.equal(200);
                     expect(res.data).to.have.property('verified');
@@ -64,7 +64,7 @@ describe('Auth', () => {
 
     // describe('POST /api/v1/auth/forgot', () => {
     //     it('Should send forgot email', (done) => {
-    //         axios.post(`${process.env.TEST_URL}/api/v1/auth/forgot`, {
+    //         axios.post(`http://127.0.0.1/api/v1/auth/forgot`, {
     //             email: 'other.user@foobar.com',
     //         }).then((res) => {
     //             expect(res.status).to.equal(200);

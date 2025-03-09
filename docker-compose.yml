@@ -8,11 +8,8 @@ services:
       - ./.vol/tmp:/tmp
     links:
       - express-api-db
-      - express-api-db-test
     ports:
       - "8888:80"
-    environment:
-      PORT: 80
 
   express-api-db:
     image: mysql:oracle
@@ -20,20 +17,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./.vol/express-api:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: supersecret
-      MYSQL_DATABASE: $DB_DATABASE
-      MYSQL_USER: $DB_USERNAME
-      MYSQL_PASSWORD: $DB_PASSWORD
-
-  express-api-db-test:
-    image: mysql:oracle
-    container_name: express-api-db-test
-    ports:
-      - "3307:3306"
-    volumes:
-      - ./.vol/express-api-test:/var/lib/mysql
+      - ./.vol/mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: supersecret
       MYSQL_DATABASE: $DB_DATABASE

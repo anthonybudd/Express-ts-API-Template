@@ -1,7 +1,7 @@
 import { ExtractJwt as ExtractJWT, Strategy as JWTStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { User } from './../models/User';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcryptjs';
 import passport from 'passport';
 import * as fs from 'fs';
 

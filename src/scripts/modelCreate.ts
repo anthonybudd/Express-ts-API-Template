@@ -6,7 +6,7 @@
 import 'dotenv/config';
 import db from './../providers/db';
 import minimist from 'minimist';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcryptjs';
 
 const argv = minimist(process.argv.slice(2));
 if (!argv['model']) throw Error('You must provide --model argument');

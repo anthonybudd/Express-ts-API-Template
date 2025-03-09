@@ -8,7 +8,7 @@ import Email from './../providers/Email';
 import { Group } from './../models/Group';
 import middleware from './middleware';
 import { v4 as uuidv4 } from 'uuid';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcryptjs';
 import express from 'express';
 import day from 'dayjs';
 import crypto from 'crypto';

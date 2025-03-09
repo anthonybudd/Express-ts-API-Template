@@ -1,5 +1,6 @@
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcryptjs');
 const day = require('dayjs');
+
 
 const insert = [{
     id: 'c4644733-deea-47d8-b35a-86f30ff9618e',

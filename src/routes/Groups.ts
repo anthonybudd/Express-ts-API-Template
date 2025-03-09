@@ -5,7 +5,7 @@ import passport from './../providers/Passport';
 import Email from './../providers/Email';
 import { Group } from './../models/Group';
 import middleware from './middleware';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcryptjs';
 import express from 'express';
 import crypto from 'crypto';
 

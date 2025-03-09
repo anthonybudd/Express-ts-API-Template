@@ -5,9 +5,9 @@
  */
 import 'dotenv/config';
 import User from './../models/User';
-import bcrypt from 'bcrypt-nodejs';
 import db from './../providers/db';
 import minimist from 'minimist';
+import bcrypt from 'bcryptjs';
 
 const argv = minimist(process.argv.slice(2));
 if (!argv['userID']) throw Error('You must provide --userID argument');

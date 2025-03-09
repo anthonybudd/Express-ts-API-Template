@@ -8,6 +8,14 @@
 @User1=c4644733-deea-47d8-b35a-86f30ff9618e
 @User2=d700932c-4a11-427f-9183-d6c4b69368f9
 
+
+###########################################
+# DevOps
+
+### /_healthcheck
+GET {{Host}}/_healthcheck
+
+
 ###########################################
 # Auth
 
@@ -19,11 +27,6 @@ content-type: application/json
     "email": "user@example.com",
     "password": "Password@1234"
 }
-
-
-### /_authcheck
-GET {{Host}}/_authcheck
-Authorization: Bearer {{AccessToken}}
 
 
 ### /auth/sign-up

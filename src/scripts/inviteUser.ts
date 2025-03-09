@@ -7,7 +7,7 @@ import 'dotenv/config';
 import GroupUser from './../models/GroupUser';
 import Group from './../models/Group';
 import User from './../models/User';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcryptjs';
 import db from './../providers/db';
 import minimist from 'minimist';
 import crypto from 'crypto';

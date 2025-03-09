@@ -7,13 +7,13 @@ let api: Axios;
 describe('User', () => {
 
     before('User', async () => {
-        const { data } = await axios.post(`${process.env.TEST_URL}/api/v1/auth/login`, {
+        const { data } = await axios.post(`http://127.0.0.1/api/v1/auth/login`, {
             email: process.env.TEST_EMAIL,
             password: process.env.TEST_PASSWORD,
         });
 
         api = axios.create({
-            baseURL: process.env.TEST_URL,
+            baseURL: 'http://127.0.0.1',
             headers: {
                 Authorization: `Bearer ${data.accessToken}`,
             }
