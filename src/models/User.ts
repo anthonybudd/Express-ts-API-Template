@@ -72,6 +72,8 @@ const User = sequelize.define<UserModel>('user', {
             exclude: [
                 'password',
                 'passwordResetKey',
+                'emailVerificationKey',
+                'inviteKey',
             ]
         }
     },

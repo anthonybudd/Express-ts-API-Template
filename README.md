@@ -54,6 +54,30 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 +--------------+                      
 ```
 
+### Deployment
+Full Kubernetes deployment instructions can be found in [k8s/Deployment.md](./k8s/Deployment.md).
+
+- [api.deployment.yml](./k8s/api.deployment.yml)
+- [api.service.yml](./k8s/api.service.yml)
+- [api.ingress.yml](./k8s/api.ingress.yml)
+
+```sh
+kubectl apply -f .k8s/api.deployment.yml \
+  -f .k8s/api.ingress.yml \
+  -f .k8s/api.service.yml 
+```
+
+### Generate SDK Client Libraries
+There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported langauages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
+
+
+```sh
+docker run --rm \
+  -v ${PWD}:/app \
+  -w /app \
+  openapitools/openapi-generator-cli batch sdk/config/*.yaml
+```
+
 ### Routes
 | Method      | Route                                                           | Description                           | Payload                               | Response          | 
 | ----------- | --------------------------------------------------------------- | ------------------------------------- | ------------------------------------- | ----------------- |  
@@ -81,31 +105,6 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 | POST        | `/api/v1/groups/:groupID/users/:userID/resend-invitation-email` | Resend invitation email               | {}                                    | {email}           |  
 | POST        | `/api/v1/groups/:groupID/users/:userID/set-role`                | Set user role                         | {role: 'User'/'Admin' }               | {UserID, role}    |  
 | DELETE      | `/api/v1/groups/:groupID/users/:userID`                         | Remove user from group                | --                                    | {UserID}          |  
-
-
-### Deployment
-Full Kubernetes deployment instructions can be found in [k8s/Deployment.md](./k8s/Deployment.md).
-
-- [api.deployment.yml](./k8s/api.deployment.yml)
-- [api.service.yml](./k8s/api.service.yml)
-- [api.ingress.yml](./k8s/api.ingress.yml)
-
-```sh
-kubectl apply -f .k8s/api.deployment.yml \
-  -f .k8s/api.ingress.yml \
-  -f .k8s/api.service.yml 
-```
-
-### Generate SDK Client Libraries
-There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported langauages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
-
-
-```sh
-docker run --rm \
-  -v ${PWD}:/app \
-  -w /app \
-  openapitools/openapi-generator-cli batch sdk/config/*.yaml
-```
 
 ### Commands
 There are a few helper scripts and commands for interacting with the application.
