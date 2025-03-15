@@ -43,6 +43,20 @@ const insert = [{
     createdAt: day().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: day().format('YYYY-MM-DD HH:mm:ss'),
     lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
+}, {
+    id: 'b7ac1ed8-8cbc-4ccd-b475-ceca4b951802',
+    email: 'invite@foobar.com',
+    password: bcrypt.hashSync('Password@1234', bcrypt.genSaltSync(10)),
+    mfaEnabled: false,
+    firstName: 'Invite',
+    lastName: 'User',
+    bio: 'I am a user',
+    tos: 'tos-version-2023-07-13',
+    inviteKey: 'f5009ff5',
+    emailVerified: false,
+    createdAt: day().format('YYYY-MM-DD HH:mm:ss'),
+    updatedAt: day().format('YYYY-MM-DD HH:mm:ss'),
+    lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
 }];
 
 

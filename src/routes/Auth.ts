@@ -82,7 +82,7 @@ app.get('/_authcheck', [
  *               password:
  *                 type: string
  *                 description: User's password
- *               mfaCode:
+ *               token:
  *                 type: string
  *                 minLength: 6
  *                 maxLength: 6
@@ -105,7 +105,7 @@ app.get('/_authcheck', [
 app.post('/auth/login', [
     body('email').exists().toLowerCase(),
     body('password').exists(),
-    body('mfaCode').optional().isLength({ min: 6, max: 6 }),
+    body('token').optional().isLength({ min: 6, max: 6 }),
     middleware.hCaptcha,
     async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         const { mfaRequired } = await User.scope('mfa').findOne({
@@ -115,7 +115,7 @@ app.post('/auth/login', [
             rejectOnEmpty: true
         });
 
-        if (mfaRequired && !req.body.mfaCode) {
+        if (mfaRequired && !req.body.token) {
             return res.status(403).json({ message: 'MFA is enabled for this account', code: 403 });
         } else {
             return next();
@@ -124,7 +124,7 @@ app.post('/auth/login', [
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const { mfaCode } = matchedData(req);
+    const { token } = matchedData(req);
 
     passport.authenticate('local', { session: false }, async (err: Error | null, user: UserModel | null) => {
         if (err) throw err;
@@ -140,7 +140,7 @@ app.post('/auth/login', [
                 period: 30,
                 secret: mfaSecret as string,
             });
-            const delta = totp.validate({ token: mfaCode, window: 1 });
+            const delta = totp.validate({ token: token, window: 1 });
             if (delta === null) return res.status(401).json({ message: 'Invalid MFA code', code: 401 });
         }
 

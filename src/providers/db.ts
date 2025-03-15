@@ -21,6 +21,6 @@ const sequelize = new Sequelize({
         idle: 10000,
     },
 });
-sequelize.authenticate().then(() => console.log(`* DB Connected (${process.env.NODE_ENV})`));
+sequelize.authenticate().then(() => (process.env.NODE_ENV !== 'test') ? console.log(`* DB Connected (${process.env.NODE_ENV})`) : null);
 
 export default sequelize;

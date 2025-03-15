@@ -265,9 +265,9 @@ app.post('/user/enable-mfa', [
  *           schema:
  *             type: object
  *             required:
- *               - mfaCode
+ *               - token
  *             properties:
- *               mfaCode:
+ *               token:
  *                 type: string
  *                 minLength: 6
  *                 maxLength: 6
@@ -286,14 +286,14 @@ app.post('/user/enable-mfa', [
  */
 app.post('/user/confirm-mfa', [
     passport.authenticate('jwt', { session: false }),
-    body('mfaCode')
+    body('token')
         .exists()
         .isLength({ min: 6, max: 6 }),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-        const { mfaCode } = matchedData(req);
+        const { token } = matchedData(req);
 
         const { mfaSecret, email: label } = await User.scope('mfa').findByPk(req.user.id, {
             rejectOnEmpty: true,
@@ -310,7 +310,7 @@ app.post('/user/confirm-mfa', [
             secret: mfaSecret as string,
         });
 
-        const delta = totp.validate({ token: mfaCode, window: 1 });
+        const delta = totp.validate({ token: token, window: 1 });
         if (delta === null) return res.status(401).json({ message: 'Incorrect MFA code', code: 401 });
 
         await User.unscoped().update({

@@ -2,5 +2,6 @@
     "compilerOptions": {
         "module": "CommonJS",
         "esModuleInterop": true
-    }
+    },
+    "files":["./../../../src/types.d.ts"]  
 }

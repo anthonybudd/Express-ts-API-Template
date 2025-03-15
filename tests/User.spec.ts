@@ -1,67 +1,173 @@
 import 'dotenv/config';
+import supertest from 'supertest';
 import { expect } from 'chai';
-import axios, { Axios } from 'axios';
+import * as OTPAuth from "otpauth";
+import app from '../src/app';
+import User from '../src/models/User';
 
-let api: Axios;
 
 describe('User', () => {
+    let accessToken: string;
 
-    before('User', async () => {
-        const { data } = await axios.post(`http://127.0.0.1/api/v1/auth/login`, {
-            email: process.env.TEST_EMAIL,
-            password: process.env.TEST_PASSWORD,
-        });
+    before(async () => {
+        const response = await supertest(app)
+            .post('/api/v1/auth/login')
+            .send({
+                email: process.env.TEST_EMAIL,
+                password: process.env.TEST_PASSWORD,
+            });
 
-        api = axios.create({
-            baseURL: 'http://127.0.0.1',
-            headers: {
-                Authorization: `Bearer ${data.accessToken}`,
-            }
-        });
+        accessToken = response.body.accessToken;
     });
 
     describe('GET /api/v1/user', () => {
-        it('Should return current user', async () => {
-            const { data } = await api.get(`/api/v1/user`);
-            expect(data).to.have.property('id');
-            expect(data).to.have.property('email');
-            expect(data).to.have.property('firstName');
+        it('should return the current user', async () => {
+            const response = await supertest(app)
+                .get('/api/v1/user')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(200);
+
+            expect(response.body).to.have.property('id');
+            expect(response.body).to.have.property('email');
+            expect(response.body).to.have.property('firstName');
+            expect(response.body).to.have.property('lastName');
+            expect(response.body).to.have.property('groups');
+            expect(response.body.groups).to.be.an('array');
+        });
+
+        it('should return 401 if not authenticated', async () => {
+            await supertest(app)
+                .get('/api/v1/user')
+                .expect(401);
         });
     });
 
     describe('POST /api/v1/user', () => {
-        it('Should return current user', async () => {
-            const { data } = await api.post(`/api/v1/user`, {
-                firstName: 'Alex',
-                lastName: 'Jones',
-                bio: 'bio here',
-            });
-            expect(data).to.have.property('id');
-            expect(data).to.have.property('firstName');
-            expect(data).to.have.property('lastName');
-            expect(data).to.have.property('bio');
+        it('should update user profile', async () => {
+            const userData = {
+                firstName: 'Updated',
+                lastName: 'User',
+                bio: 'Updated bio information'
+            };
 
-            expect(data.firstName).to.equal('Alex');
-            expect(data.lastName).to.equal('Jones');
-            expect(data.bio).to.equal('bio here');
+            const response = await supertest(app)
+                .post('/api/v1/user')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send(userData)
+                .expect(200);
+
+            expect(response.body).to.have.property('firstName', userData.firstName);
+            expect(response.body).to.have.property('lastName', userData.lastName);
+            expect(response.body).to.have.property('bio', userData.bio);
         });
     });
 
     describe('POST /api/v1/user/resend-verification-email', () => {
-        it('Should resend verification email', async () => {
-            const { data } = await api.post(`/api/v1/user/resend-verification-email`);
-            expect(data).to.have.property('email');
-            expect(data.email).to.equal(process.env.TEST_EMAIL);
+        it('should resend verification email', async () => {
+            const response = await supertest(app)
+                .post('/api/v1/user/resend-verification-email')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(200);
+
+            expect(response.body).to.have.property('email');
         });
     });
 
     describe('POST /api/v1/user/update-password', () => {
-        it('Should update the users password', async () => {
-            const { data } = await api.post(`/api/v1/user/update-password`, {
-                password: 'Password@1234',
-                newPassword: 'New_PASSWORD!4321',
+        it('should update user password', async () => {
+            const passwordData = {
+                password: process.env.TEST_PASSWORD,
+                newPassword: 'NewPassword@1234',
+            };
+
+            const response = await supertest(app)
+                .post('/api/v1/user/update-password')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send(passwordData)
+                .expect(200);
+
+            expect(response.body).to.have.property('success', true);
+
+            // Reset password back to original for other tests
+            const resetData = {
+                currentPassword: 'NewPassword@1234',
+                newPassword: process.env.TEST_PASSWORD,
+                confirmPassword: process.env.TEST_PASSWORD
+            };
+
+            await supertest(app)
+                .post('/api/v1/user/update-password')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send(resetData);
+        });
+
+        it('should reject if passwords do not match', async () => {
+            const response = await supertest(app)
+                .post('/api/v1/user/update-password')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({
+                    currentPassword: process.env.TEST_PASSWORD,
+                    newPassword: 'NewPassword@1234',
+                    confirmPassword: 'DifferentPassword@1234'
+                })
+                .expect(422);
+
+            expect(response.body).to.have.property('errors');
+        });
+    });
+
+    describe('POST /api/v1/user/enable-mfa', () => {
+        it('should generate MFA uri', async () => {
+            const response = await supertest(app)
+                .post('/api/v1/user/enable-mfa')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({
+                    password: 'NewPassword@1234',
+                })
+                .expect(200);
+
+            expect(response.body).to.have.property('uri');
+        });
+    });
+
+    describe('POST /api/v1/user/confirm-mfa', async () => {
+        it('should validate MFA token and enable MFA', async () => {
+
+            const { mfaSecret, email: label } = await User.scope('mfa').findOne({
+                where: {
+                    email: process.env.TEST_EMAIL as string,
+                },
+                rejectOnEmpty: true
             });
-            expect(data.success).to.equal(true);
+
+            let totp = new OTPAuth.TOTP({
+                issuer: 'express-api',
+                label,
+                algorithm: 'SHA3-512',
+                digits: 6,
+                period: 30,
+                secret: mfaSecret as string,
+            });
+
+            const response = await supertest(app)
+                .post('/api/v1/user/confirm-mfa')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ token: totp.generate() })
+                .expect(200);
+
+            expect(response.body).to.have.property('success');
+        });
+    });
+
+    describe('POST /api/v1/user/disable-mfa', () => {
+        it('should disable MFA for the user', async () => {
+            const response = await supertest(app)
+                .post('/api/v1/user/disable-mfa')
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ password: 'NewPassword@1234' })
+                .expect(200);
+
+            expect(response.body).to.have.property('success', true);
         });
     });
 });

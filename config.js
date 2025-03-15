@@ -16,6 +16,7 @@ module.exports = {
         },
     },
     test: {
+        // AB: I have hardcoded this for a good reason.
         username: 'root',
         password: 'supersecret',
         database: 'test',

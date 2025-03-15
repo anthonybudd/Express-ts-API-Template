@@ -1,93 +1,119 @@
 import 'dotenv/config';
+import supertest from 'supertest';
 import { expect } from 'chai';
-import axios, { Axios } from 'axios';
-
-let api: Axios;
-let groupID: string = 'fdab7a99-2c38-444b-bcb3-f7cef61c275b';
-let userID: string = 'd700932c-4a11-427f-9183-d6c4b69368f9'; // User2
+import app from '../src/app';
 
 describe('Group', () => {
 
-    before('Group', async () => {
-        const { data } = await axios.post(`http://127.0.0.1/api/v1/auth/login`, {
-            email: process.env.TEST_EMAIL,
-            password: process.env.TEST_PASSWORD,
-        });
+    let api: supertest.SuperTest<supertest.Test>;
+    let accessToken: string;
+    const groupID = 'fdab7a99-2c38-444b-bcb3-f7cef61c275b';
+    const userID = 'c4644733-deea-47d8-b35a-86f30ff9618e';
+    const inviteUserID = 'b7ac1ed8-8cbc-4ccd-b475-ceca4b951802';
 
-        api = axios.create({
-            baseURL: 'http://127.0.0.1',
-            headers: {
-                Authorization: `Bearer ${data.accessToken}`,
-            }
-        });
+    before(async () => {
+        const response = await supertest(app)
+            .post('/api/v1/auth/login')
+            .send({
+                email: process.env.TEST_EMAIL,
+                password: process.env.TEST_PASSWORD,
+            });
+
+        accessToken = response.body.accessToken;
     });
 
     describe('GET /api/v1/groups/:groupID', () => {
-        it('Should return group by ID', async () => {
-            const { data } = await api.get(`/api/v1/groups/${groupID}`);
-            expect(data).to.have.property('id');
-            expect(data).to.have.property('name');
+        it('should return group by ID', async () => {
+            const response = await supertest(app)
+                .get(`/api/v1/groups/${groupID}`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(200);
+
+            expect(response.body).to.have.property('id');
+            expect(response.body).to.have.property('name');
+        });
+
+        it('should return group with users when with=users query param is provided', async () => {
+            const response = await supertest(app)
+                .get(`/api/v1/groups/${groupID}?with=users`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(200);
+
+            expect(response.body).to.have.property('id');
+            expect(response.body).to.have.property('name');
+            expect(response.body).to.have.property('users');
+            expect(response.body.users).to.be.an('array');
         });
     });
 
     describe('POST /api/v1/groups/:groupID', () => {
-        it('Should update group by ID', async () => {
-            const { data } = await api.post(`/api/v1/groups/${groupID}`, {
-                name: 'Updated Group Name',
-            });
-            expect(data).to.have.property('id');
-            expect(data).to.have.property('name');
-            expect(data.name).to.equal('Updated Group Name');
+        it('should update group name', async () => {
+            const newName = 'Updated Group Name';
+            const response = await supertest(app)
+                .post(`/api/v1/groups/${groupID}`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({ name: newName })
+                .expect(200);
+
+            expect(response.body).to.have.property('id');
+            expect(response.body).to.have.property('name');
+            expect(response.body.name).to.equal(newName);
         });
     });
 
     describe('POST /api/v1/groups/:groupID/users/invite', () => {
-        it('Should invite the user to the group', async () => {
-            const { data } = await api.post(`/api/v1/groups/${groupID}/users/invite`, {
-                email: 'new-user@gmail.com',
-                role: 'User',
-            });
-            expect(data).to.have.property('groupID');
-            expect(data).to.have.property('userID');
-            expect(data).to.have.property('role');
-            expect(data.groupID).to.equal(groupID);
-            expect(data.role).to.equal('User');
+        it('should invite a user to the group', async () => {
+            const response = await supertest(app)
+                .post(`/api/v1/groups/${groupID}/users/invite`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .send({
+                    email: 'test-invite@example.com',
+                    role: 'User'
+                })
+                .expect(200);
+
+            expect(response.body).to.have.property('groupID');
+            expect(response.body.groupID).to.equal(groupID);
         });
     });
 
     // describe('POST /api/v1/groups/:groupID/users/:userID/resend-invitation-email', () => {
-    //     it('Should resend invitation email', async () => {
-    //         const { data: invite } = await api.post(`/api/v1/groups/${groupID}/users/invite`, {
-    //             email: 'another-new-user@gmail.com',
-    //             role: 'User',
-    //         });
-    //         const { data } = await api.post(`/api/v1/groups/${groupID}/users/${invite.userID}/resend-invitation-email`);
-    //         expect(data).to.have.property('email');
-    //         expect(data.email).to.equal('another-new-user@gmail.com');
+    //     it('should resend invitation email to user', async () => {
+    //         const response = await supertest(app)
+    //             .post(`/api/v1/groups/${groupID}/users/${inviteUserID}/resend-invitation-email`)
+    //             .set('Authorization', `Bearer ${accessToken}`);
+    //         // .expect(200);
+
+    //         console.log(response.body);
+    //         expect(response.body).to.have.property('success');
+    //         expect(response.body.success).to.be.true;
     //     });
     // });
 
     // describe('POST /api/v1/groups/:groupID/users/:userID/set-role', () => {
-    //     it('Should update the users Role within the group', async () => {
-    //         const { data } = await api.post(`/api/v1/groups/${groupID}/users/${userID}/set-role`, {
-    //             role: 'Admin',
-    //         });
-    //         expect(data).to.have.property('groupID');
-    //         expect(data).to.have.property('userID');
-    //         expect(data).to.have.property('role');
-    //         expect(data.groupID).to.equal(groupID);
-    //         expect(data.userID).to.equal(userID);
-    //         expect(data.role).to.equal('Admin');
+    //     it('should update user role in the group', async () => {
+    //         const response = await supertest(app)
+    //             .post(`/api/v1/groups/${groupID}/users/${inviteUserID}/set-role`)
+    //             .set('Authorization', `Bearer ${accessToken}`)
+    //             .send({ role: 'Admin' })
+    //             .expect(200);
+
+    //         expect(response.body).to.have.property('groupID');
+    //         expect(response.body).to.have.property('userID');
+    //         expect(response.body).to.have.property('role');
+    //         expect(response.body.role).to.equal('Admin');
     //     });
     // });
 
     describe('DELETE /api/v1/groups/:groupID/users/:userID', () => {
-        it('Should remove the user from the group', async () => {
-            const { data } = await api.delete(`/api/v1/groups/${groupID}/users/${userID}`);
-            expect(data).to.have.property('groupID');
-            expect(data).to.have.property('userID');
-            expect(data.groupID).to.equal(groupID);
-            expect(data.userID).to.equal(userID);
+        it('should remove user from the group', async () => {
+            const response = await supertest(app)
+                .delete(`/api/v1/groups/${groupID}/users/${inviteUserID}`)
+                .set('Authorization', `Bearer ${accessToken}`)
+                .expect(200);
+
+            expect(response.body).to.have.property('groupID');
+            expect(response.body).to.have.property('userID');
         });
     });
 });

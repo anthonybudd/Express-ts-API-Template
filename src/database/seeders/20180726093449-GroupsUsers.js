@@ -21,6 +21,15 @@ const insert = [
         groupID: 'be1fcb4e-caf9-41c2-ac27-c06fa24da36a',
         role: 'Admin',
         createdAt: day().format('YYYY-MM-DD HH:mm:ss'),
+    },
+
+
+    {
+        id: 'f2c5ec2e-7a64-4000-92d0-c80e62ed1c35',
+        userID: 'b7ac1ed8-8cbc-4ccd-b475-ceca4b951802',
+        groupID: 'be1fcb4e-caf9-41c2-ac27-c06fa24da36a',
+        role: 'User',
+        createdAt: day().format('YYYY-MM-DD HH:mm:ss'),
     }
 ];
 

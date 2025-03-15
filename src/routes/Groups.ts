@@ -193,7 +193,6 @@ app.post('/groups/:groupID/users/invite', [
 
         let user = await User.findOne({
             where: { email },
-            rejectOnEmpty: true
         });
 
         if (user) {
@@ -258,7 +257,7 @@ app.post('/groups/:groupID/users/invite', [
 
 /**
  * @swagger
- * /api/v1/groups/{groupID}/users/{userID}/resend-invitation-email:
+ * /groups/{groupID}/users/{userID}/resend-invitation-email:
  *   post:
  *     tags:
  *       - Groups
