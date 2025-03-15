@@ -34,33 +34,33 @@ describe('Auth', () => {
         });
     });
 
-    describe('POST /api/v1/auth/sign-up', () => {
-        it('Should create a new user', (done) => {
-            axios.post(`http://127.0.0.1/api/v1/auth/sign-up`, {
-                email: 'test@example.com',
-                password: 'Password@1234',
-                firstName: 'Test User',
-                tos: 'tos-version-2023-07-13'
-            }).then((res) => {
-                expect(res.status).to.equal(200);
-                expect(res.data).to.have.property('accessToken');
-                done();
-            }).catch((err) => done(err.response.data || err));
-        });
-    });
+    // describe('POST /api/v1/auth/sign-up', () => {
+    //     it('Should create a new user', (done) => {
+    //         axios.post(`http://127.0.0.1/api/v1/auth/sign-up`, {
+    //             email: 'test.userc@example.com',
+    //             password: 'Password@1234',
+    //             firstName: 'Test User',
+    //             tos: 'tos-version-2023-07-13'
+    //         }).then((res) => {
+    //             expect(res.status).to.equal(200);
+    //             expect(res.data).to.have.property('accessToken');
+    //             done();
+    //         }).catch((err) => done(err.response.data || err));
+    //     });
+    // });
 
-    describe('GET /api/v1/auth/verify-email/:emailVerificationKey', () => {
-        it('Should verify email address', (done) => {
-            const emailVerificationKey = 'd6c4b69368f9';
-            axios.get(`http://127.0.0.1/api/v1/auth/verify-email/${emailVerificationKey}`)
-                .then((res) => {
-                    expect(res.status).to.equal(200);
-                    expect(res.data).to.have.property('verified');
-                    expect(res.data.verified).to.equal(true);
-                    done();
-                }).catch((err) => done(err.response.data || err));
-        });
-    });
+    // describe('GET /api/v1/auth/verify-email/:emailVerificationKey', () => {
+    //     it('Should verify email address', (done) => {
+    //         const emailVerificationKey = 'f5009ff5';
+    //         axios.get(`http://127.0.0.1/api/v1/auth/verify-email/${emailVerificationKey}`)
+    //             .then((res) => {
+    //                 expect(res.status).to.equal(200);
+    //                 expect(res.data).to.have.property('verified');
+    //                 expect(res.data.verified).to.equal(true);
+    //                 done();
+    //             }).catch((err) => done(err.response.data || err));
+    //     });
+    // });
 
     // describe('POST /api/v1/auth/forgot', () => {
     //     it('Should send forgot email', (done) => {

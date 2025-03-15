@@ -1,28 +1,28 @@
 module.exports = {
-    up: (queryInterface, Sequelize) => queryInterface.createTable('Groups', {
+    up: (queryInterface, { DataTypes }) => queryInterface.createTable('Groups', {
         id: {
-            type: Sequelize.UUID,
-            defaultValue: Sequelize.UUIDV4,
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
             allowNull: false,
             unique: true
         },
 
-        name: Sequelize.STRING,
-        ownerID: Sequelize.UUID,
+        name: DataTypes.STRING,
+        ownerID: DataTypes.UUID,
 
         createdAt: {
-            type: Sequelize.DATE,
+            type: DataTypes.DATE,
             allowNull: true,
         },
         updatedAt: {
-            type: Sequelize.DATE,
+            type: DataTypes.DATE,
             allowNull: true,
         },
         deletedAt: {
-            type: Sequelize.DATE,
+            type: DataTypes.DATE,
             allowNull: true,
         },
     }),
-    down: (queryInterface, Sequelize) => queryInterface.dropTable('Groups')
+    down: (queryInterface) => queryInterface.dropTable('Groups')
 };

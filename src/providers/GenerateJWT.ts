@@ -12,7 +12,7 @@ export default (user: UserModel, signOptions: SignOptions) => {
 
     return sign(
         payload,
-        fs.readFileSync(process.env.PRIVATE_KEY_PATH || '/app/private.pem', 'utf8'),
+        fs.readFileSync(process.env.PRIVATE_KEY_PATH as string, 'utf8'),
         signOptions
     );
 };

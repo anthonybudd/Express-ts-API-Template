@@ -1,60 +1,69 @@
 module.exports = {
-    up: (queryInterface, Sequelize) => queryInterface.createTable('Users', {
+    up: (queryInterface, { DataTypes }) => queryInterface.createTable('Users', {
         id: {
-            type: Sequelize.UUID,
-            defaultValue: Sequelize.UUIDV4,
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
             allowNull: false,
             unique: true
         },
 
         email: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             allowNull: false,
             unique: true
         },
         password: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             allowNull: false,
+        },
+        mfaEnabled: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: false,
+        },
+        mfaSecret: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
 
         firstName: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             allowNull: false,
         },
         lastName: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             defaultValue: '',
             allowNull: false,
         },
         bio: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             defaultValue: '',
             allowNull: false,
         },
 
-        tos: Sequelize.STRING,
-        inviteKey: Sequelize.STRING,
-        passwordResetKey: Sequelize.STRING,
-        emailVerificationKey: Sequelize.STRING,
+        tos: DataTypes.STRING,
+        inviteKey: DataTypes.STRING,
+        passwordResetKey: DataTypes.STRING,
+        emailVerificationKey: DataTypes.STRING,
         emailVerified: {
-            type: Sequelize.BOOLEAN,
+            type: DataTypes.BOOLEAN,
             defaultValue: false,
             allowNull: false,
         },
 
         lastLoginAt: {
-            type: Sequelize.DATE,
+            type: DataTypes.DATE,
             allowNull: true,
         },
         createdAt: {
-            type: Sequelize.DATE,
+            type: DataTypes.DATE,
             allowNull: true,
         },
         updatedAt: {
-            type: Sequelize.DATE,
+            type: DataTypes.DATE,
             allowNull: true,
         },
     }),
-    down: (queryInterface, Sequelize) => queryInterface.dropTable('Users'),
+    down: (queryInterface) => queryInterface.dropTable('Users'),
 };

@@ -2,12 +2,10 @@
 
 <img height="75" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-template.png?v=1"/>
 
-A very mimimal REST API template using Express.ts, Sequelize and MySQL. 
-
-This project is designed to work with [AnthonyBudd/Vuetify-SPA-Template](https://github.com/anthonybudd/Vuetify-SPA-template)
+A very mimimal REST API template using Express.ts, Sequelize and MySQL. This project is designed to work out of the box with [AnthonyBudd/Vuetify-SPA-Template](https://github.com/anthonybudd/Vuetify-SPA-template)
 
 
-- 🔐 Auth using JWT's with Passport.js
+- 🔐 Auth using JWT's with Passport.js. Optional 2FA.
 - 👥 Simple DB: `Users` -∈ `GroupsUsers` ∋- `Groups`
 - 🌐 Production-ready [OpenApiSpec.yml](./OpenApiSpec.yml) & [Kubernetes files](./k8s)
 - 🥇 Real-world tested, generated over $50M in revenue
@@ -54,6 +52,17 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 +--------------+                      
 ```
 
+### Generate SDK Client Libraries
+There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported langauages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
+
+
+```sh
+docker run --rm \
+  -v ${PWD}:/app \
+  -w /app \
+  openapitools/openapi-generator-cli batch sdk/config/*.yaml
+```
+
 ### Deployment
 Full Kubernetes deployment instructions can be found in [k8s/Deployment.md](./k8s/Deployment.md).
 
@@ -67,16 +76,6 @@ kubectl apply -f .k8s/api.deployment.yml \
   -f .k8s/api.service.yml 
 ```
 
-### Generate SDK Client Libraries
-There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported langauages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
-
-
-```sh
-docker run --rm \
-  -v ${PWD}:/app \
-  -w /app \
-  openapitools/openapi-generator-cli batch sdk/config/*.yaml
-```
 
 ### Routes
 | Method      | Route                                                           | Description                           | Payload                               | Response          | 

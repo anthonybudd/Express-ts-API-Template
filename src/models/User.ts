@@ -1,15 +1,47 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import sequelize from '../providers/db';
-import * as Sequelize from 'sequelize';
+import { DataTypes } from 'sequelize';
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *         email:
+ *           type: string
+ *           format: email
+ *         firstName:
+ *           type: string   
+ *         lastName:
+ *           type: string
+ *         bio:
+ *           type: string
+ *         emailVerified:
+ *           type: boolean
+ *         lastLoginAt:
+ *           type: string
+ *           format: date-time
+ */
 
 interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
     id: CreationOptional<string>,
+
     email: string,
     password: string,
+
+    mfaRequired: CreationOptional<boolean>,
+    mfaEnabled: CreationOptional<boolean>,
+    mfaSecret: CreationOptional<string> | null,
+
     firstName: string,
     lastName: CreationOptional<string> | null,
     tos: CreationOptional<string> | null,
     bio: CreationOptional<string> | null,
+
     inviteKey: CreationOptional<string> | null,
     passwordResetKey: CreationOptional<string> | null,
     emailVerificationKey: CreationOptional<string> | null,
@@ -19,50 +51,66 @@ interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttri
 
 const User = sequelize.define<UserModel>('user', {
     id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false,
         unique: true
     },
 
     email: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true
     },
     password: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
 
+    mfaRequired: {
+        type: DataTypes.VIRTUAL,
+        get() {
+            return this.mfaEnabled && this.mfaSecret === null;
+        },
+    },
+    mfaEnabled: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+    },
+    mfaSecret: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+
     firstName: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     lastName: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         defaultValue: '',
         allowNull: false,
     },
     bio: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         defaultValue: '',
         allowNull: false,
     },
 
-    tos: Sequelize.STRING,
-    inviteKey: Sequelize.STRING,
-    passwordResetKey: Sequelize.STRING,
-    emailVerificationKey: Sequelize.STRING,
+    tos: DataTypes.STRING,
+    inviteKey: DataTypes.STRING,
+    passwordResetKey: DataTypes.STRING,
+    emailVerificationKey: DataTypes.STRING,
     emailVerified: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
         defaultValue: false,
         allowNull: false,
     },
 
     lastLoginAt: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
     },
 }, {
@@ -71,12 +119,27 @@ const User = sequelize.define<UserModel>('user', {
         attributes: {
             exclude: [
                 'password',
+                'mfaEnabled',
+                'mfaSecret',
                 'passwordResetKey',
                 'emailVerificationKey',
                 'inviteKey',
             ]
         }
     },
+    scopes: {
+        mfa: {
+            attributes: {
+                include: [
+                    'id',
+                    'email',
+                    'mfaRequired',
+                    'mfaEnabled',
+                    'mfaSecret'
+                ],
+            }
+        }
+    }
 });
 
 export default User;

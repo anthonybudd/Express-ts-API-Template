@@ -25,7 +25,8 @@ content-type: application/json
 
 {
     "email": "user@example.com",
-    "password": "Password@1234"
+    "password": "Password@1234",
+    "mfaCode": "000000"
 }
 
 
@@ -121,6 +122,35 @@ content-type: application/json
     "newPassword": "NewPassword!4321"
 }
 
+
+### /user/enable-mfa
+POST {{Host}}/user/enable-mfa
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "password": "Password@1234"
+}
+
+
+### /user/confirm-mfa
+POST {{Host}}/user/confirm-mfa
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "mfaCode": "917366"
+}
+
+
+### /user/disable-mfa
+POST {{Host}}/user/disable-mfa
+Authorization: Bearer {{AccessToken}}
+content-type: application/json
+
+{
+    "password": "Password@1234"
+}
 
 ###########################################
 # Group

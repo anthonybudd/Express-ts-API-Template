@@ -1,6 +1,6 @@
-import User from './User';
 import GroupUser from './GroupUser';
 import Group from './Group';
+import User from './User';
 
 
 User.belongsToMany(Group, {
@@ -8,6 +8,7 @@ User.belongsToMany(Group, {
     foreignKey: 'userID',
     otherKey: 'groupID',
 });
+
 Group.belongsToMany(User, {
     through: GroupUser,
     foreignKey: 'groupID',

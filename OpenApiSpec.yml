@@ -1,532 +1,740 @@
-openapi: 3.0.0
-servers:
-  - url: 'https://localhost:8888/api/v1/'
+openapi: "3.0.0"
 info:
-  description: >-
-    This is the public JSON REST API for the Express API Template.
-  version: 1.0.0
-  title: Express API Template 
-  license:
-    name: Apache-2.0
-    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
-
-externalDocs:
-  description: Find out more about Express API Template
-  url: 'https://github.com/anthonybudd/express-api-template'
-
-tags:
-  - name: DevOps
-    description: DevOps utility routes
-  - name: Auth
-    description: Auth routes
-  - name: Groups
-    description: Group routes
-  - name: Users
-    description: User routes
-
+  title: "express-api"
+  version: "1.0.0"
 paths:
-  ###############################################
-  ## DevOps
-  '/_healthcheck':
+  /_authcheck:
     get:
+      description: "Check if access token is valid"
       tags:
-        - DevOps
-      summary: "Returns  {status: 'ok'} if has auth"
-      responses:
-        '200':
-          description: " {status: 'ok'}"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: 'ok'
-
-  
-  ###############################################
-  ## Auth
-  '/auth/login':
-    post:
-      tags:
-        - Auth
-      summary: Login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-              - email
-              - password
-              properties:
-                email:
-                  type: string
-                  example: user@example.com
-                password:
-                  type: string
-                  example: password
-      responses:
-        '200':
-          description: "{accessToken}"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-                    example: your_access_token
-  '/auth/sign-up':
-    post:
-      tags:
-        - Auth
-      summary: Sign-up
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-              - email
-              - password
-              - firstName
-              - tos
-              properties:
-                email:
-                  type: string
-                  example: user@example.com
-                password:
-                  type: string
-                  example: password
-                firstName:
-                  type: string
-                  example: John
-                tos:
-                  type: boolean
-                  example: true
-      responses:
-        '200':
-          description: "{accessToken}"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-                    example: your_access_token
-  '/auth/verify-email/{emailVerificationKey}':
-    get:
-      tags:
-        - Auth
-      summary: Verify Email
-      parameters:
-      - name: emailVerificationKey
-        in: path
-        required: true
-        schema:
-            type: string
-      responses:
-        '200':
-          description: "{success: true}"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true 
-  '/auth/forgot':
-    post:
-      tags:
-        - Auth
-      summary: Forgot Password
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - email
-              properties:
-                email:
-                  type: string
-                  example: user@example.com
+        - "Auth"
       responses:
         200:
-          description: "{success: true}"
+          description: "Access token is valid"
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-  '/auth/get-user-by-reset-key/{passwordResetKey}':
-    get:
-      tags:
-        - Auth
-      summary: Get User for Password Reset
-      parameters:
-        - name: passwordResetKey
-          in: path
-          required: true
-          schema:
-              type: string
-      responses:
-        200:
-          description: "{id, email}"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: "user_id"
-                  email:
-                    type: string
-                    example: user@example.com
-  '/auth/reset':
-    post:
-      tags:
-        - Auth
-      summary: Reset Password
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - email
-                - password
-                - passwordResetKey
-              properties:
-                email:
-                  type: string
-                  example: user@example.com
-                password:
-                  type: string
-                  example: "new_password"
-                passwordResetKey:
-                  type: string
-                  example: "reset_key"
-      responses:
-        200:
-          description: "{accessToken}"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-                    example: "your_access_token"
-  '/auth/get-user-by-invite-key/{inviteKey}':
-    get:
-      tags:
-        - Auth
-      summary: Get User for Invite
-      parameters:
-        - name: inviteKey
-          in: path
-          required: true
-          schema:
-              type: string
-      responses:
-        200:
-          description: "{id, email}"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    example: "user_id"
-                  email:
-                    type: string
-                    example: user@example.com
-  '/auth/invite':
-    post:
-      tags:
-        - Auth
-      summary: Complete User Invite
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - inviteKey
-                - email
-                - password
-              properties:
-                inviteKey:
-                  type: string
-                  example: "invite_key"
-                email:
-                  type: string
-                  example: user@example.com
-                password:
-                  type: string
-                  example: "new_password"
-      responses:
-        200:
-          description: "{accessToken}"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-                    example: "your_access_token"
-  '/auth/_authcheck':
-    get:
-      tags:
-        - Auth
-      summary: Check Authentication Status
-      responses:
-        200:
-          description: "{auth: true}"
-          content:
-            application/json:
-              schema:
-                type: object
+                type: "object"
                 properties:
                   auth:
-                    type: boolean
-                    example: true
-
-  
-  ###############################################
-  ## Groups
-  '/groups/{groupID}':
-    get:
+                    type: "boolean"
+                  id:
+                    type: "string"
+        401:
+          description: "Unauthorized"
+  /auth/login:
+    post:
+      description: "Get access token"
       tags:
-        - Groups
-      summary: Get Group by ID
-      parameters:
-        - name: groupID
-          in: path
-          required: true
-          schema:
-            type: string
+        - "Auth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "email"
+                - "password"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                  description: "User's email address"
+                password:
+                  type: "string"
+                  description: "User's password"
+                mfaCode:
+                  type: "string"
+                  minLength: 6
+                  maxLength: 6
+                  description: "Optional MFA code if enabled for account"
       responses:
         200:
-          description: "Returns group information"
+          description: "Successfully logged in"
           content:
             application/json:
               schema:
-                type: object
-                # Replace {Group} with your actual Group model definition
+                type: "object"
+                $ref: "#/components/schemas/AccessToken"
+        401:
+          description: "Invalid credentials or MFA code"
+        403:
+          description: "MFA code required but not provided"
+        422:
+          description: "Validation errors"
+  /auth/sign-up:
+    post:
+      description: "Register a new user account"
+      tags:
+        - "Auth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "email"
+                - "password"
+                - "firstName"
+                - "tos"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                  description: "User's email address"
+                password:
+                  type: "string"
+                  description: "User's password (must meet strength requirements)"
+                firstName:
+                  type: "string"
+                  description: "User's first name"
+                lastName:
+                  type: "string"
+                  description: "User's last name (optional)"
+                groupName:
+                  type: "string"
+                  description: "Name for the user's default group (optional)"
+                tos:
+                  type: "boolean"
+                  description: "Acceptance of Terms of Service"
+      responses:
+        200:
+          description: "Successfully registered"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                $ref: "#/components/schemas/AccessToken"
+        422:
+          description: "Validation errors (email taken, weak password, etc.)"
+  /auth/verify-email/{emailVerificationKey}:
+    get:
+      description: "Verify a user's email address using the verification key"
+      tags:
+        - "Auth"
+      parameters:
+        - in: "path"
+          name: "emailVerificationKey"
+          required: true
+          schema:
+            type: "string"
+          description: "Email verification key sent to the user's email"
+        - in: "query"
+          name: "redirect"
+          schema:
+            type: "string"
+            enum:
+              - "1"
+          description: "If set to '1', redirects to frontend after verification"
+      responses:
+        200:
+          description: "Email successfully verified"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  verified:
+                    type: "boolean"
+                  id:
+                    type: "string"
+  /auth/forgot:
+    post:
+      description: "Request a password reset link"
+      tags:
+        - "Auth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "email"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                  description: "User's email address"
+      responses:
+        200:
+          description: "Password reset email sent successfully"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success:
+                    type: "boolean"
+  /auth/get-user-by-reset-key/{passwordResetKey}:
+    get:
+      description: "Get user information by password reset key"
+      tags:
+        - "Auth"
+      parameters:
+        - in: "path"
+          name: "passwordResetKey"
+          required: true
+          schema:
+            type: "string"
+          description: "Password reset key sent to the user's email"
+      responses:
+        200:
+          description: "Returns user information"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  id:
+                    type: "string"
+                  email:
+                    type: "string"
+                    format: "email"
+  /auth/reset:
+    post:
+      description: "Reset user password using reset key"
+      tags:
+        - "Auth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "email"
+                - "password"
+                - "passwordResetKey"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                  description: "User's email address"
+                password:
+                  type: "string"
+                  description: "New password (must meet strength requirements)"
+                passwordResetKey:
+                  type: "string"
+                  description: "Password reset key sent to the user's email"
+      responses:
+        200:
+          description: "Password successfully reset and user logged in"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                $ref: "#/components/schemas/AccessToken"
+  /auth/get-user-by-invite-key/{inviteKey}:
+    get:
+      description: "Get user information by invite key"
+      tags:
+        - "Auth"
+      parameters:
+        - in: "path"
+          name: "inviteKey"
+          required: true
+          schema:
+            type: "string"
+          description: "Invitation key sent to the user's email"
+      responses:
+        200:
+          description: "Returns basic user information"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  id:
+                    type: "string"
+                    description: "User ID"
+                  email:
+                    type: "string"
+                    format: "email"
+                    description: "User's email address"
+  /auth/invite:
+    post:
+      description: "Accept an invitation and create a user account"
+      tags:
+        - "Auth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "email"
+                - "password"
+                - "firstName"
+                - "tos"
+                - "inviteKey"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                  description: "User's email address"
+                password:
+                  type: "string"
+                  description: "User's password (must meet strength requirements)"
+                firstName:
+                  type: "string"
+                  description: "User's first name"
+                lastName:
+                  type: "string"
+                  description: "User's last name (optional)"
+                tos:
+                  type: "boolean"
+                  description: "Acceptance of Terms of Service"
+                inviteKey:
+                  type: "string"
+                  description: "Invitation key received via email"
+      responses:
+        200:
+          description: "Successfully accepted invitation and created account"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                $ref: "#/components/schemas/AccessToken"
+  /groups/{groupID}:
+    get:
+      description: "Get a group by ID"
+      tags:
+        - "Groups"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "groupID"
+          required: true
+          schema:
+            type: "string"
+          description: "ID of the group to retrieve"
+        - in: "query"
+          name: "with"
+          schema:
+            type: "string"
+            enum:
+              - "users"
+          description: "Include related data (users) in the response"
+      responses:
+        200:
+          description: "Returns the group information"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  id:
+                    type: "string"
+                  name:
+                    type: "string"
+                  users:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/User"
+                    description: "Only included when with=users query parameter is provided"
+    post:
+      description: "Update a group's information"
+      tags:
+        - "Groups"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "groupID"
+          required: true
+          schema:
+            type: "string"
+          description: "ID of the group to update"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                  description: "New name for the group"
+      responses:
+        200:
+          description: "Returns the updated group information"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  id:
+                    type: "string"
+                  name:
+                    type: "string"
+  /groups/{groupID}/users/invite:
+    post:
+      description: "Invite a user to a group"
+      tags:
+        - "Groups"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "groupID"
+          required: true
+          schema:
+            type: "string"
+          description: "ID of the group to invite the user to"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                  description: "Email of the user to invite"
+                role:
+                  type: "string"
+                  enum:
+                    - "User"
+                    - "Admin"
+                  default: "User"
+                  description: "Role to assign to the user in the group"
+      responses:
+        200:
+          description: "User successfully invited to the group"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  groupID:
+                    type: "string"
+                  userID:
+                    type: "string"
+                  role:
+                    type: "string"
+                    enum:
+                      - "User"
+                      - "Admin"
+  /api/v1/groups/{groupID}/users/{userID}/resend-invitation-email:
+    post:
+      tags:
+        - "Groups"
+      summary: "Resend invitation email to a user"
+      description: "Regenerates the invitation link and resends the invitation email to a user"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "path"
+          name: "groupID"
+          required: true
+          schema:
+            type: "string"
+          description: "ID of the group"
+        - in: "path"
+          name: "userID"
+          required: true
+          schema:
+            type: "string"
+          description: "ID of the user to resend invitation to"
+      responses:
+        200:
+          description: "Invitation email resent successfully"
+          content:
+            application/json:
+              schema:
+                type: "object"
                 properties:
                   email:
-                    type: string
-                    description: The email address of the user to invite
-                    example: user@example.com
+                    type: "string"
+                    description: "Email address of the user"
+  /groups/{groupID}/users/{userID}/set-role:
     post:
+      description: "Set a user's role within a group"
       tags:
-        - Groups
-      summary: Invite User to Group
+        - "Groups"
+      security:
+        - bearerAuth: []
       parameters:
-        - name: groupID
-          in: path
+        - in: "path"
+          name: "groupID"
           required: true
           schema:
-            type: string
+            type: "string"
+          description: "ID of the group"
+        - in: "path"
+          name: "userID"
+          required: true
+          schema:
+            type: "string"
+          description: "ID of the user whose role will be changed"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
+              type: "object"
               properties:
-                email:
-                  type: string
-                  description: The email address of the user to invite
-                  example: user@example.com
+                role:
+                  type: "string"
+                  enum:
+                    - "User"
+                    - "Admin"
+                  default: "User"
+                  description: "The role to assign to the user"
       responses:
         200:
-          description: "Returns invited user ID and group ID"
+          description: "Role updated successfully"
           content:
             application/json:
               schema:
-                type: object
+                type: "object"
                 properties:
-                  UserID:
-                    type: string
-                    description: The ID of the invited user
-                    example: "user_id"
-                  GroupID:
-                    type: string
-                    description: The ID of the group
-                    example: "group_id"
-  '/groups/{groupID}/users/invite':
-    post:
-      tags:
-        - Groups
-      summary: Invite User to Group
-      parameters:
-        - name: groupID
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: The email address of the user to invite
-                  example: user@example.com
-      responses:
-        200:
-          description: "Returns invited user ID and group ID"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  UserID:
-                    type: string
-                    description: The ID of the invited user
-                    example: "user_id"
-                  GroupID:
-                    type: string
-                    description: The ID of the group
-                    example: "group_id"
-  '/groups/{groupID}/users/{userID}':
+                  userID:
+                    type: "string"
+                  groupID:
+                    type: "string"
+                  role:
+                    type: "string"
+                    enum:
+                      - "User"
+                      - "Admin"
+  /groups/{groupID}/users/{userID}:
     delete:
+      description: "Remove a user from a group"
       tags:
-        - Groups
-      summary: Remove User from Group
+        - "Groups"
+      security:
+        - bearerAuth: []
       parameters:
-        - name: groupID
-          in: path
+        - in: "path"
+          name: "groupID"
           required: true
           schema:
-            type: string
-        - name: userID
-          in: path
+            type: "string"
+          description: "ID of the group"
+        - in: "path"
+          name: "userID"
           required: true
           schema:
-            type: string
+            type: "string"
+          description: "ID of the user to remove from the group"
       responses:
         200:
-          description: "Returns the ID of the removed user"
+          description: "User successfully removed from the group"
           content:
             application/json:
               schema:
-                type: object
+                type: "object"
                 properties:
-                  UserID:
-                    type: string
-                    description: The ID of the removed user
-                    example: "user_id"
-
-
-  ###############################################
-  ## User
-  '/user':
+                  groupID:
+                    type: "string"
+                  userID:
+                    type: "string"
+  /user:
     get:
+      description: "Get the current user"
       tags:
-        - Users
-      summary: Get the current user
+        - "User"
+      security:
+        - bearerAuth: []
       responses:
         200:
           description: "Returns the current user"
           content:
             application/json:
               schema:
-                type: object
-                # Replace {Group} with your actual Group model definition
+                type: "object"
+                $ref: "#/components/schemas/User"
+        401:
+          description: "Unauthorized - Invalid or missing authentication token"
+    post:
+      description: "Update the current user"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                firstName:
+                  type: "string"
+                  description: "User's first name"
+                lastName:
+                  type: "string"
+                  description: "User's last name"
+                bio:
+                  type: "string"
+                  description: "User's bio"
+      responses:
+        200:
+          description: "Returns the current user"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                $ref: "#/components/schemas/User"
+        401:
+          description: "Unauthorized - Invalid or missing authentication token"
+  /user/resend-verification-email:
+    get:
+      description: "Resend the verification email"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Returns email"
+          content:
+            application/json:
+              schema:
+                type: "object"
                 properties:
                   email:
-                    type: string
-                    description: The email address of the user to invite
-                    example: user@example.com
+                    type: "string"
+  /user/update-password:
     post:
+      description: "Update the current user's password"
       tags:
-        - Users
-      summary: Update the current user
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Returns success"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success:
+                    type: "boolean"
+  /user/enable-mfa:
+    post:
+      description: "Enable MFA for the current user"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Returns the current user"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  uri:
+                    type: "string"
+  /user/confirm-mfa:
+    post:
+      description: "Confirm MFA"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
+              type: "object"
+              required:
+                - "mfaCode"
               properties:
-                email:
-                  type: string
-                  description: The email address of the user to invite
-                  example: user@example.com
+                mfaCode:
+                  type: "string"
+                  minLength: 6
+                  maxLength: 6
       responses:
         200:
-          description: "Returns invited user ID and group ID"
+          description: "Returns success status"
           content:
             application/json:
               schema:
-                type: object
+                type: "object"
                 properties:
-                  UserID:
-                    type: string
-                    description: The ID of the invited user
-                    example: "user_id"
-                  GroupID:
-                    type: string
-                    description: The ID of the group
-                    example: "group_id"
-  '/user/update-password':
+                  success:
+                    type: "boolean"
+        401:
+          description: "Unauthorized - Invalid MFA code or MFA not enabled"
+  /user/disable-mfa:
     post:
+      description: "Disable MFA"
       tags:
-        - Users
-      summary: Update password
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: The email address of the user to invite
-                  example: user@example.com
+        - "User"
+      security:
+        - bearerAuth: []
       responses:
         200:
-          description: "Returns invited user ID and group ID"
+          description: "Returns success status"
           content:
             application/json:
               schema:
-                type: object
+                type: "object"
                 properties:
-                  UserID:
-                    type: string
-                    description: The ID of the invited user
-                    example: "user_id"
-                  GroupID:
-                    type: string
-                    description: The ID of the group
-                    example: "group_id"
-  
-
+                  success:
+                    type: "boolean"
+        401:
+          description: "Unauthorized - Invalid MFA code or MFA not enabled"
 components:
+  schemas:
+    Group:
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        name:
+          type: "string"
+        ownerID:
+          type: "string"
+          format: "uuid"
+        deletedAt:
+          type: "string"
+          format: "date-time"
+          nullable: true
+    User:
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        email:
+          type: "string"
+          format: "email"
+        firstName:
+          type: "string"
+        lastName:
+          type: "string"
+        bio:
+          type: "string"
+        emailVerified:
+          type: "boolean"
+        lastLoginAt:
+          type: "string"
+          format: "date-time"
+    AccessToken:
+      properties:
+        accessToken:
+          type: "string"
   securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
+    bearerAuth:
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"
+tags:
+  - name: "Auth"
+    description: "Authentication routes"
+  - name: "Groups"
+    description: "Groups"
+  - name: "User"
+    description: "User"

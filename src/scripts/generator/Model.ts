@@ -1,7 +1,6 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import sequelize from '../providers/db';
-import * as Sequelize from 'sequelize';
-import { UpdatedAt } from 'sequelize-typescript';
+import { DataTypes } from 'sequelize';
 
 interface {{ ModelName }}Model extends Model<InferAttributes<{{ ModelName }}Model>, InferCreationAttributes<{{ ModelName }}Model>> {
     id: CreationOptional<string>,
@@ -19,8 +18,8 @@ interface {{ ModelName }}Model extends Model<InferAttributes<{{ ModelName }}Mode
 
 const {{ ModelName }} = sequelize.define<{{ ModelName }}Model>('{{ ModelName }}', {
     id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false,
         unique: true,
@@ -28,30 +27,30 @@ const {{ ModelName }} = sequelize.define<{{ ModelName }}Model>('{{ ModelName }}'
 
     {{#userID}}
     userID: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         allowNull: false,
     },
     {{/userID}}
     {{#groupID}}
     groupID: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         allowNull: false,
     },
     {{/groupID}}
 
     name: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
 
     createdAt: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
     },
     updatedAt: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
     },
 }, {

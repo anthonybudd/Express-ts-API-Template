@@ -1,26 +1,26 @@
 module.exports = {
-    up: (queryInterface, Sequelize) => queryInterface.createTable('GroupsUsers', {
+    up: (queryInterface, { DataTypes }) => queryInterface.createTable('GroupsUsers', {
         id: {  // Not used. Required by default mysql system var sql_require_primary_key
-            type: Sequelize.UUID,
-            defaultValue: Sequelize.UUIDV4,
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
             allowNull: false,
             unique: true
         },
         groupID: {
-            type: Sequelize.UUID,
+            type: DataTypes.UUID,
         },
         userID: {
-            type: Sequelize.UUID,
+            type: DataTypes.UUID,
         },
         role: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
             defaultValue: 'User',
             allowNull: false,
         },
 
         createdAt: {
-            type: Sequelize.DATE,
+            type: DataTypes.DATE,
             allowNull: true,
         },
     }).then(() => queryInterface.addConstraint('GroupsUsers', {
@@ -28,5 +28,5 @@ module.exports = {
         type: 'unique',
         name: 'groupID_userID_index'
     })),
-    down: (queryInterface, Sequelize) => queryInterface.dropTable('GroupsUsers'),
+    down: (queryInterface) => queryInterface.dropTable('GroupsUsers'),
 };

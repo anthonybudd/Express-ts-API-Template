@@ -8,7 +8,7 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/anthonybudd/express-api-template.git"
+    "url": "https://github.com/anthonybudd/Express-ts-API-Template.git"
   },
   "scripts": {
     "start": "ts-node src/index.ts",
@@ -19,21 +19,23 @@
     "exec:jwt": "docker exec -ti express-api npm run jwt",
     "env": "./src/scripts/env",
     "generate": "docker exec -ti express-api ts-node ./src/scripts/generate.ts",
+    "openapispec": "ts-node ./src/scripts/openapispec.ts",
+    "exec:openapispec": "docker exec -ti express-api npm run openapispec",
     "db:migrate": "sequelize db:migrate",
     "db:seed": "./src/scripts/seed",
     "db:refresh": "./src/scripts/refresh",
     "exec:db:refresh": "docker exec -ti express-api npm run db:refresh",
-    "test": "export NODE_ENV=test && npm run db:refresh && mocha --config ./tests/runners/mocha/.mocharc.jsonc",
+    "test": "export NODE_ENV=test && npm run db:refresh && mocha --timeout 10000 --config ./tests/runners/mocha/.mocharc.jsonc",
     "exec:test": "docker exec -ti express-api npm run test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@catalystic/json-to-yaml": "^1.0.0",
     "@types/express-fileupload": "^1.5.0",
     "@types/mustache": "^4.2.5",
     "axios": "^1.7.2",
     "bcryptjs": "^3.0.2",
     "chai-http": "^5.0.0",
-    "change-case": "^5.4.4",
     "cors": "^2.8.5",
     "dayjs": "^1.11.12",
     "dotenv": "^16.4.5",
@@ -47,13 +49,14 @@
     "morgan": "^1.10.0",
     "mustache": "^4.2.0",
     "mysql2": "^3.9.7",
+    "otpauth": "^9.3.6",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
-    "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "swagger-jsdoc": "^6.2.8"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
@@ -68,6 +71,7 @@
     "@types/passport-local": "^1.0.38",
     "@types/sinon": "^17.0.3",
     "@types/supertest": "^6.0.2",
+    "@types/swagger-jsdoc": "^6.0.4",
     "@types/uuid": "^9.0.8",
     "@types/validator": "^13.11.10",
     "@typescript-eslint/eslint-plugin": "^7.6.0",

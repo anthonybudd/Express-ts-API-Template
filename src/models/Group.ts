@@ -1,6 +1,26 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
 import sequelize from '../providers/db';
-import * as Sequelize from 'sequelize';
+import { DataTypes } from 'sequelize';
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Group:
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *         name:
+ *           type: string
+ *         ownerID:
+ *           type: string
+ *           format: uuid
+ *         deletedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ */
 
 interface GroupModel extends Model<InferAttributes<GroupModel>, InferCreationAttributes<GroupModel>> {
     id: CreationOptional<string>,
@@ -11,22 +31,22 @@ interface GroupModel extends Model<InferAttributes<GroupModel>, InferCreationAtt
 
 const Group = sequelize.define<GroupModel>('group', {
     id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false,
         unique: true
     },
 
     name: {
-        type: Sequelize.STRING
+        type: DataTypes.STRING
     },
     ownerID: {
-        type: Sequelize.UUID
+        type: DataTypes.UUID
     },
 
     deletedAt: {
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
         allowNull: true,
     },
 }, {

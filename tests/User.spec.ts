@@ -58,8 +58,8 @@ describe('User', () => {
     describe('POST /api/v1/user/update-password', () => {
         it('Should update the users password', async () => {
             const { data } = await api.post(`/api/v1/user/update-password`, {
-                newPassword: 'New_PASSWORD!4321',
                 password: 'Password@1234',
+                newPassword: 'New_PASSWORD!4321',
             });
             expect(data.success).to.equal(true);
         });

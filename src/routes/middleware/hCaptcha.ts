@@ -16,9 +16,9 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     if (!req.body.htoken) return res.status(422).json({
         errors: {
             htoken: {
-                location: "body",
-                param: "htoken",
-                msg: "You must complete the captcha"
+                location: 'body',
+                param: 'htoken',
+                msg: 'You must complete the captcha'
             }
         }
     });
@@ -30,8 +30,8 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     return res.status(422).json({
         errors: {
             htoken: {
-                location: "body",
-                param: "htoken",
+                location: 'body',
+                param: 'htoken',
                 msg: 'Captcha validation failed.'
             }
         }

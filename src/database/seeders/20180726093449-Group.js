@@ -16,6 +16,6 @@ const insert = [{
 
 
 module.exports = {
-    up: (queryInterface, Sequelize) => queryInterface.bulkInsert('Groups', insert).catch(err => console.log(err)),
-    down: (queryInterface, Sequelize) => { }
+    up: (queryInterface) => queryInterface.bulkInsert('Groups', insert).catch(err => console.log(err)),
+    down: () => { }
 };

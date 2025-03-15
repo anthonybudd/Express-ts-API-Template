@@ -7,11 +7,11 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 const sequelize = new Sequelize({
-    username: process.env.DB_USERNAME || '',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_DATABASE || '',
-    host: process.env.DB_HOST || '',
-    port: Number(process.env.DB_PORT) || 3306,
+    username: process.env.DB_USERNAME as string,
+    password: process.env.DB_PASSWORD as string,
+    database: process.env.DB_DATABASE as string,
+    host: process.env.DB_HOST as string,
+    port: Number(process.env.DB_PORT),
     dialect: 'mysql',
     logging: false,
     pool: {
@@ -21,6 +21,6 @@ const sequelize = new Sequelize({
         idle: 10000,
     },
 });
-sequelize.authenticate().then(() => console.log('* DB Connected'));
+sequelize.authenticate().then(() => console.log(`* DB Connected (${process.env.NODE_ENV})`));
 
 export default sequelize;

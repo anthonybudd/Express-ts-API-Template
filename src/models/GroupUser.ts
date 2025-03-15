@@ -1,6 +1,6 @@
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, QueryInterface } from 'sequelize';
 import sequelize from '../providers/db';
-import * as Sequelize from 'sequelize';
+import { DataTypes } from 'sequelize';
 
 interface GroupUserModel extends Model<InferAttributes<GroupUserModel>, InferCreationAttributes<GroupUserModel>> {
     id: CreationOptional<string>,
@@ -11,22 +11,22 @@ interface GroupUserModel extends Model<InferAttributes<GroupUserModel>, InferCre
 
 const GroupUser = sequelize.define<GroupUserModel>('GroupUser', {
     id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false,
         unique: true
     },
 
     userID: {
-        type: Sequelize.UUID
+        type: DataTypes.UUID
     },
     groupID: {
-        type: Sequelize.UUID
+        type: DataTypes.UUID
     },
 
     role: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         defaultValue: 'User',
         allowNull: false,
     },
