@@ -42,6 +42,7 @@ app.use(fileUpload({
     limits: { fileSize: 50 * 1024 * 1024 },
     useTempFiles: true,
     parseNested: true,
+    tempFileDir: '/tmp',
 }));
 app.get('/_readiness', (req, res) => res.send('healthy'));
 app.get('/api/v1/_healthcheck', (req, res) => res.json({ message: 'healthy' }));
