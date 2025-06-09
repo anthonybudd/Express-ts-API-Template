@@ -48,6 +48,7 @@
     "morgan": "^1.10.0",
     "mustache": "^4.2.0",
     "mysql2": "^3.9.7",
+    "node-cron": "^4.1.0",
     "otpauth": "^9.3.6",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

@@ -4,8 +4,8 @@ if [[ $NODE_ENV == "production" ]]
   then
     echo "ERROR: Can not refresh while in production"
   else
-    sequelize db:drop
-    sequelize db:create
-    sequelize db:migrate
+    sequelize db:drop && \
+    sequelize db:create && \
+    sequelize db:migrate && \
     sequelize db:seed:all
   fi

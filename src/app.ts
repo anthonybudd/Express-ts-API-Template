@@ -2,6 +2,7 @@ import 'dotenv/config';
 import ErrorHandler from './providers/ErrorHandler';
 import fileUpload from 'express-fileupload';
 import express from 'express';
+import cron from 'node-cron';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -46,6 +47,11 @@ app.use(fileUpload({
 }));
 app.get('/_readiness', (req, res) => res.send('healthy'));
 app.get('/api/v1/_healthcheck', (req, res) => res.json({ message: 'healthy' }));
+
+
+////////////////////////////////////////////////
+// Cron Jobs
+// cron.schedule('*/5 * * * *', async () => console.log('Cron task executed'));
 
 
 ////////////////////////////////////////////////

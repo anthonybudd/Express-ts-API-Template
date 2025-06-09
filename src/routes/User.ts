@@ -45,7 +45,7 @@ app.get('/user', [
             rejectOnEmpty: true,
         }));
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -98,7 +98,7 @@ app.post('/user', [
         await user.update(data);
         return res.json(user);
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -139,7 +139,7 @@ app.post('/user/resend-verification-email', [
 
         return res.json({ email: user.email });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -188,7 +188,7 @@ app.post('/user/update-password', [
 
         return res.json({ success: true });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -246,7 +246,7 @@ app.post('/user/enable-mfa', [
             uri: totp.toString(),
         });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -323,7 +323,7 @@ app.post('/user/confirm-mfa', [
 
         return res.json({ success: true });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -367,6 +367,6 @@ app.post('/user/disable-mfa', [
 
         return res.json({ success: true });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });

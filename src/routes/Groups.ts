@@ -67,7 +67,7 @@ app.get('/groups/:groupID', [
             rejectOnEmpty: true
         }));
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -127,7 +127,7 @@ app.post('/groups/:groupID', [
 
         return res.json(group);
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -251,7 +251,7 @@ app.post('/groups/:groupID/users/invite', [
             role,
         });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -318,7 +318,7 @@ app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
 
         return res.json({ email: user.email });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -413,7 +413,7 @@ app.post('/groups/:groupID/users/:userID/set-role', [
 
         return res.json({ userID, groupID, role });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -477,6 +477,6 @@ app.delete('/groups/:groupID/users/:userID', [
 
         return res.json({ userID, groupID });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });

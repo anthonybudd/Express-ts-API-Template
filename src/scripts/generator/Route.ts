@@ -1,4 +1,4 @@
-import { body, validationResult, matchedData } from 'express-validator';
+import { body, param, validationResult, matchedData } from 'express-validator';
 import passport from './../providers/Passport';
 import {{ModelName}} from './../models/{{ModelName}}';
 import express from 'express';
@@ -12,10 +12,14 @@ export const app = express.Router();
  */
 app.get('/{{modelnames}}', [
     passport.authenticate('jwt', { session: false })
-], async (req: express.Request, res: express.Response) => {
-    return res.json(
-        await {{ModelName}}.findAll()
-    );
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        return res.json(
+            await {{ModelName}}.findAll()
+        );
+    } catch (error) {
+        return next(error);
+    }
 });
 
 
@@ -25,10 +29,17 @@ app.get('/{{modelnames}}', [
  */
 app.get('/{{modelnames}}/:{{modelName}}ID', [
     passport.authenticate('jwt', { session: false }),
-], async (req: express.Request, res: express.Response) => {
-    return res.json(
-        await {{ModelName}}.findByPk(req.params.{{modelName}}ID)
-    );
+    param('{{modelName}}ID').exists().isUUID(),
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        return res.json(
+            await {{ModelName}}.findByPk(req.params.{{modelName}}ID, {
+                rejectOnEmpty: true
+            })
+        ); 
+    } catch (error) {
+        return next(error);
+    }
 });
 
 
@@ -40,22 +51,26 @@ app.get('/{{modelnames}}/:{{modelName}}ID', [
 app.post('/{{modelnames}}', [
     passport.authenticate('jwt', { session: false }),
     body('name').exists().isString(),
-], async (req: express.Request, res: express.Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const data = matchedData(req);
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const data = matchedData(req);
 
-    const {{modelName}} = await {{ModelName}}.create({
-        name: data.name,
-        {{#userID}}
-        userID: '{{userID}}',
-        {{/userID}}
-        {{#groupID}}
-        groupID: '{{groupID}}',
-        {{/groupID}}
-    });
+        const {{modelName}} = await {{ModelName}}.create({
+            name: data.name,
+            {{#userID}}
+            userID: '{{userID}}',
+            {{/userID}}
+            {{#groupID}}
+            groupID: '{{groupID}}',
+            {{/groupID}}
+        });
 
-    return res.json({{modelName}});
+        return res.json({{modelName}});
+    } catch (error) {
+        return next(error);
+    }
 });
 
 
@@ -66,19 +81,24 @@ app.post('/{{modelnames}}', [
  */
 app.post('/{{modelnames}}/:{{modelName}}ID', [
     passport.authenticate('jwt', { session: false }),
+    param('{{modelName}}ID').exists().isUUID(),
     body('name').exists(),
-], async (req: express.Request, res: express.Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const data = matchedData(req);
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const data = matchedData(req);
 
-    await {{ModelName}}.update(data, {
-        where: {
-            id: req.params.{{modelName}}ID,
-        }
-    });
+        await {{ModelName}}.update(data, {
+            where: {
+                id: req.params.{{modelName}}ID,
+            }
+        });
 
-    return res.json(await {{ModelName}}.findByPk(req.params.{{modelName}}ID));
+        return res.json(await {{ModelName}}.findByPk(req.params.{{modelName}}ID));
+    } catch (error) {
+        return next(error);
+    }
 });
 
 
@@ -90,12 +110,17 @@ app.post('/{{modelnames}}/:{{modelName}}ID', [
  */
 app.delete('/{{modelnames}}/:{{modelName}}ID', [
     passport.authenticate('jwt', { session: false }),
-], async (req: express.Request, res: express.Response) => {
-    await {{ModelName}}.destroy({
-        where: {
-            id: req.params.{{modelName}}ID,
-        }
-    });
+    param('{{modelName}}ID').exists().isUUID(),
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        await {{ModelName}}.destroy({
+            where: {
+                id: req.params.{{modelName}}ID,
+            }
+        });
 
-    return res.json({ id: req.params.{{modelName}}ID });
+        return res.json({ id: req.params.{{modelName}}ID });
+    } catch (error) {
+        return next(error);
+    }
 });

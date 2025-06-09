@@ -51,6 +51,30 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 |...           |                                                      
 +--------------+                      
 ```
+### OpenAPISpec
+Above each route you will see a large comment block, these comments are optional and can be removed if you do not need/want them. 
+
+I have found when building large commercial API's that it is far more practical to document the routes next to the code rather than manually updating the OpenAPISpec each time a route is created or modified.
+
+```js
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     description: Get an access token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *         ... 
+ */
+app.post('/auth/login', [...
+```
+
+To auto generate a new OpenAPISpec run the command below
+```sh
+npm run exec:openapispec
+```
 
 ### Generate SDK Client Libraries
 There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported langauages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
@@ -115,5 +139,5 @@ Some commands need to be run inside the docker container, these commands have be
 | renderEmail.ts        | Generate an email locally     | `docker exec -ti express-api ts-node ./src/scripts/renderEmail.ts --template="Verify" --code="512616" --link="https://google.com"` |
 | jwt.ts                | Generate JWT for a user       | `docker exec -ti express-api ts-node ./src/scripts/jwt.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | forgotPassword.ts     | Generate password reset link  | `docker exec -ti express-api ts-node ./src/scripts/forgotPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
-| resetPassword.ts      | Password user password        | `docker exec -ti express-api ts-node ./src/scripts/resetPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"` |
-| inviteUser.ts         | Invite user to group          | `docker exec -ti express-api ts-node ./src/scripts/inviteUser.ts --email="newuser@example.com" --groupID="fdab7a99-2c38-444b-bcb3-f7cef61c275b"` |
+| setPassword.ts        | Set user password             | `docker exec -ti express-api ts-node ./src/scripts/setPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"` |
+

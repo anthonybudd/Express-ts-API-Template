@@ -63,7 +63,7 @@ app.get('/_authcheck', [
  * @swagger
  * /auth/login:
  *   post:
- *     description: Get access token
+ *     description: Get an access token
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -122,44 +122,48 @@ app.post('/auth/login', [
         }
     },
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const { token } = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { token } = matchedData(req);
 
-    passport.authenticate('local', { session: false }, async (err: Error | null, user: UserModel | null) => {
-        if (err) throw err;
-        if (!user) return res.status(401).json({ message: 'Incorrect email or password', code: 401 });
-
-        const { mfaRequired, email: label, mfaSecret } = await User.scope('mfa').findByPk(user.get('id'), { rejectOnEmpty: true });
-        if (mfaRequired) {
-            const totp = new OTPAuth.TOTP({
-                issuer: 'express-api',
-                label,
-                algorithm: 'SHA3-512',
-                digits: 6,
-                period: 30,
-                secret: mfaSecret as string,
-            });
-            const delta = totp.validate({ token: token, window: 1 });
-            if (delta === null) return res.status(401).json({ message: 'Invalid MFA code', code: 401 });
-        }
-
-        req.login(user, { session: false }, (err: Error) => {
+        passport.authenticate('local', { session: false }, async (err: Error | null, user: UserModel | null) => {
             if (err) throw err;
+            if (!user) return res.status(401).json({ message: 'Incorrect email or password', code: 401 });
 
-            res.json({
-                accessToken: generateJWT(user, { expiresIn: "24h" })
-            });
+            const { mfaRequired, email: label, mfaSecret } = await User.scope('mfa').findByPk(user.get('id'), { rejectOnEmpty: true });
+            if (mfaRequired) {
+                const totp = new OTPAuth.TOTP({
+                    issuer: 'express-api',
+                    label,
+                    algorithm: 'SHA3-512',
+                    digits: 6,
+                    period: 30,
+                    secret: mfaSecret as string,
+                });
+                const delta = totp.validate({ token: token, window: 1 });
+                if (delta === null) return res.status(401).json({ message: 'Invalid MFA code', code: 401 });
+            }
 
-            User.update({
-                lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
-            }, {
-                where: {
-                    id: user.get('id')
-                },
+            req.login(user, { session: false }, (err: Error) => {
+                if (err) throw err;
+
+                res.json({
+                    accessToken: generateJWT(user, { expiresIn: "24h" })
+                });
+
+                User.update({
+                    lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
+                }, {
+                    where: {
+                        id: user.get('id')
+                    },
+                });
             });
-        });
-    })(req, res, next);
+        })(req, res, next);
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -288,7 +292,7 @@ app.post('/auth/sign-up', [
             });
         })(req, res);
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -324,25 +328,26 @@ app.post('/auth/sign-up', [
  *                 id:
  *                   type: string
  */
-app.get('/auth/verify-email/:emailVerificationKey', async (req: express.Request, res: express.Response) => {
-    const user = await User.findOne({
-        where: {
-            emailVerificationKey: req.params.emailVerificationKey
-        }
-    });
+app.get('/auth/verify-email/:emailVerificationKey', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const user = await User.findOne({
+            where: {
+                emailVerificationKey: req.params.emailVerificationKey
+            },
+            rejectOnEmpty: true,
+        });
 
-    if (!user) return res.status(404).json({
-        msg: 'Invalid verification code',
-        code: 40402
-    });
+        await user.update({
+            emailVerified: true,
+            emailVerificationKey: null,
+        });
 
-    await user.update({
-        emailVerified: true,
-        emailVerificationKey: null,
-    });
+        if (req.query.redirect === '1') return res.redirect(`${process.env.FRONTEND_URL}?email_verified=1`);
 
-    if (req.query.redirect === '1') return res.redirect(`${process.env.FRONTEND_URL}?email_verified=1`);
-    return res.json({ verified: true, id: user.id });
+        return res.json({ verified: true, id: user.id });
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -409,7 +414,7 @@ app.post('/auth/forgot', [
 
         return res.json({ success: true });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -455,7 +460,7 @@ app.get('/auth/get-user-by-reset-key/:passwordResetKey', async (req: express.Req
             email: user.email
         });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -542,7 +547,7 @@ app.post('/auth/reset', [
             });
         })(req, res);
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -590,7 +595,7 @@ app.get('/auth/get-user-by-invite-key/:inviteKey', async (req: express.Request, 
             email: user.email
         });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
 
@@ -690,6 +695,6 @@ app.post('/auth/invite', [
             });
         })(req, res);
     } catch (error) {
-        next(error);
+        return next(error);
     }
 });
