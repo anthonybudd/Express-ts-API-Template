@@ -8,7 +8,7 @@ import { Group } from './../models/Group';
 import Email from './../providers/Email';
 import middleware from './middleware';
 import { v4 as uuidv4 } from 'uuid';
-import * as OTPAuth from "otpauth";
+import * as OTPAuth from 'otpauth';
 import bcrypt from 'bcryptjs';
 import express from 'express';
 import crypto from 'crypto';
@@ -108,17 +108,21 @@ app.post('/auth/login', [
     body('token').optional().isLength({ min: 6, max: 6 }),
     middleware.hCaptcha,
     async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        const { mfaRequired } = await User.scope('mfa').findOne({
-            where: {
-                email: req.body.email
-            },
-            rejectOnEmpty: true
-        });
+        try {
+            const { mfaRequired } = await User.scope('mfa').findOne({
+                where: {
+                    email: req.body.email
+                },
+                rejectOnEmpty: true
+            });
 
-        if (mfaRequired && !req.body.token) {
-            return res.status(403).json({ message: 'MFA is enabled for this account', code: 403 });
-        } else {
-            return next();
+            if (mfaRequired && !req.body.token) {
+                return res.status(403).json({ message: 'MFA is enabled for this account', code: 403 });
+            } else {
+                return next();
+            }
+        } catch (error) {
+            return res.status(401).json({ message: 'Incorrect email or password' });
         }
     },
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -129,7 +133,7 @@ app.post('/auth/login', [
 
         passport.authenticate('local', { session: false }, async (err: Error | null, user: UserModel | null) => {
             if (err) throw err;
-            if (!user) return res.status(401).json({ message: 'Incorrect email or password', code: 401 });
+            if (!user) return res.status(401).json({ message: 'Incorrect email or password' });
 
             const { mfaRequired, email: label, mfaSecret } = await User.scope('mfa').findByPk(user.get('id'), { rejectOnEmpty: true });
             if (mfaRequired) {
@@ -149,7 +153,7 @@ app.post('/auth/login', [
                 if (err) throw err;
 
                 res.json({
-                    accessToken: generateJWT(user, { expiresIn: "24h" })
+                    accessToken: generateJWT(user, { expiresIn: '24h' })
                 });
 
                 User.update({
@@ -248,7 +252,7 @@ app.post('/auth/sign-up', [
         const userID = uuidv4();
         const groupID = uuidv4();
         if (!data.lastName) data.lastName = '';
-        if (!data.groupName) data.groupName = data.firstName.concat("'s Team");
+        if (!data.groupName) data.groupName = data.firstName.concat(`'s Team`);
 
         await Group.create({
             id: groupID,
@@ -265,7 +269,7 @@ app.post('/auth/sign-up', [
             mfaEnabled: false,
             firstName: ucFirst(data.firstName),
             lastName: ucFirst(data.lastName),
-            lastLoginAt: day().format("YYYY-MM-DD HH:mm:ss"),
+            lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
             tos: data.tos,
             emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
         });
@@ -287,7 +291,9 @@ app.post('/auth/sign-up', [
                 if (err) throw err;
 
                 res.json({
-                    accessToken: generateJWT(user, { expiresIn: "24h" })
+                    accessToken: generateJWT(user, {
+                        expiresIn: '24h'
+                    })
                 });
             });
         })(req, res);
@@ -543,7 +549,11 @@ app.post('/auth/reset', [
             req.login(user, { session: false }, (err) => {
                 if (err) throw err;
 
-                return res.json({ accessToken: generateJWT(user, { expiresIn: "24h" }) });
+                return res.json({
+                    accessToken: generateJWT(user, {
+                        expiresIn: '24h'
+                    })
+                });
             });
         })(req, res);
     } catch (error) {
@@ -691,7 +701,11 @@ app.post('/auth/invite', [
             req.login(user, { session: false }, (err) => {
                 if (err) throw err;
 
-                return res.json({ accessToken: generateJWT(user, { expiresIn: "24h" }) });
+                return res.json({
+                    accessToken: generateJWT(user, {
+                        expiresIn: '24h'
+                    })
+                });
             });
         })(req, res);
     } catch (error) {
