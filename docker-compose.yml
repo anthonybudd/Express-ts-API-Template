@@ -3,6 +3,9 @@ services:
     build: .
     entrypoint: "nodemon --watch \"src/**\" --ext \"ts,json\" --exec \"ts-node src/index.ts\""
     container_name: express-api
+    depends_on:
+      express-api-db:
+        condition: service_healthy
     volumes:
       - ./:/app
       - ./.vol/tmp:/tmp
@@ -14,6 +17,11 @@ services:
   express-api-db:
     image: mysql:oracle
     container_name: express-api-db
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "3306:3306"
     volumes:
