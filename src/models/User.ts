@@ -33,7 +33,6 @@ interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttri
     email: string,
     password: string,
 
-    mfaRequired: CreationOptional<boolean>,
     mfaEnabled: CreationOptional<boolean>,
     mfaSecret: CreationOptional<string> | null,
 
@@ -68,12 +67,6 @@ const User = sequelize.define<UserModel>('user', {
         allowNull: false,
     },
 
-    mfaRequired: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            return this.mfaEnabled && this.mfaSecret === null;
-        },
-    },
     mfaEnabled: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
@@ -133,7 +126,6 @@ const User = sequelize.define<UserModel>('user', {
                 include: [
                     'id',
                     'email',
-                    'mfaRequired',
                     'mfaEnabled',
                     'mfaSecret'
                 ],

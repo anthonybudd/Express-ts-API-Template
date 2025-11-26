@@ -218,7 +218,6 @@ app.post('/user/enable-mfa', [
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-        const data = matchedData(req);
 
         const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
 

@@ -110,14 +110,14 @@ app.post('/auth/login', [
     middleware.hCaptcha,
     async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
-            const { mfaRequired } = await User.scope('mfa').findOne({
+            const { mfaEnabled } = await User.scope('mfa').findOne({
                 where: {
                     email: req.body.email
                 },
                 rejectOnEmpty: true
             });
 
-            if (mfaRequired && !req.body.token) {
+            if (mfaEnabled && !req.body.token) {
                 return res.status(403).json({ message: 'MFA is enabled for this account', code: 403 });
             } else {
                 return next();
@@ -143,8 +143,8 @@ app.post('/auth/login', [
             if (err) throw err;
             if (!user) return res.status(401).json({ message: 'Incorrect email or password' });
 
-            const { mfaRequired, email: label, mfaSecret } = await User.scope('mfa').findByPk(user.get('id'), { rejectOnEmpty: true });
-            if (mfaRequired) {
+            const { mfaEnabled, email: label, mfaSecret } = await User.scope('mfa').findByPk(user.get('id'), { rejectOnEmpty: true });
+            if (mfaEnabled) {
                 const totp = new OTPAuth.TOTP({
                     issuer: 'express-api',
                     label,
