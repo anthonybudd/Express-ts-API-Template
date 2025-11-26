@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 import Group from './../../models/Group';
 
 export default async (req: Request, res: Response, next: NextFunction) => {

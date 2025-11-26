@@ -6,7 +6,7 @@ interface GroupUserModel extends Model<InferAttributes<GroupUserModel>, InferCre
     id: CreationOptional<string>,
     userID: string,
     groupID: string,
-    role: 'User' | 'Admin',
+    role: 'User' | 'Admin', // Add custom roles here e.g. 'Editor', 'Viewer', etc.
 }
 
 const GroupUser = sequelize.define<GroupUserModel>('GroupUser', {

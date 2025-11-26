@@ -1,3 +1,4 @@
+import { LoginAttempt, LoginAttemptModel } from './../models/LoginAttempt';
 import { body, validationResult, matchedData } from 'express-validator';
 import generateJWT from './../providers/GenerateJWT';
 import { User, UserModel } from './../models/User';
@@ -129,7 +130,14 @@ app.post('/auth/login', [
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-        const { token } = matchedData(req);
+        const { token, email } = matchedData(req);
+
+        const loginAttempt: LoginAttemptModel = await LoginAttempt.create({
+            email,
+            successful: false,
+            ip: req.headers['x-forwarded-for']?.toString().split(',')[0].trim() || req.socket.remoteAddress,
+            headers: JSON.stringify(req.headers),
+        });
 
         passport.authenticate('local', { session: false }, async (err: Error | null, user: UserModel | null) => {
             if (err) throw err;
@@ -162,6 +170,10 @@ app.post('/auth/login', [
                     where: {
                         id: user.get('id')
                     },
+                });
+
+                loginAttempt.update({
+                    successful: true,
                 });
             });
         })(req, res, next);
@@ -277,10 +289,11 @@ app.post('/auth/sign-up', [
 
         //////////////////////////////////////////
         // EMAIL THIS TO THE USER
-        const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`;
-        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nEMAIL VERIFICATION LINK: ${link}\n\n`);
+        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS CODE TO THE USER\nCODE: ${user.emailVerificationKey}\n\n`);
 
-        // const html = Email.generate('Verify', { link, code: user.emailVerificationKey });
+        // const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`; // HINT: You could also send a clickable link.
+
+        // const html = Email.generate('Verify', { firstName: user.firstName, code: user.emailVerificationKey });
         //////////////////////////////////////////
 
 
@@ -294,6 +307,13 @@ app.post('/auth/sign-up', [
                     accessToken: generateJWT(user, {
                         expiresIn: '24h'
                     })
+                });
+
+                LoginAttempt.create({
+                    email: user.email,
+                    successful: true,
+                    ip: req.headers['x-forwarded-for']?.toString().split(',')[0].trim() || req.socket.remoteAddress,
+                    headers: JSON.stringify(req.headers),
                 });
             });
         })(req, res);
@@ -414,8 +434,7 @@ app.post('/auth/forgot', [
         // EMAIL THIS TO THE USER
         const link = `${process.env.FRONTEND_URL}/reset/${passwordResetKey}`;
         if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nPASSWORD RESET LINK: ${link}\n\n`);
-
-        // const html = Email.generate('Reset', { link })
+        // const html = Email.generate('Reset', { firstName: user.firstName, link })
         //////////////////////////////////////////
 
         return res.json({ success: true });

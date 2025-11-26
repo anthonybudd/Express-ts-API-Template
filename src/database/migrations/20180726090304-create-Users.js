@@ -64,6 +64,10 @@ module.exports = {
             type: DataTypes.DATE,
             allowNull: true,
         },
-    }),
+    }).then(() => queryInterface.addIndex('Users', ['id'], {
+        name: 'id_index'
+    })).then(() => queryInterface.addIndex('Users', ['email'], {
+        name: 'email_index'
+    })),
     down: (queryInterface) => queryInterface.dropTable('Users'),
 };

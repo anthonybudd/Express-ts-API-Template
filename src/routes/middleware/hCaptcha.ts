@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 import hCaptcha from './../../providers/hCaptcha';
 
 export default async (req: Request, res: Response, next: NextFunction) => {

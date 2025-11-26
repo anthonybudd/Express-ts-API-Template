@@ -132,9 +132,9 @@ app.post('/user/resend-verification-email', [
 
         //////////////////////////////////////////
         // EMAIL THIS LINK TO THE USER
-        const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`;
-        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nEMAIL VERIFICATION LINK: ${link}\n\n`);
-        // const html = Email.generate('Verify', { link, code: user.emailVerificationKey });
+        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS CODE TO THE USER\nCODE: ${user.emailVerificationKey}\n\n`);
+        // const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`; // HINT: You could also send a clickable link.
+        // const html = Email.generate('Verify', { firstName: user.firstName, code: user.emailVerificationKey });
         //////////////////////////////////////////
 
         return res.json({ email: user.email });
@@ -221,6 +221,8 @@ app.post('/user/enable-mfa', [
         const data = matchedData(req);
 
         const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
+
+        if (user.mfaEnabled) return res.status(400).json({ message: 'MFA is already enabled for this account', code: 400 });
 
         const secret = new OTPAuth.Secret({ size: 20 });
 

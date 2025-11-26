@@ -9,6 +9,7 @@ export default (err: Error, req: Request, res: Response, next: NextFunction) => 
         });
     }
 
+    // ADD YOUR OWN CODE FOR HANDLING ERRORS HERE
     console.error(err);
 
     if (process.env.NODE_ENV === "development") {

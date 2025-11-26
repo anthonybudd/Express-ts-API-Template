@@ -23,7 +23,11 @@ module.exports = {
             type: DataTypes.DATE,
             allowNull: true,
         },
-    }).then(() => queryInterface.addConstraint('GroupsUsers', {
+    }).then(() => queryInterface.addIndex('GroupsUsers', ['userID'], {
+        name: 'userID_index'
+    })).then(() => queryInterface.addIndex('GroupsUsers', ['groupID'], {
+        name: 'groupID_index'
+    })).then(() => queryInterface.addConstraint('GroupsUsers', {
         fields: ['groupID', 'userID'],
         type: 'unique',
         name: 'groupID_userID_index'

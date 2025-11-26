@@ -1,11 +1,17 @@
 # Deployment
 
 
+export KUBECONFIG=/Users/anthonybudd/Development/htv-dev-test/kubeconfig.yaml
+
+
+
 ### Namespace
 Create a namespace
 
 ```sh
 kubectl --kubeconfig=./kubeconfig.yml create namespace express-api`
+
+kubectl config set-context --current --namespace=express-api
 ```
 
 

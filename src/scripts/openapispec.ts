@@ -5,7 +5,7 @@
  *
  */
 import 'dotenv/config';
-import { convert } from "@catalystic/json-to-yaml";
+import { convert } from '@catalystic/json-to-yaml';
 import swaggerJsdoc from 'swagger-jsdoc';
 import fs from 'fs';
 

@@ -1,9 +1,10 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
 import Group from './../../models/Group';
 import GroupUser from './../../models/GroupUser';
 
 export default (role: string) => async (req: Request, res: Response, next: NextFunction) => {
     const groupID = (req.params.groupID || req.body.groupID);
+    if (!groupID) throw new Error('No groupID provided');
     const hasRole = await GroupUser.findOne({
         where: {
             userID: req.user.id,

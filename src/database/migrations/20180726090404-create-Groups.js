@@ -23,6 +23,8 @@ module.exports = {
             type: DataTypes.DATE,
             allowNull: true,
         },
-    }),
+    }).then(() => queryInterface.addIndex('Groups', ['id'], {
+        name: 'id_index'
+    })),
     down: (queryInterface) => queryInterface.dropTable('Groups')
 };

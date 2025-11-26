@@ -1,15 +1,16 @@
-<div class="nano_h1">Hi {{firstName}},</div>
+<div class="nano_h1">{{title}}</div>
 
 <div class="nano_p">
-    There was recently a request to change the password on your account. If you requested this password change, please click the button below to set a new password within 24 hours:
+    {{{ body }}}
 </div>
 
+{{#link}}
 <div class="nano_flex">
     <a
         href="{{ link }}"
         class="nano_button"
         target="_blank"
-    >Reset Password</a>
+    >{{ linkText }}</a>
 </div>
 
 <div class="nano_divider"></div>
@@ -18,3 +19,4 @@
     If the button above does not work, paste this into your browser:
     <a href="{{ link }}">{{ link }}</a>
 </div>
+{{/link}}

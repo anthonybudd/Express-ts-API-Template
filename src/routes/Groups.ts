@@ -1,4 +1,4 @@
-import { body, validationResult, matchedData } from 'express-validator';
+import { body, validationResult, matchedData, param } from 'express-validator';
 import { GroupUser } from './../models/GroupUser';
 import passport from './../providers/Passport';
 import Email from './../providers/Email';
@@ -181,15 +181,16 @@ app.post('/groups/:groupID', [
 app.post('/groups/:groupID/users/invite', [
     passport.authenticate('jwt', { session: false }),
     middleware.hasRole('Admin'),
+    param('groupID').isUUID(),
     body('email').isEmail().toLowerCase(),
     body('role').default('User').isIn(['User', 'Admin']),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-        const { email, role } = matchedData(req);
+        const { email, role, groupID } = matchedData(req);
 
-        const groupID = req.params.groupID;
+        const group = await Group.findByPk(groupID, { rejectOnEmpty: true });
 
         let user = await User.findOne({
             where: { email },
@@ -226,8 +227,12 @@ app.post('/groups/:groupID/users/invite', [
             // EMAIL THIS TO THE USER
             const link = `${process.env.FRONTEND_URL}/invite/${user.inviteKey}`;
             if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nINVITE LINK: ${link}\n\n`);
-
-            // const html = Email.generate('Invite', { link, groupName: group.name });
+            // const html = Email.generate('Default', { 
+            //     title: `You've been invited to join ${group.name}`,
+            //     body: `You have been invited to join ${group.name} by ${req.user.firstName} ${req.user.lastName}. Click the button below to accept the invitation.`,
+            //     link,
+            //     linkText: 'Accept Invitation'
+            // });
             //////////////////////////////////////////
         }
 
@@ -295,7 +300,7 @@ app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
     middleware.hasRole('Admin'),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const user = await User.findByPk(req.user.id, {
+        const user = await User.unscoped().findByPk(req.params.userID, {
             rejectOnEmpty: true
         });
 
