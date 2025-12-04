@@ -59,10 +59,12 @@ export const app = express.Router();
  */
 app.get('/groups/:groupID', [
     passport.authenticate('jwt', { session: false }),
+    param('groupID').exists().isUUID(),
     middleware.isInGroup,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        return res.json(await Group.findByPk(req.params.groupID, {
+        const { groupID } = matchedData(req);
+        return res.json(await Group.findByPk(groupID, {
             include: (req.query.with === 'users') ? [User] : [],
             rejectOnEmpty: true
         }));
@@ -111,20 +113,17 @@ app.get('/groups/:groupID', [
  */
 app.post('/groups/:groupID', [
     passport.authenticate('jwt', { session: false }),
+    param('groupID').isUUID(),
+    body('name').exists().isString(),
     middleware.hasRole('Admin'),
-    body('name')
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-        const data = matchedData(req);
+        const { groupID, name } = matchedData(req);
 
-        const group = await Group.findByPk(req.params.groupID, {
-            rejectOnEmpty: true
-        });
-
-        await group.update(data);
-
+        const group = await Group.findByPk(groupID, { rejectOnEmpty: true });
+        await group.update({ name });
         return res.json(group);
     } catch (error) {
         return next(error);
@@ -180,10 +179,10 @@ app.post('/groups/:groupID', [
  */
 app.post('/groups/:groupID/users/invite', [
     passport.authenticate('jwt', { session: false }),
-    middleware.hasRole('Admin'),
     param('groupID').isUUID(),
     body('email').isEmail().toLowerCase(),
     body('role').default('User').isIn(['User', 'Admin']),
+    middleware.hasRole('Admin'),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const errors = validationResult(req);
@@ -297,12 +296,16 @@ app.post('/groups/:groupID/users/invite', [
  */
 app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
     passport.authenticate('jwt', { session: false }),
+    param('groupID').isUUID(),
+    param('userID').isUUID(),
     middleware.hasRole('Admin'),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const user = await User.unscoped().findByPk(req.params.userID, {
-            rejectOnEmpty: true
-        });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { userID } = matchedData(req);
+
+        const user = await User.unscoped().findByPk(userID, { rejectOnEmpty: true });
 
         if (!user.inviteKey) return res.status(400).json({
             msg: 'This user has already accepted their invitation',
@@ -378,25 +381,20 @@ app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
  */
 app.post('/groups/:groupID/users/:userID/set-role', [
     passport.authenticate('jwt', { session: false }),
-    middleware.hasRole('Admin'),
+    param('groupID').isUUID(),
+    param('userID').isUUID(),
     body('role').default('User').isIn(['User', 'Admin']),
+    middleware.hasRole('Admin'),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-        const { role } = matchedData(req);
+        const { role, groupID, userID } = matchedData(req);
 
-        const groupID = req.params.groupID;
-        const userID = req.params.userID;
+        // Check if user exists
+        const user = await User.findByPk(userID, { rejectOnEmpty: true });
 
-        // AB: Required to check if user exists
-        await User.findByPk(userID, {
-            rejectOnEmpty: true
-        });
-
-        const group = await Group.findByPk(groupID, {
-            rejectOnEmpty: true
-        });
+        const group = await Group.findByPk(groupID, { rejectOnEmpty: true });
 
         if (group.ownerID === userID) return res.status(400).json({
             msg: 'You cannot remove the owner of the group',
@@ -458,16 +456,19 @@ app.post('/groups/:groupID/users/:userID/set-role', [
  */
 app.delete('/groups/:groupID/users/:userID', [
     passport.authenticate('jwt', { session: false }),
-    middleware.hasRole('Admin'),
+
+    param('groupID').isUUID(),
+    param('userID').isUUID(),
+
     middleware.isNotSelf,
+    middleware.hasRole('Admin'),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const groupID = req.params.groupID;
-        const userID = req.params.userID;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { groupID, userID } = matchedData(req);
 
-        const group = await Group.findByPk(groupID, {
-            rejectOnEmpty: true
-        });
+        const group = await Group.findByPk(groupID, { rejectOnEmpty: true });
 
         if (group.ownerID === userID) return res.status(400).json({
             msg: 'You cannot remove the owner of the group',

@@ -1,10 +1,13 @@
+import { validationResult, matchedData } from 'express-validator';
 import { NextFunction, Request, Response } from 'express';
-import Group from './../../models/Group';
 import GroupUser from './../../models/GroupUser';
+import Group from './../../models/Group';
 
 export default (role: string) => async (req: Request, res: Response, next: NextFunction) => {
-    const groupID = (req.params.groupID || req.body.groupID);
-    if (!groupID) throw new Error('No groupID provided');
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+    const { groupID } = matchedData(req);
+
     const hasRole = await GroupUser.findOne({
         where: {
             userID: req.user.id,

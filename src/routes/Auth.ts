@@ -1,5 +1,5 @@
+import { body, validationResult, matchedData, param } from 'express-validator';
 import { LoginAttempt, LoginAttemptModel } from './../models/LoginAttempt';
-import { body, validationResult, matchedData } from 'express-validator';
 import generateJWT from './../providers/GenerateJWT';
 import { User, UserModel } from './../models/User';
 import { GroupUser } from './../models/GroupUser';
@@ -107,21 +107,15 @@ app.post('/auth/login', [
     body('email').exists().toLowerCase(),
     body('password').exists(),
     body('token').optional().isLength({ min: 6, max: 6 }),
+
     middleware.hCaptcha,
+
     async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
-            const { mfaEnabled } = await User.scope('mfa').findOne({
-                where: {
-                    email: req.body.email
-                },
-                rejectOnEmpty: true
-            });
-
-            if (mfaEnabled && !req.body.token) {
-                return res.status(403).json({ message: 'MFA is enabled for this account', code: 403 });
-            } else {
-                return next();
-            }
+            const { email, token } = matchedData(req);
+            const { mfaEnabled } = await User.scope('mfa').findOne({ where: { email }, rejectOnEmpty: true });
+            if (mfaEnabled && !token) return res.status(403).json({ message: 'MFA is enabled for this account', code: 403 });
+            return next();
         } catch (error) {
             return res.status(401).json({ message: 'Incorrect email or password' });
         }
@@ -354,11 +348,17 @@ app.post('/auth/sign-up', [
  *                 id:
  *                   type: string
  */
-app.get('/auth/verify-email/:emailVerificationKey', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.get('/auth/verify-email/:emailVerificationKey', [
+    param('emailVerificationKey').exists(),
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { emailVerificationKey } = matchedData(req);
+
         const user = await User.findOne({
             where: {
-                emailVerificationKey: req.params.emailVerificationKey
+                emailVerificationKey,
             },
             rejectOnEmpty: true,
         });
@@ -470,11 +470,17 @@ app.post('/auth/forgot', [
  *                   type: string
  *                   format: email
  */
-app.get('/auth/get-user-by-reset-key/:passwordResetKey', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.get('/auth/get-user-by-reset-key/:passwordResetKey', [
+    param('passwordResetKey').exists()
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { passwordResetKey } = matchedData(req);
+
         const user = await User.findOne({
             where: {
-                passwordResetKey: req.params.passwordResetKey
+                passwordResetKey,
             },
             attributes: ['id', 'email'],
             rejectOnEmpty: true,
@@ -609,11 +615,17 @@ app.post('/auth/reset', [
  *                   format: email
  *                   description: User's email address
  */
-app.get('/auth/get-user-by-invite-key/:inviteKey', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.get('/auth/get-user-by-invite-key/:inviteKey', [
+    param('inviteKey').exists(),
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { inviteKey } = matchedData(req);
+
         const user = await User.findOne({
             where: {
-                inviteKey: req.params.inviteKey
+                inviteKey
             },
             attributes: ['id', 'email'],
             rejectOnEmpty: true

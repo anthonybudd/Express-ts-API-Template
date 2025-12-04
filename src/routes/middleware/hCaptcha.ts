@@ -3,6 +3,8 @@ import hCaptcha from './../../providers/hCaptcha';
 
 export default async (req: Request, res: Response, next: NextFunction) => {
 
+    const htoken = req.body.htoken;
+
     // Skip hCaptcha validation if running tests
     if (typeof global.it === 'function') {
         return next();
@@ -13,7 +15,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
         return next();
     }
 
-    if (!req.body.htoken) return res.status(422).json({
+    if (!htoken) return res.status(422).json({
         errors: {
             htoken: {
                 location: 'body',
@@ -23,7 +25,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
         }
     });
 
-    const { data } = await hCaptcha.verify(req.body.htoken);
+    const { data } = await hCaptcha.verify(htoken);
 
     if (data.success) return next();
 

@@ -3,7 +3,10 @@ import User from './../../models/User';
 import bcrypt from 'bcryptjs';
 
 export default async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.body.password) return res.status(422).json({
+
+    const password = req.body.password;
+
+    if (!password) return res.status(422).json({
         errors: {
             components: {
                 location: 'body',
@@ -22,7 +25,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
         code: 92294,
     });
 
-    bcrypt.compare(req.body.password, user.password, (err, compare) => {
+    bcrypt.compare(password, user.password, (err, compare) => {
         if (err) return res.status(401).json({
             msg: 'Incorrect password',
             code: 96294,
@@ -37,5 +40,4 @@ export default async (req: Request, res: Response, next: NextFunction) => {
             });
         }
     });
-
 };

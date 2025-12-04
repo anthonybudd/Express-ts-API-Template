@@ -26,7 +26,6 @@ if (!isTest) console.log(`* NODE_ENV: ${process.env.NODE_ENV}`);
 if (!isTest) console.log((process.env.H_CAPTCHA_SECRET) ? `* H_CAPTCHA_SECRET: Enabled` : `* ⚠️ H_CAPTCHA_SECRET not set. Login/Sign-up requests will not require captcha validadation!`);
 if (!isTest) console.log('*');
 
-
 ////////////////////////////////////////////////
 // Express
 const app = express();
@@ -68,9 +67,9 @@ if (!isTest) app.use(rateLimit({
 
 ////////////////////////////////////////////////
 // HTTP
-app.use('/api/v1/', Auth);
-app.use('/api/v1/', User);
-app.use('/api/v1/', Groups);
+app.use('/api/v1', Auth);
+app.use('/api/v1', User);
+app.use('/api/v1', Groups);
 app.use(ErrorHandler);
 
 export default app;

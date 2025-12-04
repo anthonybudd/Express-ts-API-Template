@@ -8,7 +8,7 @@ A very mimimal REST API template using Express.ts, Sequelize and MySQL. This pro
 - 🔐 Auth using JWT's with Passport.js. Optional 2FA.
 - 👥 Simple DB: `Users` -∈ `GroupsUsers` ∋- `Groups`
 - 🌐 Production-ready [OpenApiSpec.yml](./OpenApiSpec.yml) & [Kubernetes files](./k8s)
-- 🥇 Real-world tested, generated over $50M in revenue
+- 🥇 Real-world tested, handled over $50M of live transactions
 
 
 ```sh
@@ -51,6 +51,8 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 |...           |                                                      
 +--------------+                      
 ```
+
+
 ### OpenAPISpec
 Above each route you will see a large comment block, these comments are optional and can be removed if you do not need/want them. 
 
@@ -86,6 +88,7 @@ docker run --rm \
   -w /app \
   openapitools/openapi-generator-cli batch sdk/config/*.yaml
 ```
+
 
 ### Deployment
 Full Kubernetes deployment instructions can be found in [k8s/Deployment.md](./k8s/Deployment.md).
