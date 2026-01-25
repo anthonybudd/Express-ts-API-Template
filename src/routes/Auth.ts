@@ -62,6 +62,56 @@ app.get('/_authcheck', [
 
 /**
  * @swagger
+ * /auth/login/mfa:
+ *   post:
+ *     description: Check if MFA is enabled for a user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *     responses:
+ *       200:
+ *         description: Successfully checked MFA status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mfa:
+ *                   type: boolean
+ */
+app.post('/auth/login/mfa', [
+    body('email').optional().default('').toLowerCase(),
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.json({ mfa: false });
+        const { email } = matchedData(req);
+
+        const user = await User.unscoped().findOne({
+            where: {
+                email
+            },
+        });
+
+        if (!user) return res.json({ mfa: false });
+
+        res.json({ mfa: !!user.mfaEnabled });
+    } catch (error) {
+        return res.json({ mfa: false });
+    }
+});
+
+/**
+ * @swagger
  * /auth/login:
  *   post:
  *     description: Get an access token

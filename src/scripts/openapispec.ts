@@ -1,7 +1,7 @@
 /**
- * ts-node ./src/scripts/jsdoc.ts
- * docker exec -ti express-api ts-node ./src/scripts/jsdoc.ts
- * npm run exec:jsdoc
+ * ts-node ./src/scripts/openapispec.ts
+ * docker exec -ti express-api ts-node ./src/scripts/openapispec.ts
+ * npm run exec:openapispec
  *
  */
 import 'dotenv/config';
