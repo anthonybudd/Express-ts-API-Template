@@ -164,10 +164,10 @@ app.post('/auth/login', [
         try {
             const { email, token } = matchedData(req);
             const { mfaEnabled } = await User.scope('mfa').findOne({ where: { email }, rejectOnEmpty: true });
-            if (mfaEnabled && !token) return res.status(403).json({ message: 'MFA is enabled for this account', code: 403 });
+            if (mfaEnabled && !token) return res.status(403).json({ msg: 'MFA is enabled for this account', code: 403 });
             return next();
         } catch (error) {
-            return res.status(401).json({ message: 'Incorrect email or password' });
+            return res.status(401).json({ msg: 'Incorrect email or password' });
         }
     },
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -185,7 +185,7 @@ app.post('/auth/login', [
 
         passport.authenticate('local', { session: false }, async (err: Error | null, user: UserModel | null) => {
             if (err) throw err;
-            if (!user) return res.status(401).json({ message: 'Incorrect email or password' });
+            if (!user) return res.status(401).json({ msg: 'Incorrect email or password' });
 
             const { mfaEnabled, email: label, mfaSecret } = await User.scope('mfa').findByPk(user.get('id'), { rejectOnEmpty: true });
             if (mfaEnabled) {
@@ -198,7 +198,7 @@ app.post('/auth/login', [
                     secret: mfaSecret as string,
                 });
                 const delta = totp.validate({ token: token, window: 1 });
-                if (delta === null) return res.status(401).json({ message: 'Invalid MFA code', code: 401 });
+                if (delta === null) return res.status(401).json({ msg: 'Invalid MFA code', code: 401 });
             }
 
             req.login(user, { session: false }, (err: Error) => {

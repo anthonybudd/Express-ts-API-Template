@@ -223,7 +223,7 @@ app.post('/user/enable-mfa', [
 
         const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
 
-        if (user.mfaEnabled) return res.status(400).json({ message: 'MFA is already enabled for this account', code: 400 });
+        if (user.mfaEnabled) return res.status(400).json({ msg: 'MFA is already enabled for this account', code: 400 });
 
         const secret = new OTPAuth.Secret({ size: 20 });
 
@@ -302,7 +302,7 @@ app.post('/user/confirm-mfa', [
             rejectOnEmpty: true,
         });
 
-        if (mfaSecret === null) return res.status(401).json({ message: 'MFA is not enabled for this account', code: 401 });
+        if (mfaSecret === null) return res.status(401).json({ msg: 'MFA is not enabled for this account', code: 401 });
 
         const totp = new OTPAuth.TOTP({
             issuer: 'express-api',
@@ -314,7 +314,7 @@ app.post('/user/confirm-mfa', [
         });
 
         const delta = totp.validate({ token: token, window: 1 });
-        if (delta === null) return res.status(401).json({ message: 'Incorrect MFA code', code: 401 });
+        if (delta === null) return res.status(401).json({ msg: 'Incorrect MFA code', code: 401 });
 
         await User.unscoped().update({
             mfaEnabled: true,
