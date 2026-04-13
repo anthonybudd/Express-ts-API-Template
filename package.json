@@ -1,8 +1,8 @@
 {
   "name": "express-api-template",
-  "version": "1.0.0",
+  "version": "1.2.1",
   "author": "Anthony Budd",
-  "description": "Production-ready minimal REST API template using Express.js, Sequelize and MySQL.",
+  "description": "Production-ready minimal REST API template using Express, Sequelize and MySQL.",
   "main": "src/index.ts",
   "license": "MIT",
   "keywords": [],
@@ -55,8 +55,7 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "sequelize": "^6.37.3",
-    "sequelize-typescript": "^2.1.6",
-    "swagger-jsdoc": "^6.2.8"
+    "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
@@ -83,6 +82,7 @@
     "mocha": "^11.1.0",
     "nodemon": "^3.1.0",
     "supertest": "^6.3.4",
+    "swagger-jsdoc": "^6.2.8",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.4"
   }

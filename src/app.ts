@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { version } from '../package.json';
 import ErrorHandler from './providers/ErrorHandler';
 import { rateLimit } from 'express-rate-limit';
 import fileUpload from 'express-fileupload';
@@ -19,7 +20,7 @@ import { app as Groups } from './routes/Groups';
 
 const isTest = (process.env.NODE_ENV === 'test');
 if (!isTest) console.log('*************************************');
-if (!isTest) console.log('* express-api');
+if (!isTest) console.log(`* express-api v${version}`);
 if (!isTest) console.log('*');
 if (!isTest) console.log('* ENV');
 if (!isTest) console.log(`* NODE_ENV: ${process.env.NODE_ENV}`);
@@ -51,12 +52,12 @@ app.use(fileUpload({
 app.get('/_readiness', (req, res) => res.send('healthy'));
 app.get('/api/v1/_healthcheck', (req, res) => res.json({ message: 'healthy' }));
 if (!isTest) app.use(rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
     limit: 1000,
+    windowMs: 15 * 60 * 1000,   // 15 minutes
     standardHeaders: 'draft-8', // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-    ipv6Subnet: 56, // Set to 60 or 64 to be less aggressive, or 52 or 48 to be more aggressive
-    // store: ... , // Redis, Memcached, etc. See below.
+    legacyHeaders: false,       // Disable the `X-RateLimit-*` headers.
+    ipv6Subnet: 56,             // Set to 60 or 64 to be less aggressive, or 52 or 48 to be more aggressive
+    // store: ... ,             // Redis, Memcached, etc. See below.
 }));
 
 

@@ -54,7 +54,7 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 
 
 ### OpenAPISpec
-Above each route you will see a large comment block, these comments are optional and can be removed if you do not need/want them. 
+Above each route you will see a large comment block, these comments are optional and can be removed if you do not want them. 
 
 I have found when building large commercial API's that it is far more practical to document the routes next to the code rather than manually updating the OpenAPISpec each time a route is created or modified.
 
