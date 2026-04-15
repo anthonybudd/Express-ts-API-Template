@@ -10,6 +10,9 @@
     "type": "git",
     "url": "https://github.com/anthonybudd/Express-ts-API-Template.git"
   },
+  "overrides": {
+    "serialize-javascript": "^7.0.5"
+  },
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc",
@@ -79,7 +82,7 @@
     "eslint-config-airbnb-typescript": "^18.0.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
-    "mocha": "^11.1.0",
+    "mocha": "^11.3.0",
     "nodemon": "^3.1.0",
     "supertest": "^6.3.4",
     "swagger-jsdoc": "^6.2.8",
