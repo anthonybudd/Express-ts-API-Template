@@ -4,12 +4,20 @@
 
 A very mimimal REST API template using Express.ts, Sequelize and MySQL. This project is designed to work out of the box with [AnthonyBudd/Shadcn-Vue-SaaS-Template](https://github.com/anthonybudd/Shadcn-Vue-SaaS-Template)
 
-
 - 🔐 Auth using JWT's with Passport.js. Optional 2FA.
 - 👥 Simple DB: `Users` -∈ `GroupsUsers` ∋- `Groups`
 - 🌐 Production-ready [OpenApiSpec.yml](./OpenApiSpec.yml) & [Kubernetes files](./k8s)
 - 🥇 Real-world tested, handled over $50M of live transactions
 
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=nA5UFuqjQgk">
+  <img width="350" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-temaplate-thumbnail.png" alt="YouTube Video">
+  </a>
+  </br>
+  <a href="https://youtu.be/nA5UFuqjQgk">
+  youtu.be/nA5UFuqjQgk
+  </a>
+</p>
 
 ```sh
 git clone git@github.com:anthonybudd/express-ts-api-template.git
@@ -39,15 +47,15 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 
 ```                                                                
 +--------------+           +---------------+         +--------------+  
-|Users         | --------∈ |GroupsUsers    | ∋------ |Groups        |  
+| Users        | --------⚟ | GroupsUsers   | ⚞------ | Groups       |  
 |--------------|           |---------------|         |--------------|  
-|id            |           |id             |         |id            |  
-|email         |           |groupID        |         |name          |  
-|password      |           |userID         |         |ownerID       |  
-|firstName     |           |role           |         |createdAt     |  
-|lastName      |           |createdAt      |         |updatedAt     |
-|createdAt     |           |updatedAt      |         +--------------+  
-|updatedAt     |           +---------------+                                            
+| id           |           | id            |         | id           |  
+| email        |           | groupID       |         | name         |  
+| password     |           | userID        |         | ownerID      |  
+| firstName    |           | role          |         | createdAt    |  
+| lastName     |           | createdAt     |         | updatedAt    |
+| createdAt    |           | updatedAt     |         +--------------+  
+| updatedAt    |           +---------------+                                            
 |...           |                                                      
 +--------------+                      
 ```
