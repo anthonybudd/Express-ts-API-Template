@@ -24,6 +24,7 @@
     "generate": "docker exec -ti express-api ts-node ./src/scripts/generate.ts",
     "openapispec": "ts-node ./src/scripts/openapispec.ts",
     "exec:openapispec": "docker exec -ti express-api npm run openapispec",
+    "buildClientSDKs": "docker run --rm -v ${PWD}:/app -w /app openapitools/openapi-generator-cli batch sdk/config/*.yaml",
     "db:migrate": "sequelize db:migrate",
     "db:seed": "./src/scripts/seed",
     "db:refresh": "./src/scripts/refresh",

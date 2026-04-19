@@ -5,8 +5,9 @@
 A very mimimal REST API template using Express.ts, Sequelize and MySQL. This project is designed to work out of the box with [AnthonyBudd/Shadcn-Vue-SaaS-Template](https://github.com/anthonybudd/Shadcn-Vue-SaaS-Template)
 
 - 🔐 Auth using JWT's with Passport.js. Optional 2FA.
-- 👥 Simple DB: `Users` -∈ `GroupsUsers` ∋- `Groups`
-- 🌐 Production-ready [OpenApiSpec.yml](./OpenApiSpec.yml) & [Kubernetes files](./k8s)
+- ✅ Full Test Coverage with Mocha.js
+- 👥 Simple DB Structure: `Users` -⚟ `GroupsUsers` ⚞- `Groups`
+- 🌐 Prod-ready [OpenApiSpec.yml](./OpenApiSpec.yml) & [Kubernetes deployment files](./k8s)
 - 🥇 Real-world tested, handled over $50M of live transactions
 
 <p align="center">
@@ -15,7 +16,7 @@ A very mimimal REST API template using Express.ts, Sequelize and MySQL. This pro
   </a>
   </br>
   <a href="https://youtu.be/nA5UFuqjQgk">
-  youtu.be/nA5UFuqjQgk
+  Getting Started: youtu.be/nA5UFuqjQgk
   </a>
 </p>
 
@@ -56,16 +57,18 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 | lastName     |           | createdAt     |         | updatedAt    |
 | createdAt    |           | updatedAt     |         +--------------+  
 | updatedAt    |           +---------------+                                            
-|...           |                                                      
+| ...          |                                                      
 +--------------+                      
 ```
 
 
 ### OpenAPISpec
-Above each route you will see a large comment block, these comments are optional and can be removed if you do not want them. 
+Above each route you will see a large comment block with the decorator `@swagger`, these comments are optional and can be removed if you do not want them. To generate a new OpenAPISpec run the command:
+```sh
+npm run exec:openapispec
+```
 
-I have found when building large commercial API's that it is far more practical to document the routes next to the code rather than manually updating the OpenAPISpec each time a route is created or modified.
-
+Exmaple:
 ```js
 /**
  * @swagger
@@ -81,20 +84,14 @@ I have found when building large commercial API's that it is far more practical 
 app.post('/auth/login', [...
 ```
 
-To auto generate a new OpenAPISpec run the command below
-```sh
-npm run exec:openapispec
-```
+I have found when building large commercial API's that it is far more practical to document the routes next to the code rather than manually updating the OpenAPISpec each time a route is created or modified.
 
 ### Generate SDK Client Libraries
 There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported langauages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
 
 
 ```sh
-docker run --rm \
-  -v ${PWD}:/app \
-  -w /app \
-  openapitools/openapi-generator-cli batch sdk/config/*.yaml
+npm run buildClientSDKs
 ```
 
 
@@ -116,7 +113,6 @@ kubectl apply -f .k8s/api.deployment.yml \
 | Method      | Route                                                           | Description                           | Payload                               | Response          | 
 | ----------- | --------------------------------------------------------------- | ------------------------------------- | ------------------------------------- | ----------------- |  
 | GET         | `/_readiness`                                                   | Kuber readiness check                 | --                                    | "healthy"         |  
-| GET         | `/api/v1/_healthcheck`                                          | Returns {status: 'ok'} if healthy     | --                                    | {status: 'ok'}    |  
 | **Auth**    |                                                                 |                                       |                                       |                   |  
 | POST        | `/api/v1/auth/login`                                            | Login                                 | {email, password}                     | {accessToken}     |  
 | POST        | `/api/v1/auth/sign-up`                                          | Sign-up                               | {email, password, firstName, tos}     | {accessToken}     |  
