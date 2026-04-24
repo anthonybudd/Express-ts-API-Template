@@ -9,7 +9,6 @@ A mimimal REST API template using Express.ts, Sequelize and MySQL.
 - 🔐 Local SSL Termination with NGINX. Optional.
 - 👥 Simple DB Structure: `Users` -⚟ `GroupsUsers` ⚞- `Groups`
 - 🖥️ ShadCN x Vue3 UI: [AnthonyBudd/Shadcn-Vue-SaaS-Template](https://github.com/anthonybudd/Shadcn-Vue-SaaS-Template)
-- 🌐 Prod-ready [OpenApiSpec.yml](./OpenApiSpec.yml) & [Kubernetes deployment files](./k8s)
 - 🥇 Real-world tested, handled over $50M of live transactions
 
 <p align="center">
