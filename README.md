@@ -2,12 +2,13 @@
 
 <img height="75" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-template.png?v=1"/>
 
-A very mimimal REST API template using Express.ts, Sequelize and MySQL. This project is designed to work out of the box with [AnthonyBudd/Shadcn-Vue-SaaS-Template](https://github.com/anthonybudd/Shadcn-Vue-SaaS-Template)
+A mimimal REST API template using Express.ts, Sequelize and MySQL.
 
 - 🔑 Auth using JWT's with Passport.js. Optional 2FA.
 - ✅ Full Test Coverage with Mocha.js
 - 🔐 Local SSL Termination with NGINX. Optional.
 - 👥 Simple DB Structure: `Users` -⚟ `GroupsUsers` ⚞- `Groups`
+- 🖥️ ShadCN x Vue3 UI: [AnthonyBudd/Shadcn-Vue-SaaS-Template](https://github.com/anthonybudd/Shadcn-Vue-SaaS-Template)
 - 🌐 Prod-ready [OpenApiSpec.yml](./OpenApiSpec.yml) & [Kubernetes deployment files](./k8s)
 - 🥇 Real-world tested, handled over $50M of live transactions
 
@@ -31,6 +32,9 @@ LC_ALL=C find . -type f -name '*.*' -exec sed -i '' s/express-api/your-api-name/
 # Private RSA key for JWT signing
 openssl genrsa -out private.pem 2048
 openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+
+# Local SSL Certificate
+mkdir ./.ssl && openssl req -x509 -nodes -days 825 -newkey rsa:2048 -keyout ./.ssl/key.pem -out ./.ssl/cert.pem -subj "/CN=localhost/O=dev/C=US"
 
 # Start app
 cp .env.example .env
