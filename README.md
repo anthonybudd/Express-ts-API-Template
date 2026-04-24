@@ -63,12 +63,13 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 
 
 ### OpenAPISpec
-Above each route you will see a large comment block with the decorator `@swagger`, these comments are optional and can be removed if you do not want them. To generate a new OpenAPISpec run the command:
-```sh
-npm run exec:openapispec
-```
 
-Exmaple:
+Above each route you will see a large comment block with the decorator `@swagger`, these comments are optional and can be removed if you do not want them. To generate a new OpenAPISpec run the command `
+npm run exec:openapispec`
+
+I have found when building large commercial API's that it is far more practical to document the routes next to the code rather than manually updating the OpenAPISpec each time a route is created or modified.
+
+
 ```js
 /**
  * @swagger
@@ -81,17 +82,16 @@ Exmaple:
  *         application/json:
  *         ... 
  */
-app.post('/auth/login', [...
+app.post('/auth/login', [
 ```
 
-I have found when building large commercial API's that it is far more practical to document the routes next to the code rather than manually updating the OpenAPISpec each time a route is created or modified.
 
 ### Generate SDK Client Libraries
 There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported langauages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
 
 
 ```sh
-npm run buildClientSDKs
+npm run build-sdk
 ```
 
 

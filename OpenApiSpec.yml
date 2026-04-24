@@ -1,7 +1,12 @@
 openapi: "3.0.0"
 info:
   title: "express-api"
-  version: "1.0.0"
+  version: "1.2.1"
+servers:
+  - url: "http://localhost:8888/api/v1"
+    description: "Local development server"
+  - url: "https://api.example.com/api/v1"
+    description: "Production server"
 paths:
   /_authcheck:
     get:
@@ -22,9 +27,35 @@ paths:
                     type: "string"
         401:
           description: "Unauthorized"
+  /auth/login/mfa:
+    post:
+      description: "Check if MFA is enabled for a user"
+      tags:
+        - "Auth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                  description: "User's email address"
+      responses:
+        200:
+          description: "Successfully checked MFA status"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  mfa:
+                    type: "boolean"
   /auth/login:
     post:
-      description: "Get access token"
+      description: "Get an access token"
       tags:
         - "Auth"
       requestBody:
