@@ -4,8 +4,9 @@
 
 A very mimimal REST API template using Express.ts, Sequelize and MySQL. This project is designed to work out of the box with [AnthonyBudd/Shadcn-Vue-SaaS-Template](https://github.com/anthonybudd/Shadcn-Vue-SaaS-Template)
 
-- 🔐 Auth using JWT's with Passport.js. Optional 2FA.
+- 🔑 Auth using JWT's with Passport.js. Optional 2FA.
 - ✅ Full Test Coverage with Mocha.js
+- 🔐 Local SSL Termination with NGINX. Optional.
 - 👥 Simple DB Structure: `Users` -⚟ `GroupsUsers` ⚞- `Groups`
 - 🌐 Prod-ready [OpenApiSpec.yml](./OpenApiSpec.yml) & [Kubernetes deployment files](./k8s)
 - 🥇 Real-world tested, handled over $50M of live transactions

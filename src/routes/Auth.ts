@@ -129,14 +129,17 @@ app.post('/auth/login/mfa', [
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: "user@example.com"
  *                 description: User's email address
  *               password:
  *                 type: string
+ *                 example: "Password@1234"
  *                 description: User's password
  *               token:
  *                 type: string
  *                 minLength: 6
  *                 maxLength: 6
+ *                 example: "000000"
  *                 description: Optional MFA code if enabled for account
  *     responses:
  *       200:

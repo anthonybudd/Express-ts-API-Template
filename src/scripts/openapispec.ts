@@ -23,8 +23,12 @@ import fs from 'fs';
                 },
                 servers: [
                     {
-                        url: 'http://localhost:8888/api/v1',
+                        url: 'https://localhost/api/v1',
                         description: 'Local development server',
+                    },
+                    {
+                        url: 'http://localhost:8888/api/v1',
+                        description: 'Unsecured Local development server',
                     },
                     {
                         url: 'https://api.example.com/api/v1',

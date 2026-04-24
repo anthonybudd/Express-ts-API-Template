@@ -1,5 +1,6 @@
 # Misc
 .vol/
+.ssl/
 .env
 private.pem
 public.pem
