@@ -4,6 +4,8 @@
 .env
 private.pem
 public.pem
+key.pem
+cert.pem
 .DS_Store
 */.DS_Store
 k8s/secrets.yml

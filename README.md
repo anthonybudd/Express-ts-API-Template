@@ -29,12 +29,10 @@ cd express-ts-api-template
 # [Optional] Find & Replace (case-sensaive, whole repo): "express-api" => "your-api-name" 
 LC_ALL=C find . -type f -name '*.*' -exec sed -i '' s/express-api/your-api-name/g {} +
 
-# Private RSA key for JWT signing
+# Local SSL Cert for HTTPS and RSA key for JWT signing
+openssl req -x509 -nodes -days 825 -newkey rsa:2048 -keyout key.pem -out cert.pem -subj "/CN=localhost/O=dev/C=US"
 openssl genrsa -out private.pem 2048
 openssl rsa -in private.pem -outform PEM -pubout -out public.pem
-
-# Local SSL Certificate
-mkdir ./.ssl && openssl req -x509 -nodes -days 825 -newkey rsa:2048 -keyout ./.ssl/key.pem -out ./.ssl/cert.pem -subj "/CN=localhost/O=dev/C=US"
 
 # Start app
 cp .env.example .env
