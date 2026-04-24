@@ -3,7 +3,7 @@ info:
   title: "express-api"
   version: "1.2.1"
 servers:
-  - url: "https://127.0.0.1/api/v1"
+  - url: "https://localhost/api/v1"
     description: "Local development server"
   - url: "http://localhost:8888/api/v1"
     description: "Unsecured Local development server"
