@@ -34,84 +34,6 @@ export const app = express.Router();
 
 /**
  * @swagger
- * /_authcheck:
- *   get:
- *     description: Check if access token is valid
- *     tags: [Auth]
- *     responses:
- *       200:
- *         description: Access token is valid
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 auth:
- *                   type: boolean
- *                 id:
- *                   type: string
- *       401:
- *         description: Unauthorized
- */
-app.get('/_authcheck', [
-    passport.authenticate('jwt', { session: false })
-], async (req: express.Request, res: express.Response) => res.json({
-    auth: true,
-    id: req.user.id
-}));
-
-/**
- * @swagger
- * /auth/login/mfa:
- *   post:
- *     description: Check if MFA is enabled for a user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 description: User's email address
- *     responses:
- *       200:
- *         description: Successfully checked MFA status
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 mfa:
- *                   type: boolean
- */
-app.post('/auth/login/mfa', [
-    body('email').optional().default('').toLowerCase(),
-], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.json({ mfa: false });
-        const { email } = matchedData(req);
-
-        const user = await User.unscoped().findOne({
-            where: {
-                email
-            },
-        });
-
-        if (!user) return res.json({ mfa: false });
-
-        res.json({ mfa: !!user.mfaEnabled });
-    } catch (error) {
-        return res.json({ mfa: false });
-    }
-});
-
-/**
- * @swagger
  * /auth/login:
  *   post:
  *     description: Get an access token
@@ -226,6 +148,56 @@ app.post('/auth/login', [
         })(req, res, next);
     } catch (error) {
         return next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /auth/login/mfa:
+ *   post:
+ *     description: Check if MFA is enabled for a user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *     responses:
+ *       200:
+ *         description: Successfully checked MFA status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mfa:
+ *                   type: boolean
+ */
+app.post('/auth/login/mfa', [
+    body('email').optional().default('').toLowerCase(),
+], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.json({ mfa: false });
+        const { email } = matchedData(req);
+
+        const user = await User.unscoped().findOne({
+            where: {
+                email
+            },
+        });
+
+        if (!user) return res.json({ mfa: false });
+
+        res.json({ mfa: !!user.mfaEnabled });
+    } catch (error) {
+        return res.json({ mfa: false });
     }
 });
 
@@ -796,3 +768,31 @@ app.post('/auth/invite', [
         return next(error);
     }
 });
+
+/**
+ * @swagger
+ * /_authcheck:
+ *   get:
+ *     description: Check if access token is valid
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Access token is valid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 auth:
+ *                   type: boolean
+ *                 id:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized
+ */
+app.get('/_authcheck', [
+    passport.authenticate('jwt', { session: false })
+], async (req: express.Request, res: express.Response) => res.json({
+    auth: true,
+    id: req.user.id
+}));

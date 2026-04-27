@@ -1,11 +1,10 @@
 # Misc
 .vol/
-.ssl/
 .env
 private.pem
 public.pem
-key.pem
-cert.pem
+ssl.key
+ssl.cert
 .DS_Store
 */.DS_Store
 k8s/secrets.yml

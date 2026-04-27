@@ -38,7 +38,7 @@ interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttri
 
     firstName: string,
     lastName: CreationOptional<string> | null,
-    tos: CreationOptional<string> | null,
+    tos: string,
     bio: CreationOptional<string> | null,
 
     inviteKey: CreationOptional<string> | null,
@@ -92,10 +92,22 @@ const User = sequelize.define<UserModel>('user', {
         allowNull: false,
     },
 
-    tos: DataTypes.STRING,
-    inviteKey: DataTypes.STRING,
-    passwordResetKey: DataTypes.STRING,
-    emailVerificationKey: DataTypes.STRING,
+    tos: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    inviteKey: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    passwordResetKey: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    emailVerificationKey: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     emailVerified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

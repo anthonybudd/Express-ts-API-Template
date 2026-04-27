@@ -35,7 +35,7 @@ if (/^\d/.test(argv['model'])) throw Error('--model cannot start with a number')
         ModelNames: inflection.pluralize(ModelName),
         UUID: uuidv4(),
 
-        userID: (argv['userID']) ? 'c4644733-deea-47d8-b35a-86f30ff9618e' : false, // user@exmaple.com
+        userID: (argv['userID']) ? 'c4644733-deea-47d8-b35a-86f30ff9618e' : false, // user@example.com
         groupID: (argv['groupID']) ? 'fdab7a99-2c38-444b-bcb3-f7cef61c275b' : false, // Group A
     };
 

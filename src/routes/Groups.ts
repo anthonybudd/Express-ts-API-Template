@@ -220,6 +220,7 @@ app.post('/groups/:groupID/users/invite', [
                 firstName: '',
                 emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
                 inviteKey: crypto.randomBytes(10).toString('hex'),
+                tos: 'INVITE',
             });
 
             //////////////////////////////////////////

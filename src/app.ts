@@ -24,7 +24,7 @@ if (!isTest) console.log(`* express-api v${version}`);
 if (!isTest) console.log('*');
 if (!isTest) console.log('* ENV');
 if (!isTest) console.log(`* NODE_ENV: ${process.env.NODE_ENV}`);
-if (!isTest) console.log((process.env.H_CAPTCHA_SECRET) ? `* H_CAPTCHA_SECRET: Enabled` : `* ⚠️ H_CAPTCHA_SECRET not set. Login/Sign-up requests will not require captcha validadation!`);
+if (!isTest) console.log((process.env.H_CAPTCHA_SECRET) ? `* H_CAPTCHA_SECRET: Enabled` : `* ⚠️  H_CAPTCHA_SECRET not set! Login/Sign-up requests will skip captcha validadation.`);
 if (!isTest) console.log('*');
 
 ////////////////////////////////////////////////

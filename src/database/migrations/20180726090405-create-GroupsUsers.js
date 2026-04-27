@@ -1,6 +1,8 @@
 module.exports = {
     up: (queryInterface, { DataTypes }) => queryInterface.createTable('GroupsUsers', {
-        id: {  // Not used. Required by default mysql system var sql_require_primary_key
+
+        // AB: This column is not used. Required by default mysql system var `sql_require_primary_key`
+        id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,

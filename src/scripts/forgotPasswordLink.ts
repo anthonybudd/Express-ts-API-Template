@@ -1,6 +1,6 @@
 /**
- * ts-node ./src/scripts/forgotPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
- * docker exec -ti express-api ts-node ./src/scripts/forgotPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
+ * ts-node ./src/scripts/forgotPasswordLink.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
+ * docker exec -ti express-api ts-node ./src/scripts/forgotPasswordLink.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
  *
  */
 import 'dotenv/config';
@@ -15,6 +15,8 @@ if (!argv['userID']) throw Error('You must provide --userID argument');
 (async function Main() {
     try {
         const user = await User.findByPk(argv['userID']);
+
+        if (!user) return console.error('User not found');
 
         const passwordResetKey = crypto.randomBytes(32).toString('base64').replace(/[^a-zA-Z0-9]/g, '');
 

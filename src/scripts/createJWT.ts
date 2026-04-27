@@ -1,6 +1,6 @@
 /**
- * ts-node ./src/scripts/jwt.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
- * docker exec -ti express-api ts-node ./src/scripts/jwt.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
+ * ts-node ./src/scripts/createJWT.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
+ * docker exec -ti express-api ts-node ./src/scripts/createJWT.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
  *
  */
 import 'dotenv/config';

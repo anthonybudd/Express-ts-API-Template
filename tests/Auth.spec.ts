@@ -56,7 +56,7 @@ describe('Auth', () => {
                     password: 'StrongPass123!',
                     firstName: 'Test',
                     lastName: 'User',
-                    tos: true
+                    tos: 'tos-version-2026',
                 })
                 .expect(200)
                 .end((err, res) => {
@@ -74,7 +74,7 @@ describe('Auth', () => {
                     password: 'weak',
                     firstName: 'Test',
                     lastName: 'User',
-                    tos: true
+                    tos: 'tos-version-2026',
                 })
                 .expect(422)
                 .end((err, res) => {
@@ -90,7 +90,7 @@ describe('Auth', () => {
                     password: 'StrongPass123!',
                     firstName: 'Test',
                     lastName: 'User',
-                    tos: true
+                    tos: 'tos-version-2026',
                 })
                 .expect(422)
                 .end((err, res) => {
@@ -111,7 +111,7 @@ describe('Auth', () => {
                     password: 'StrongPass123!',
                     firstName: 'Test',
                     lastName: 'User',
-                    tos: true
+                    tos: 'tos-version-2026',
                 });
 
             // We need to get the verification key from the database
@@ -156,7 +156,7 @@ describe('Auth', () => {
                     password: 'StrongPass123!',
                     firstName: 'Test',
                     lastName: 'User',
-                    tos: true
+                    tos: 'tos-version-2026',
                 });
 
             await supertest(app)
@@ -263,7 +263,8 @@ describe('Auth', () => {
                     email: testEmail,
                     password: 'temporary',
                     firstName: '',
-                    inviteKey: 'test-invite-key-123'
+                    inviteKey: 'test-invite-key-123',
+                    tos: 'tos-version-2026',
                 });
                 inviteKey = user.inviteKey as string;
             });
@@ -298,7 +299,7 @@ describe('Auth', () => {
                         password: 'StrongPass123!',
                         firstName: 'Test',
                         lastName: 'User',
-                        tos: true,
+                        tos: 'tos-version-2026',
                         inviteKey: inviteKey
                     })
                     .expect(200)
@@ -317,7 +318,7 @@ describe('Auth', () => {
                         password: 'StrongPass123!',
                         firstName: 'Test',
                         lastName: 'User',
-                        tos: true,
+                        tos: 'tos-version-2026',
                         inviteKey: 'invalid-key'
                     })
                     .expect(404)

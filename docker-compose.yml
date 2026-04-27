@@ -15,21 +15,6 @@ services:
     ports:
       - "8888:80"
 
-  express-api-proxy:
-    image: nginx:alpine
-    container_name: express-api-proxy
-    depends_on:
-      - express-api
-    ports:
-      - "443:443"
-    volumes:
-      - ./key.pem:/etc/nginx/ssl/key.pem:ro
-      - ./cert.pem:/etc/nginx/ssl/cert.pem:ro
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    environment:
-      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
-    restart: unless-stopped
-
   express-api-db:
     image: mysql:oracle
     container_name: express-api-db
@@ -47,3 +32,18 @@ services:
       MYSQL_DATABASE: $DB_DATABASE
       MYSQL_USER: $DB_USERNAME
       MYSQL_PASSWORD: $DB_PASSWORD
+
+  express-api-proxy:
+    image: nginx:alpine
+    container_name: express-api-proxy
+    depends_on:
+      - express-api
+    ports:
+      - "443:443"
+    volumes:
+      - ./ssl.key:/etc/nginx/ssl/key.pem:ro
+      - ./ssl.cert:/etc/nginx/ssl/cert.pem:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
+    restart: unless-stopped

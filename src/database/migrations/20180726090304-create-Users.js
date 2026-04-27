@@ -42,10 +42,22 @@ module.exports = {
             allowNull: false,
         },
 
-        tos: DataTypes.STRING,
-        inviteKey: DataTypes.STRING,
-        passwordResetKey: DataTypes.STRING,
-        emailVerificationKey: DataTypes.STRING,
+        tos: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        inviteKey: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        passwordResetKey: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        emailVerificationKey: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         emailVerified: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,

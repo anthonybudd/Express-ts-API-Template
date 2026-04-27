@@ -8,8 +8,14 @@ module.exports = {
             unique: true
         },
 
-        name: DataTypes.STRING,
-        ownerID: DataTypes.UUID,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        ownerID: {
+            type: DataTypes.UUID,
+            allowNull: false,
+        },
 
         createdAt: {
             type: DataTypes.DATE,
