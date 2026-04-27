@@ -2,7 +2,7 @@
 
 <img height="75" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-template.png?v=1"/>
 
-A mimimal REST API template using Express.ts, Sequelize and MySQL.
+A minimal REST API template using Express.ts, Sequelize and MySQL.
 
 - 🔑 Auth using JWT's with Passport.js. Optional 2FA.
 - ✅ Full Test Coverage with Mocha.js
@@ -25,14 +25,14 @@ A mimimal REST API template using Express.ts, Sequelize and MySQL.
 git clone git@github.com:anthonybudd/express-ts-api-template.git
 cd express-ts-api-template
 
-# [Optional] Find & Replace (case-sensaive, whole repo): "express-api" => "your-api-name" 
+# [Optional] Find & Replace (case-sensitive, whole repo): "express-api" => "your-api-name" 
 LC_ALL=C find . -type f -name '*.*' -exec sed -i '' s/express-api/your-api-name/g {} +
 
 # Local SSL Cert for HTTPS and RSA key for JWT signing
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ssl.key -out ssl.cert -subj "/CN=localhost/O=dev/C=US"
 openssl genrsa -out private.pem 2048
 openssl rsa -in private.pem -outform PEM -pubout -out public.pem
-cl
+
 # Start app
 cp .env.example .env
 npm install
@@ -45,9 +45,9 @@ npm run generate -- --model="Book"
 npm run exec:db:refresh
 ```
 
-### Contents
-- [DB Structure](#db-structure) - DB structure and design philosphy
-- [Open API Spec](#openapispec) - Genrate an OpenApiSpec.yml with one command
+# Contents
+- [DB Structure](#db-structure) - DB structure and design philosophy
+- [Open API Spec](#openapispec) - Generate an OpenApiSpec.yml with one command
 - [Auto-Generated Client-Side SDKs](#auto-generated-client-side-sdks) - Use the OpenAPISpec to generate client SDKs
 - [Deployment](#deployment) - Full Kubernetes deployment guide
 - [Commands](#commands) - Lots of useful helper commands
@@ -97,7 +97,7 @@ app.post('/auth/login', [
 
 
 ### Auto-Generated Client-Side SDKs
-There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported langauages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
+There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported languages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
 
 
 ```sh
@@ -122,7 +122,7 @@ kubectl apply -f .k8s/api.deployment.yml \
 ### Commands
 There are a few helper scripts and commands for interacting with the application.
 
-Some commands need to be run inside the docker container, these commands have been aliased with an underscore prefix, for exmaple `npm run exec:db:refresh` is an alias for `docker exec -ti express-api npm run db:refresh` which actually runs `./src/scripts/refresh`
+Some commands need to be run inside the docker container, these commands have been aliased with an underscore prefix, for example `npm run exec:db:refresh` is an alias for `docker exec -ti express-api npm run db:refresh` which actually runs `./src/scripts/refresh`
 | Command                          | Description                     | Example                          | 
 | -------------------------------- | ------------------------------- | -------------------------------- |
 | [refresh](./src/scripts/refresh) | Delete the DB, rebuild and seed | `npm run exec:db:refresh` |
