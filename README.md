@@ -120,9 +120,10 @@ kubectl apply -f .k8s/api.deployment.yml \
 
 
 ### Commands
-There are a few helper scripts and commands for interacting with the application.
+There are a few helper scripts and commands for interacting with the API.
 
-Some commands need to be run inside the docker container, these commands have been aliased with an underscore prefix, for example `npm run exec:db:refresh` is an alias for `docker exec -ti express-api npm run db:refresh` which actually runs `./src/scripts/refresh`
+Some commands need to be executed inside the Node docker container, for ease of use these commands are aliased with the prefix `exec:`. These prexixed commands will run the underlying commands but inside the container, for example `npm run exec:db:refresh` will actually call `docker exec -ti express-api npm run db:refresh`.
+
 | Command                          | Description                     | Example                          | 
 | -------------------------------- | ------------------------------- | -------------------------------- |
 | [refresh](./src/scripts/refresh) | Delete the DB, rebuild and seed | `npm run exec:db:refresh` |
