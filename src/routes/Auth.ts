@@ -1,6 +1,6 @@
 import { body, validationResult, matchedData, param } from 'express-validator';
-import { LoginAttempt, LoginAttemptModel } from './../models/LoginAttempt';
 import { ucFirst, generateJWT, generateEmail } from './../providers/Helpers';
+import { LoginAttempt, LoginAttemptModel } from './../models/LoginAttempt';
 import { User, UserModel } from './../models/User';
 import { GroupUser } from './../models/GroupUser';
 import passport from './../providers/Passport';

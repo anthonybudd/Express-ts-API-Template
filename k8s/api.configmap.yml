@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: express-api-config
+  namespace: express-api
+data:
+  NODE_ENV: "production"
+  FRONTEND_URL: "https://app.example.com"
+  BACKEND_URL: "https://api.example.com/api/v1"
+  PORT: "80"
+  PRIVATE_KEY_PATH: "/app/private.pem"
+  PUBLIC_KEY_PATH: "/app/public.pem"
+  DB_HOST: "UUID.db.ondigitalocean.com"
+  DB_PORT: "25060"
+  DB_USERNAME: "doadmin"
+  DB_DATABASE: "defaultdb"

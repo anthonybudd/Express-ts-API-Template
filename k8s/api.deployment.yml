@@ -19,7 +19,7 @@ spec:
             secretName: express-api-jwt-secret
       containers:
         - name: express-api
-          image: registry.EXAMPLE.COM/express-api/express-api
+          image: registry.digitalocean.com/express-api/api:latest
           lifecycle:
             postStart:
               exec:
@@ -33,27 +33,10 @@ spec:
           - name: express-api-jwt-secret
             mountPath: "/app/public.pem"
             subPath: public.pem
+          envFrom:
+          - configMapRef:
+              name: express-api-config
           env:
-          - name: NODE_ENV
-            value: "production"
-          - name: FRONTEND_URL
-            value: "https://app.EXAMPLE.COM"
-          - name: BACKEND_URL
-            value: "https://api.EXAMPLE.COM/api/v1"
-          - name: PORT
-            value: "80"
-          - name: PRIVATE_KEY_PATH
-            value: "/app/private.pem"
-          - name: PUBLIC_KEY_PATH
-            value: "/app/public.pem"
-          - name: DB_HOST
-            value: "db.EXAMPLE.COM"
-          - name: DB_PORT
-            value: "3306"
-          - name: DB_USERNAME
-            value: "user"
-          - name: DB_DATABASE
-            value: "app"
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:

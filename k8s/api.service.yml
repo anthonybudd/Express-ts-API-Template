@@ -1,11 +1,23 @@
-apiVersion: v1
 kind: Service
+apiVersion: v1
 metadata:
   name: express-api
   namespace: express-api
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "https"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "UUID-HERE"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-type: "REGIONAL"
 spec:
-  ports:
-  - port: 80
-    targetPort: 80
+  type: LoadBalancer
   selector:
     app: express-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 80

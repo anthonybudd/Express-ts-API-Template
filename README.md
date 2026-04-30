@@ -6,10 +6,10 @@ A minimal REST API template using Express.ts, Sequelize and MySQL.
 
 - 🔑 Auth using JWT's with Passport.js. Optional 2FA.
 - ✅ Full Test Coverage with Mocha.js
-- 🔐 Local SSL Termination with NGINX. Optional.
+- 🔒 Local SSL Termination with NGINX. Optional.
 - 👥 Simple DB Structure: `Users` -⚟ `GroupsUsers` ⚞- `Groups`
 - 🖥️ ShadCN x Vue3 UI: [AnthonyBudd/Shadcn-Vue-SaaS-Template](https://github.com/anthonybudd/Shadcn-Vue-SaaS-Template)
-- 🥇 Real-world tested, handled over $50M of live transactions
+- 🥇 Real-World Tested. Handled Over $50M Live Transactions!
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=PwZWUVhFmmQ">
@@ -111,14 +111,9 @@ npm run build-sdk
 ### Deployment
 Full Kubernetes deployment instructions can be found in [k8s/Deployment.md](./k8s/Deployment.md).
 
-- [api.deployment.yml](./k8s/api.deployment.yml)
-- [api.service.yml](./k8s/api.service.yml)
-- [api.ingress.yml](./k8s/api.ingress.yml)
-
 ```sh
-kubectl apply -f .k8s/api.deployment.yml \
-  -f .k8s/api.ingress.yml \
-  -f .k8s/api.service.yml 
+kubectl apply -f ./k8s/api.deployment.yml \
+  -f ./k8s/api.service.yml 
 ```
 
 
