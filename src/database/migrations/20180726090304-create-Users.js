@@ -44,12 +44,9 @@ module.exports = {
 
         tos: {
             type: DataTypes.STRING,
-            allowNull: false,
-        },
-        inviteKey: {
-            type: DataTypes.STRING,
             allowNull: true,
         },
+
         passwordResetKey: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -73,6 +70,10 @@ module.exports = {
             allowNull: true,
         },
         updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        deletedAt: {
             type: DataTypes.DATE,
             allowNull: true,
         },

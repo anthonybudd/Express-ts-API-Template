@@ -20,6 +20,10 @@ module.exports = {
             defaultValue: 'User',
             allowNull: false,
         },
+        inviteKey: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
 
         createdAt: {
             type: DataTypes.DATE,

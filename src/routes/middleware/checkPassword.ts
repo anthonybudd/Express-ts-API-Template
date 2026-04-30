@@ -4,40 +4,40 @@ import bcrypt from 'bcryptjs';
 
 export default async (req: Request, res: Response, next: NextFunction) => {
 
-    const password = req.body.password;
+  const password = req.body.password;
 
-    if (!password) return res.status(422).json({
-        errors: {
-            components: {
-                location: 'body',
-                param: 'password',
-                msg: 'Password must be provided'
-            }
-        }
+  if (!password) return res.status(422).json({
+    errors: {
+      components: {
+        location: 'body',
+        param: 'password',
+        msg: 'Password must be provided',
+      },
+    },
+  });
+
+  const user = await User.unscoped().findOne({
+    where: { id: req.user.id },
+  });
+
+  if (!user) return res.status(401).json({
+    msg: 'Incorrect password',
+    code: 92294,
+  });
+
+  bcrypt.compare(password, user.password, (err, compare) => {
+    if (err) return res.status(401).json({
+      msg: 'Incorrect password',
+      code: 96294,
     });
 
-    const user = await User.unscoped().findOne({
-        where: { id: req.user.id }
-    });
-
-    if (!user) return res.status(401).json({
+    if (compare) {
+      return next();
+    } else {
+      return res.status(401).json({
         msg: 'Incorrect password',
-        code: 92294,
-    });
-
-    bcrypt.compare(password, user.password, (err, compare) => {
-        if (err) return res.status(401).json({
-            msg: 'Incorrect password',
-            code: 96294,
-        });
-
-        if (compare) {
-            return next();
-        } else {
-            return res.status(401).json({
-                msg: 'Incorrect password',
-                code: 92298,
-            });
-        }
-    });
+        code: 92298,
+      });
+    }
+  });
 };

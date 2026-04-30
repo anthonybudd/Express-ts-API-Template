@@ -38,7 +38,6 @@ const insert = [{
     lastName: 'User',
     bio: 'This user was invited to the platform',
     tos: 'tos-version-2023-07-13',
-    inviteKey: 'f5009ff5',
     emailVerified: false,
     createdAt: day().format('YYYY-MM-DD HH:mm:ss'),
     updatedAt: day().format('YYYY-MM-DD HH:mm:ss'),

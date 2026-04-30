@@ -40,9 +40,12 @@ docker compose up
 npm run exec:db:refresh
 npm run exec:test
 
-# [Optional] Code generation command
-npm run generate -- --model="Book"
-npm run exec:db:refresh
+curl -k -X POST https://localhost/api/v1/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "user@example.com",
+    "password": "Password@1234"
+  }'
 ```
 
 # Contents
@@ -75,7 +78,7 @@ The DB structure is the optimum balance of functionality and minimalism. A User 
 
 ### OpenAPISpec
 
-Above each route you will see a large comment block with the `@swagger` decorator, these comments are optional and can be removed if you do not want them. I have found when building large commercial API's that it is far more practical to document the routes with comments next to the code rather than manually updating an OpenAPISpec each time a route is created or modified. 
+Above each route you will see a large comment block with the `@swagger` decorator, these comments are optional and can be removed if you do not want them. I have found when building large commercial API's that it is far more practical to document the routes with comments next to the code rather than manually updating an Open API Spec each time a route is created or modified. 
 
 To generate a new OpenAPISpec.yml run the command `npm run exec:openapispec`
 
@@ -97,7 +100,7 @@ app.post('/auth/login', [
 
 
 ### Auto-Generated Client-Side SDKs
-There is an [OpenAPISpec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported languages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
+There is an [Open API Spec](./OpenApiSpec.yml) in the root of the repo. The project includes code generation config files for PHP, JavaScript and Swift. Use the below command to generate SDK Client Libraries for your API to `/sdk/dist`. A full list of supported languages [can be found here.](https://github.com/OpenAPITools/openapi-generator?tab=readme-ov-file#overview)
 
 
 ```sh
@@ -130,11 +133,10 @@ Some commands need to be executed inside the Node docker container, for ease of 
 | [test](./src/tests)              | Run the test suite              | `npm run exec:test` |
 | [openapispec](./package.json)    | Generate a new OpenAPISpec.yml  | `npm run exec:openapispec` |
 | [build-sdk](./package.json)      | Generate client-side SDKs       | `npm run build-sdk` |
-| [renderEmail.ts](./src/scripts/renderEmail.ts)| Generate a HTML email locally  | `docker exec -ti express-api ts-node ./src/scripts/renderEmail.ts --template="Verify" --code="512616" --link="https://google.com"` |
-| [createJWT.ts](.src/scripts/createJWT.ts)     | Create a JWT for a user by ID  | `docker exec -ti express-api ts-node ./src/scripts/createJWT.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
+| [generateEmail.ts](./src/scripts/generateEmail.ts)| Generate a HTML email locally  | `docker exec -ti express-api ts-node ./src/scripts/generateEmail.ts --template="Verify" --code="512616" --link="https://google.com"` |
+| [generateJWT.ts](.src/scripts/generateJWT.ts)     | Generate a JWT for a user by ID  | `docker exec -ti express-api ts-node ./src/scripts/generateJWT.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | [forgotPasswordLink.ts](./src/scripts/forgotPasswordLink.ts) | Generate password reset link  | `docker exec -ti express-api ts-node ./src/scripts/forgotPasswordLink.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"` |
 | [setPassword.ts](.src/scripts/setPassword.ts) | Set user password              | `docker exec -ti express-api ts-node ./src/scripts/setPassword.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e" --password="password"` |
-| [generate.ts](.src/scripts/generate.ts)       | Non-AI Code generation         | `npm run generate -- --model="book"` |
 
 
 ### Routes
@@ -144,14 +146,14 @@ Some commands need to be executed inside the Node docker container, for ease of 
 | **Auth**    |                                                                 |                                       |                                       |                   |  
 | POST        | `/api/v1/auth/login`                                            | Login                                 | {email, password}                     | {accessToken}     |  
 | POST        | `/api/v1/auth/sign-up`                                          | Sign-up                               | {email, password, firstName, tos}     | {accessToken}     |  
-| GET         | `/api/v1/_authcheck`                                            | Returns {auth: true} if has auth      | --                                    | {auth: true}      |  
+| POST        | `/api/v1/auth/sign-up/with-invite`                              | Complete user invite process          | {inviteKey, email, password, ...}     | {accessToken}     |   
 | GET         | `/api/v1/auth/verify-email/:emailVerificationKey`               | Verify email                          | --                                    | {success: true}   |  
 | GET         | `/api/v1/auth/resend-verification-email`                        | Resend verification email             | --                                    | {email}           |  
 | POST        | `/api/v1/auth/forgot`                                           | Forgot                                | {email}                               | {success: true}   |  
-| GET         | `/api/v1/auth/get-user-by-reset-key/:passwordResetKey`          | Get user for given `passwordResetKey` | --                                    | {id, email}       |  
 | POST        | `/api/v1/auth/reset`                                            | Reset password                        | {email, password, passwordResetKey}   | {accessToken}     |  
+| GET         | `/api/v1/auth/get-user-by-reset-key/:passwordResetKey`          | Get user for given `passwordResetKey` | --                                    | {id, email}       |  
 | GET         | `/api/v1/auth/get-user-by-invite-key/:inviteKey`                | Get user for given `inviteKey`        | --                                    | {id, email}       |  
-| POST        | `/api/v1/auth/invite`                                           | Complete user invite process          | {inviteKey, email, password, ...}     | {accessToken}     |   
+| GET         | `/api/v1/_authcheck`                                            | Returns {auth: true} if has auth      | --                                    | {auth: true}      |  
 | **User**    |                                                                 |                                       |                                       |                   |  
 | GET         | `/api/v1/user`                                                  | Get the current user                  |                                       | {User}            |  
 | POST        | `/api/v1/user`                                                  | Update the current user               | {firstName, lastName}                 | {User}            |  

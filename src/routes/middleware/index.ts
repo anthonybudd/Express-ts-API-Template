@@ -7,11 +7,11 @@ import hasRole from './hasRole';
 import isStrongPassword from './isStrongPassword';
 
 export default {
-    isInGroup,
-    isGroupOwner,
-    checkPassword,
-    isNotSelf,
-    hCaptcha,
-    hasRole,
-    isStrongPassword,
+  isInGroup,
+  isGroupOwner,
+  checkPassword,
+  isNotSelf,
+  hCaptcha,
+  hasRole,
+  isStrongPassword,
 };

@@ -16,7 +16,10 @@ module.exports = {
         },
     },
     test: {
-        // AB: I have hardcoded this for a good reason.
+        // AB: I didn't want to make a second MySQL 
+        // container for testing, so will use the root 
+        // user and use the DB `test`. This needs to 
+        // be hardcoded because of providers/db.ts
         username: 'root',
         password: 'supersecret',
         database: 'test',

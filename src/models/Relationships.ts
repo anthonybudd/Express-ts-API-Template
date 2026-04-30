@@ -4,13 +4,13 @@ import User from './User';
 
 
 User.belongsToMany(Group, {
-    through: GroupUser,
-    foreignKey: 'userID',
-    otherKey: 'groupID',
+  through: GroupUser,
+  foreignKey: 'userID',
+  otherKey: 'groupID',
 });
 
 Group.belongsToMany(User, {
-    through: GroupUser,
-    foreignKey: 'groupID',
-    otherKey: 'userID',
+  through: GroupUser,
+  foreignKey: 'groupID',
+  otherKey: 'userID',
 });

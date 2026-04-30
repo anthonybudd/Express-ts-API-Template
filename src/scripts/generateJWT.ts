@@ -1,10 +1,10 @@
 /**
- * ts-node ./src/scripts/createJWT.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
- * docker exec -ti express-api ts-node ./src/scripts/createJWT.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
+ * ts-node ./src/scripts/generateJWT.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
+ * docker exec -ti express-api ts-node ./src/scripts/generateJWT.ts --userID="c4644733-deea-47d8-b35a-86f30ff9618e"
  *
  */
 import 'dotenv/config';
-import generateJWT from './../providers/GenerateJWT';
+import { generateJWT } from './../providers/Helpers';
 import User from './../models/User';
 import db from './../providers/db';
 import minimist from 'minimist';
@@ -16,7 +16,7 @@ if (!argv['userID']) throw Error('You must provide --userID argument');
     try {
         const user = await User.findByPk(argv['userID']);
         if (!user) return console.error('User not found');
-        const jwt = generateJWT(user, { expiresIn: "24h" });
+        const jwt = generateJWT(user, { expiresIn: '24h' });
         console.log(`\n\nJWT:\n\n${jwt}\n\n`);
     } catch (err) {
         console.error(err);

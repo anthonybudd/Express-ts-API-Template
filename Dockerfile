@@ -1,6 +1,7 @@
 FROM node:24
 
-RUN apt update && apt install -y vim moreutils
+RUN apt update
+RUN apt install -y vim moreutils
 RUN npm install -g nodemon sequelize sequelize-cli mysql2 eslint ts-node 
 
 WORKDIR /app

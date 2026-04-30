@@ -22,7 +22,7 @@ if (!argv['userID']) throw Error('You must provide --userID argument');
 
         await user.update({ passwordResetKey });
 
-        console.log(`\n\nEMAIL THIS TO THE USER\nPASSWORD RESET LINK: ${process.env.FRONTEND_URL}/reset/${passwordResetKey}\n\n`);
+        console.log(`\n\nRESET PASSWORD LINK: ${process.env.FRONTEND_URL}/reset/${passwordResetKey}\n\n`);
     } catch (err) {
         console.error(err);
     } finally {

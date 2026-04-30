@@ -23,40 +23,40 @@ import { DataTypes } from 'sequelize';
  */
 
 interface GroupModel extends Model<InferAttributes<GroupModel>, InferCreationAttributes<GroupModel>> {
-    id: CreationOptional<string>,
-    name: string,
-    ownerID: string,
-    deletedAt: CreationOptional<string>,
+  id: CreationOptional<string>,
+  name: string,
+  ownerID: string,
+  deletedAt: CreationOptional<string>,
 }
 
 const Group = sequelize.define<GroupModel>('group', {
-    id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-        allowNull: false,
-        unique: true
-    },
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+    allowNull: false,
+    unique: true,
+  },
 
-    name: {
-        type: DataTypes.STRING
-    },
-    ownerID: {
-        type: DataTypes.UUID
-    },
+  name: {
+    type: DataTypes.STRING,
+  },
+  ownerID: {
+    type: DataTypes.UUID,
+  },
 
-    deletedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-    },
+  deletedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 }, {
-    tableName: 'Groups',
-    paranoid: true,
+  tableName: 'Groups',
+  paranoid: true,
 });
 
 export default Group;
 
 export {
-    GroupModel,
-    Group,
+  GroupModel,
+  Group,
 };
