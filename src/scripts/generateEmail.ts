@@ -24,8 +24,7 @@ if (!argv['template']) throw Error('You must provide --template argument');
     try {
         const filepath = `/tmp/email.html`;
         fs.writeFileSync(filepath, generateEmail(argv['template'], argv));
-        console.log(`\n`);
-        console.log(`Open in browser:`);
+        console.log(`\nOpen in browser:`);
         console.log(`  open ./.vol${filepath}`);
     } catch (err) {
         console.error(err);

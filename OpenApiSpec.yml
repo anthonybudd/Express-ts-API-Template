@@ -41,17 +41,17 @@ paths:
                   example: "000000"
                   description: "Optional MFA code if enabled for account"
       responses:
-        200:
+        "200":
           description: "Successfully logged in"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AccessToken"
-        401:
+        "401":
           description: "Invalid credentials or MFA code"
-        403:
+        "403":
           description: "MFA code required but not provided"
-        422:
+        "422":
           description: "Validation errors"
   /auth/login/mfa:
     post:
@@ -70,7 +70,7 @@ paths:
                   format: "email"
                   description: "User's email address"
       responses:
-        200:
+        "200":
           description: "Successfully checked MFA status"
           content:
             application/json:
@@ -116,13 +116,13 @@ paths:
                   type: "boolean"
                   description: "Acceptance of Terms of Service"
       responses:
-        200:
+        "200":
           description: "Successfully registered"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AccessToken"
-        422:
+        "422":
           description: "Validation errors (email taken, weak password, etc.)"
   /auth/sign-up/with-invite:
     post:
@@ -162,7 +162,7 @@ paths:
                   type: "string"
                   description: "Invitation key received via email"
       responses:
-        200:
+        "200":
           description: "Successfully accepted invitation and created account"
           content:
             application/json:
@@ -188,7 +188,7 @@ paths:
               - "1"
           description: "If set to '1', redirects to frontend after verification"
       responses:
-        200:
+        "200":
           description: "Email successfully verified"
           content:
             application/json:
@@ -218,7 +218,7 @@ paths:
                   format: "email"
                   description: "User's email address"
       responses:
-        200:
+        "200":
           description: "Password reset email sent successfully"
           content:
             application/json:
@@ -240,7 +240,7 @@ paths:
             type: "string"
           description: "Password reset key sent to the user's email"
       responses:
-        200:
+        "200":
           description: "Returns user information"
           content:
             application/json:
@@ -279,7 +279,7 @@ paths:
                   type: "string"
                   description: "Password reset key sent to the user's email"
       responses:
-        200:
+        "200":
           description: "Password successfully reset and user logged in"
           content:
             application/json:
@@ -298,7 +298,7 @@ paths:
             type: "string"
           description: "Invitation key sent to the user's email"
       responses:
-        200:
+        "200":
           description: "Returns basic user information"
           content:
             application/json:
@@ -318,7 +318,7 @@ paths:
       tags:
         - "Auth"
       responses:
-        200:
+        "200":
           description: "Access token is valid"
           content:
             application/json:
@@ -329,8 +329,157 @@ paths:
                     type: "boolean"
                   id:
                     type: "string"
-        401:
+        "401":
           description: "Unauthorized"
+  /user:
+    get:
+      description: "Get the current user"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "Returns the current user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: "Unauthorized - Invalid or missing authentication token"
+    post:
+      description: "Update the current user"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                firstName:
+                  type: "string"
+                  description: "User's first name"
+                lastName:
+                  type: "string"
+                  description: "User's last name"
+                bio:
+                  type: "string"
+                  description: "User's bio"
+      responses:
+        "200":
+          description: "Returns the current user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: "Unauthorized - Invalid or missing authentication token"
+  /user/resend-verification-email:
+    get:
+      description: "Resend the verification email"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "Returns email"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  email:
+                    type: "string"
+  /user/update-password:
+    post:
+      description: "Update the current user's password"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "Returns success"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success:
+                    type: "boolean"
+  /user/enable-mfa:
+    post:
+      description: "Enable MFA for the current user"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "Returns the current user"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  uri:
+                    type: "string"
+  /user/confirm-mfa:
+    post:
+      description: "Confirm MFA"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "token"
+              properties:
+                token:
+                  type: "string"
+                  minLength: 6
+                  maxLength: 6
+      responses:
+        "200":
+          description: "Returns success status"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success:
+                    type: "boolean"
+        "401":
+          description: "Unauthorized - Invalid MFA code or MFA not enabled"
+  /user/disable-mfa:
+    post:
+      description: "Disable MFA"
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "Returns success status"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  success:
+                    type: "boolean"
+        "401":
+          description: "Unauthorized - Invalid MFA code or MFA not enabled"
   /groups/{groupID}:
     get:
       description: "Get a group by ID"
@@ -353,7 +502,7 @@ paths:
               - "users"
           description: "Include related data (users) in the response"
       responses:
-        200:
+        "200":
           description: "Returns the group information"
           content:
             application/json:
@@ -393,17 +542,12 @@ paths:
                   type: "string"
                   description: "New name for the group"
       responses:
-        200:
-          description: "Returns the updated group information"
+        "200":
+          description: "Returns the updated group"
           content:
             application/json:
               schema:
-                type: "object"
-                properties:
-                  id:
-                    type: "string"
-                  name:
-                    type: "string"
+                $ref: "#/components/schemas/Group"
   /groups/{groupID}/users/invite:
     post:
       description: "Invite a user to a group"
@@ -437,7 +581,7 @@ paths:
                   default: "User"
                   description: "Role to assign to the user in the group"
       responses:
-        200:
+        "200":
           description: "User successfully invited to the group"
           content:
             application/json:
@@ -457,8 +601,6 @@ paths:
     post:
       tags:
         - "Groups"
-      summary: "Resend invitation email to a user"
-      description: "Regenerates the invitation link and resends the invitation email to a user"
       security:
         - bearerAuth: []
       parameters:
@@ -475,7 +617,7 @@ paths:
             type: "string"
           description: "ID of the user to resend invitation to"
       responses:
-        200:
+        "200":
           description: "Invitation email resent successfully"
           content:
             application/json:
@@ -520,7 +662,7 @@ paths:
                   default: "User"
                   description: "The role to assign to the user"
       responses:
-        200:
+        "200":
           description: "Role updated successfully"
           content:
             application/json:
@@ -557,7 +699,7 @@ paths:
             type: "string"
           description: "ID of the user to remove from the group"
       responses:
-        200:
+        "200":
           description: "User successfully removed from the group"
           content:
             application/json:
@@ -568,157 +710,12 @@ paths:
                     type: "string"
                   userID:
                     type: "string"
-  /user:
-    get:
-      description: "Get the current user"
-      tags:
-        - "User"
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: "Returns the current user"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        401:
-          description: "Unauthorized - Invalid or missing authentication token"
-    post:
-      description: "Update the current user"
-      tags:
-        - "User"
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: "object"
-              properties:
-                firstName:
-                  type: "string"
-                  description: "User's first name"
-                lastName:
-                  type: "string"
-                  description: "User's last name"
-                bio:
-                  type: "string"
-                  description: "User's bio"
-      responses:
-        200:
-          description: "Returns the current user"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        401:
-          description: "Unauthorized - Invalid or missing authentication token"
-  /user/resend-verification-email:
-    get:
-      description: "Resend the verification email"
-      tags:
-        - "User"
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: "Returns email"
-          content:
-            application/json:
-              schema:
-                type: "object"
-                properties:
-                  email:
-                    type: "string"
-  /user/update-password:
-    post:
-      description: "Update the current user's password"
-      tags:
-        - "User"
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: "Returns success"
-          content:
-            application/json:
-              schema:
-                type: "object"
-                properties:
-                  success:
-                    type: "boolean"
-  /user/enable-mfa:
-    post:
-      description: "Enable MFA for the current user"
-      tags:
-        - "User"
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: "Returns the current user"
-          content:
-            application/json:
-              schema:
-                type: "object"
-                properties:
-                  uri:
-                    type: "string"
-  /user/confirm-mfa:
-    post:
-      description: "Confirm MFA"
-      tags:
-        - "User"
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: "object"
-              required:
-                - "token"
-              properties:
-                token:
-                  type: "string"
-                  minLength: 6
-                  maxLength: 6
-      responses:
-        200:
-          description: "Returns success status"
-          content:
-            application/json:
-              schema:
-                type: "object"
-                properties:
-                  success:
-                    type: "boolean"
-        401:
-          description: "Unauthorized - Invalid MFA code or MFA not enabled"
-  /user/disable-mfa:
-    post:
-      description: "Disable MFA"
-      tags:
-        - "User"
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: "Returns success status"
-          content:
-            application/json:
-              schema:
-                type: "object"
-                properties:
-                  success:
-                    type: "boolean"
-        401:
-          description: "Unauthorized - Invalid MFA code or MFA not enabled"
 components:
   schemas:
+    AccessToken:
+      properties:
+        accessToken:
+          type: "string"
     Group:
       properties:
         id:
@@ -752,10 +749,6 @@ components:
         lastLoginAt:
           type: "string"
           format: "date-time"
-    AccessToken:
-      properties:
-        accessToken:
-          type: "string"
   securitySchemes:
     bearerAuth:
       type: "http"
@@ -764,7 +757,7 @@ components:
 tags:
   - name: "Auth"
     description: "Authentication routes"
-  - name: "Groups"
-    description: "Groups"
   - name: "User"
     description: "User"
+  - name: "Groups"
+    description: "Groups"

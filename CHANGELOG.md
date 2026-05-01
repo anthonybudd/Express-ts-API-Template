@@ -12,6 +12,7 @@
 - Removed generate command
 - `Email.generate` moved to helpers
 - `generateJWT` moved to helpers
+- eslint fixed
 
 ### v1.2.3 - 04/27/26
 - `Users.tos` nullable

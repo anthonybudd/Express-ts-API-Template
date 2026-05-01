@@ -36,10 +36,15 @@ import fs from 'fs';
                     },
                 ]
             },
-            apis: ['./src/**/*.ts'],
+            apis: [
+                './src/routes/Auth.ts', // AB: Keep this ordering
+                './src/routes/User.ts',
+                './src/**/*.ts'
+            ],
         });
 
-        const yaml = convert(openapiSpecification);
+        let yaml = convert(openapiSpecification);
+        yaml = yaml.replace(/(\b\d{3}\b):/g, '"$1":'); // AB: responses.200: -> responses."200":
         fs.writeFileSync('./OpenApiSpec.yml', yaml);
         console.log('API spec written to ./OpenApiSpec.yml');
     } catch (err) {

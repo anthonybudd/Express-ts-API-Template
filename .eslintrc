@@ -7,12 +7,18 @@
   "parserOptions": {
     "project": [
       "./tsconfig.json"
-    ]
+    ],
+    "warnOnUnsupportedTypeScriptVersion": false
   },
   "extends": "airbnb-typescript/base",
   "plugins": [
     "import",
     "@typescript-eslint"
+  ],
+  "ignorePatterns": [
+    "src/database/**",
+    "src/emails/**",
+    "src/scripts/**"
   ],
   "rules": {
     "comma-dangle": 0,
@@ -22,7 +28,9 @@
     "camelcase": 0,
     "import/extensions": 0,
     "@typescript-eslint/no-redeclare": 0,
-    "@typescript-eslint/no-unused-vars": 0
+    "@typescript-eslint/no-unused-vars": 0,
+    "indent": 0,
+    "@typescript-eslint/indent": ["error", 4]
   },
   "settings": {
     "import/parsers": {

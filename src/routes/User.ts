@@ -36,16 +36,16 @@ export const app = express.Router();
  *         description: Unauthorized - Invalid or missing authentication token
  */
 app.get('/user', [
-  passport.authenticate('jwt', { session: false }),
+    passport.authenticate('jwt', { session: false }),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    return res.json(await User.findByPk(req.user.id, {
-      include: [Group],
-      rejectOnEmpty: true,
-    }));
-  } catch (error) {
-    return next(error);
-  }
+    try {
+        return res.json(await User.findByPk(req.user.id, {
+            include: [Group],
+            rejectOnEmpty: true,
+        }));
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -83,21 +83,21 @@ app.get('/user', [
  *         description: Unauthorized - Invalid or missing authentication token
  */
 app.post('/user', [
-  passport.authenticate('jwt', { session: false }),
-  body('firstName').optional(),
-  body('lastName').optional(),
-  body('bio').optional(),
+    passport.authenticate('jwt', { session: false }),
+    body('firstName').optional(),
+    body('lastName').optional(),
+    body('bio').optional(),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const data = matchedData(req);
-    const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
-    await user.update(data);
-    return res.json(user);
-  } catch (error) {
-    return next(error);
-  }
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const data = matchedData(req);
+        const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
+        await user.update(data);
+        return res.json(user);
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -120,25 +120,25 @@ app.post('/user', [
  *                   type: string
  */
 app.post('/user/resend-verification-email', [
-  passport.authenticate('jwt', { session: false }),
+    passport.authenticate('jwt', { session: false }),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
-    await user.update({
-      emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
-    });
+    try {
+        const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
+        await user.update({
+            emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
+        });
 
-    //////////////////////////////////////////
-    // EMAIL THIS LINK TO THE USER
-    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS CODE TO THE USER\nCODE: ${user.emailVerificationKey}\n\n`);
-    // const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`; // HINT: You could also send a clickable link.
-    // const html = generateEmail('Verify', { firstName: user.firstName, code: user.emailVerificationKey });
-    //////////////////////////////////////////
+        //////////////////////////////////////////
+        // EMAIL THIS LINK TO THE USER
+        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS CODE TO THE USER\nCODE: ${user.emailVerificationKey}\n\n`);
+        // const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`; // HINT: You could also send a clickable link.
+        // const html = generateEmail('Verify', { firstName: user.firstName, code: user.emailVerificationKey });
+        //////////////////////////////////////////
 
-    return res.json({ email: user.email });
-  } catch (error) {
-    return next(error);
-  }
+        return res.json({ email: user.email });
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -161,35 +161,35 @@ app.post('/user/resend-verification-email', [
  *                   type: boolean
  */
 app.post('/user/update-password', [
-  passport.authenticate('jwt', { session: false }),
+    passport.authenticate('jwt', { session: false }),
 
-  body('newPassword')
-    .notEmpty()
-    .exists(),
-  body('password')
-    .notEmpty()
-    .exists(),
+    body('newPassword')
+        .notEmpty()
+        .exists(),
+    body('password')
+        .notEmpty()
+        .exists(),
 
-  middleware.checkPassword,
-  middleware.isStrongPassword,
+    middleware.checkPassword,
+    middleware.isStrongPassword,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const data = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const data = matchedData(req);
 
-    await User.unscoped().update({
-      password: bcrypt.hashSync(data.newPassword, bcrypt.genSaltSync(10)),
-    }, {
-      where: {
-        id: req.user.id,
-      },
-    });
+        await User.unscoped().update({
+            password: bcrypt.hashSync(data.newPassword, bcrypt.genSaltSync(10)),
+        }, {
+            where: {
+                id: req.user.id,
+            },
+        });
 
-    return res.json({ success: true });
-  } catch (error) {
-    return next(error);
-  }
+        return res.json({ success: true });
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -212,43 +212,43 @@ app.post('/user/update-password', [
  *                   type: string
  */
 app.post('/user/enable-mfa', [
-  passport.authenticate('jwt', { session: false }),
-  middleware.checkPassword,
+    passport.authenticate('jwt', { session: false }),
+    middleware.checkPassword,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
 
-    const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
+        const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
 
-    if (user.mfaEnabled) return res.status(400).json({ msg: 'MFA is already enabled for this account', code: 400 });
+        if (user.mfaEnabled) return res.status(400).json({ msg: 'MFA is already enabled for this account', code: 400 });
 
-    const secret = new OTPAuth.Secret({ size: 20 });
+        const secret = new OTPAuth.Secret({ size: 20 });
 
-    const totp = new OTPAuth.TOTP({
-      issuer: 'express-api',
-      label: user.email,
-      algorithm: 'SHA3-512',
-      digits: 6,
-      period: 30,
-      secret: secret.base32,
-    });
+        const totp = new OTPAuth.TOTP({
+            issuer: 'express-api',
+            label: user.email,
+            algorithm: 'SHA3-512',
+            digits: 6,
+            period: 30,
+            secret: secret.base32,
+        });
 
-    await User.unscoped().update({
-      mfaEnabled: false,
-      mfaSecret: secret.base32,
-    }, {
-      where: {
-        id: req.user.id,
-      },
-    });
+        await User.unscoped().update({
+            mfaEnabled: false,
+            mfaSecret: secret.base32,
+        }, {
+            where: {
+                id: req.user.id,
+            },
+        });
 
-    return res.json({
-      uri: totp.toString(),
-    });
-  } catch (error) {
-    return next(error);
-  }
+        return res.json({
+            uri: totp.toString(),
+        });
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -286,46 +286,46 @@ app.post('/user/enable-mfa', [
  *         description: Unauthorized - Invalid MFA code or MFA not enabled
  */
 app.post('/user/confirm-mfa', [
-  passport.authenticate('jwt', { session: false }),
-  body('token')
-    .exists()
-    .isLength({ min: 6, max: 6 }),
+    passport.authenticate('jwt', { session: false }),
+    body('token')
+        .exists()
+        .isLength({ min: 6, max: 6 }),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const { token } = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { token } = matchedData(req);
 
-    const { mfaSecret, email: label } = await User.scope('mfa').findByPk(req.user.id, {
-      rejectOnEmpty: true,
-    });
+        const { mfaSecret, email: label } = await User.scope('mfa').findByPk(req.user.id, {
+            rejectOnEmpty: true,
+        });
 
-    if (mfaSecret === null) return res.status(401).json({ msg: 'MFA is not enabled for this account', code: 401 });
+        if (mfaSecret === null) return res.status(401).json({ msg: 'MFA is not enabled for this account', code: 401 });
 
-    const totp = new OTPAuth.TOTP({
-      issuer: 'express-api',
-      label,
-      algorithm: 'SHA3-512',
-      digits: 6,
-      period: 30,
-      secret: mfaSecret as string,
-    });
+        const totp = new OTPAuth.TOTP({
+            issuer: 'express-api',
+            label,
+            algorithm: 'SHA3-512',
+            digits: 6,
+            period: 30,
+            secret: mfaSecret as string,
+        });
 
-    const delta = totp.validate({ token: token, window: 1 });
-    if (delta === null) return res.status(401).json({ msg: 'Incorrect MFA code', code: 401 });
+        const delta = totp.validate({ token: token, window: 1 });
+        if (delta === null) return res.status(401).json({ msg: 'Incorrect MFA code', code: 401 });
 
-    await User.unscoped().update({
-      mfaEnabled: true,
-    }, {
-      where: {
-        id: req.user.id,
-      },
-    });
+        await User.unscoped().update({
+            mfaEnabled: true,
+        }, {
+            where: {
+                id: req.user.id,
+            },
+        });
 
-    return res.json({ success: true });
-  } catch (error) {
-    return next(error);
-  }
+        return res.json({ success: true });
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -350,24 +350,24 @@ app.post('/user/confirm-mfa', [
  *         description: Unauthorized - Invalid MFA code or MFA not enabled
  */
 app.post('/user/disable-mfa', [
-  passport.authenticate('jwt', { session: false }),
-  middleware.checkPassword,
+    passport.authenticate('jwt', { session: false }),
+    middleware.checkPassword,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
 
-    await User.unscoped().update({
-      mfaEnabled: false,
-      mfaSecret: null,
-    }, {
-      where: {
-        id: req.user.id,
-      },
-    });
+        await User.unscoped().update({
+            mfaEnabled: false,
+            mfaSecret: null,
+        }, {
+            where: {
+                id: req.user.id,
+            },
+        });
 
-    return res.json({ success: true });
-  } catch (error) {
-    return next(error);
-  }
+        return res.json({ success: true });
+    } catch (error) {
+        return next(error);
+    }
 });

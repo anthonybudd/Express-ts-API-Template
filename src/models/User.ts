@@ -28,122 +28,122 @@ import { DataTypes } from 'sequelize';
  */
 
 interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
-  id: CreationOptional<string>,
+    id: CreationOptional<string>,
 
-  email: string,
-  password: string,
+    email: string,
+    password: string,
 
-  mfaEnabled: CreationOptional<boolean>,
-  mfaSecret: CreationOptional<string> | null,
+    mfaEnabled: CreationOptional<boolean>,
+    mfaSecret: CreationOptional<string> | null,
 
-  firstName: string,
-  lastName: CreationOptional<string> | null,
-  tos: CreationOptional<string> | null,
-  bio: CreationOptional<string> | null,
+    firstName: string,
+    lastName: CreationOptional<string> | null,
+    tos: CreationOptional<string> | null,
+    bio: CreationOptional<string> | null,
 
-  passwordResetKey: CreationOptional<string> | null,
-  emailVerificationKey: CreationOptional<string> | null,
-  emailVerified: CreationOptional<boolean>,
-  lastLoginAt: CreationOptional<string>,
+    passwordResetKey: CreationOptional<string> | null,
+    emailVerificationKey: CreationOptional<string> | null,
+    emailVerified: CreationOptional<boolean>,
+    lastLoginAt: CreationOptional<string>,
 }
 
 const User = sequelize.define<UserModel>('user', {
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true,
-    allowNull: false,
-    unique: true,
-  },
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+        allowNull: false,
+        unique: true,
+    },
 
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
 
-  mfaEnabled: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-    allowNull: false,
-  },
-  mfaSecret: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+    mfaEnabled: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+    },
+    mfaSecret: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
 
-  firstName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  lastName: {
-    type: DataTypes.STRING,
-    defaultValue: '',
-    allowNull: false,
-  },
-  bio: {
-    type: DataTypes.STRING,
-    defaultValue: '',
-    allowNull: false,
-  },
+    firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    lastName: {
+        type: DataTypes.STRING,
+        defaultValue: '',
+        allowNull: false,
+    },
+    bio: {
+        type: DataTypes.STRING,
+        defaultValue: '',
+        allowNull: false,
+    },
 
-  tos: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  passwordResetKey: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  emailVerificationKey: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  emailVerified: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-    allowNull: false,
-  },
+    tos: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    passwordResetKey: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    emailVerificationKey: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    emailVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+    },
 
-  lastLoginAt: {
-    type: DataTypes.DATE,
-    allowNull: true,
-  },
+    lastLoginAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
 }, {
-  tableName: 'Users',
-  paranoid: true,
-  defaultScope: {
-    attributes: {
-      exclude: [
-        'password',
-        'mfaEnabled',
-        'mfaSecret',
-        'passwordResetKey',
-        'emailVerificationKey',
-      ],
+    tableName: 'Users',
+    paranoid: true,
+    defaultScope: {
+        attributes: {
+            exclude: [
+                'password',
+                'mfaEnabled',
+                'mfaSecret',
+                'passwordResetKey',
+                'emailVerificationKey',
+            ],
+        },
     },
-  },
-  scopes: {
-    mfa: {
-      attributes: {
-        include: [
-          'id',
-          'email',
-          'mfaEnabled',
-          'mfaSecret',
-        ],
-      },
+    scopes: {
+        mfa: {
+            attributes: {
+                include: [
+                    'id',
+                    'email',
+                    'mfaEnabled',
+                    'mfaSecret',
+                ],
+            },
+        },
     },
-  },
 });
 
 export default User;
 
 export {
-  UserModel,
-  User,
+    UserModel,
+    User,
 };

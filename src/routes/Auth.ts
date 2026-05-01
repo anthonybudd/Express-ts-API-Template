@@ -76,76 +76,76 @@ export const app = express.Router();
  *         description: Validation errors
  */
 app.post('/auth/login', [
-  body('email').exists().toLowerCase(),
-  body('password').exists(),
-  body('token').optional().isLength({ min: 6, max: 6 }),
+    body('email').exists().toLowerCase(),
+    body('password').exists(),
+    body('token').optional().isLength({ min: 6, max: 6 }),
 
-  middleware.hCaptcha,
+    middleware.hCaptcha,
 
-  async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-      const { email, token } = matchedData(req);
-      const { mfaEnabled } = await User.scope('mfa').findOne({ where: { email }, rejectOnEmpty: true });
-      if (mfaEnabled && !token) return res.status(403).json({ msg: 'MFA is enabled for this account', code: 403 });
-      return next();
-    } catch (error) {
-      return res.status(401).json({ msg: 'Incorrect email or password' });
-    }
-  },
+    async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        try {
+            const { email, token } = matchedData(req);
+            const { mfaEnabled } = await User.scope('mfa').findOne({ where: { email }, rejectOnEmpty: true });
+            if (mfaEnabled && !token) return res.status(403).json({ msg: 'MFA is enabled for this account', code: 403 });
+            return next();
+        } catch (error) {
+            return res.status(401).json({ msg: 'Incorrect email or password' });
+        }
+    },
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const { token, email } = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { token, email } = matchedData(req);
 
-    const loginAttempt: LoginAttemptModel = await LoginAttempt.create({
-      email,
-      successful: false,
-      ip: req.headers['x-forwarded-for']?.toString().split(',')[0].trim() || req.socket.remoteAddress,
-      headers: JSON.stringify(req.headers),
-    });
-
-    passport.authenticate('local', { session: false }, async (err: Error | null, user: UserModel | null) => {
-      if (err) throw err;
-      if (!user) return res.status(401).json({ msg: 'Incorrect email or password' });
-
-      const { mfaEnabled, email: label, mfaSecret } = await User.scope('mfa').findByPk(user.get('id'), { rejectOnEmpty: true });
-      if (mfaEnabled) {
-        const totp = new OTPAuth.TOTP({
-          issuer: 'express-api',
-          label,
-          algorithm: 'SHA3-512',
-          digits: 6,
-          period: 30,
-          secret: mfaSecret as string,
-        });
-        const delta = totp.validate({ token: token, window: 1 });
-        if (delta === null) return res.status(401).json({ msg: 'Invalid MFA code', code: 401 });
-      }
-
-      req.login(user, { session: false }, (err_: Error) => {
-        if (err_) throw err_;
-
-        res.json({
-          accessToken: generateJWT(user, { expiresIn: '24h' }),
+        const loginAttempt: LoginAttemptModel = await LoginAttempt.create({
+            email,
+            successful: false,
+            ip: req.headers['x-forwarded-for']?.toString().split(',')[0].trim() || req.socket.remoteAddress,
+            headers: JSON.stringify(req.headers),
         });
 
-        User.update({
-          lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
-        }, {
-          where: {
-            id: user.get('id'),
-          },
-        });
+        passport.authenticate('local', { session: false }, async (err: Error | null, user: UserModel | null) => {
+            if (err) throw err;
+            if (!user) return res.status(401).json({ msg: 'Incorrect email or password' });
 
-        loginAttempt.update({
-          successful: true,
-        });
-      });
-    })(req, res, next);
-  } catch (error) {
-    return next(error);
-  }
+            const { mfaEnabled, email: label, mfaSecret } = await User.scope('mfa').findByPk(user.get('id'), { rejectOnEmpty: true });
+            if (mfaEnabled) {
+                const totp = new OTPAuth.TOTP({
+                    issuer: 'express-api',
+                    label,
+                    algorithm: 'SHA3-512',
+                    digits: 6,
+                    period: 30,
+                    secret: mfaSecret as string,
+                });
+                const delta = totp.validate({ token: token, window: 1 });
+                if (delta === null) return res.status(401).json({ msg: 'Invalid MFA code', code: 401 });
+            }
+
+            req.login(user, { session: false }, (err_: Error) => {
+                if (err_) throw err_;
+
+                res.json({
+                    accessToken: generateJWT(user, { expiresIn: '24h' }),
+                });
+
+                User.update({
+                    lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
+                }, {
+                    where: {
+                        id: user.get('id'),
+                    },
+                });
+
+                loginAttempt.update({
+                    successful: true,
+                });
+            });
+        })(req, res, next);
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -177,25 +177,25 @@ app.post('/auth/login', [
  *                   type: boolean
  */
 app.post('/auth/login/mfa', [
-  body('email').optional().default('').toLowerCase(),
+    body('email').optional().default('').toLowerCase(),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.json({ mfa: false });
-    const { email } = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.json({ mfa: false });
+        const { email } = matchedData(req);
 
-    const user = await User.unscoped().findOne({
-      where: {
-        email,
-      },
-    });
+        const user = await User.unscoped().findOne({
+            where: {
+                email,
+            },
+        });
 
-    if (!user) return res.json({ mfa: false });
+        if (!user) return res.json({ mfa: false });
 
-    res.json({ mfa: !!user.mfaEnabled });
-  } catch (error) {
-    return res.json({ mfa: false });
-  }
+        res.json({ mfa: !!user.mfaEnabled });
+    } catch (error) {
+        return res.json({ mfa: false });
+    }
 });
 
 /**
@@ -246,95 +246,95 @@ app.post('/auth/login/mfa', [
  *         description: Validation errors (email taken, weak password, etc.)
  */
 app.post('/auth/sign-up', [
-  body('email')
-    .isEmail()
-    .trim()
-    .toLowerCase()
-    .custom(async (email) => {
-      const user = await User.findOne({ where: { email } });
-      if (user) throw new Error('This email address is taken');
-    }),
-  body('password')
-    .notEmpty()
-    .exists(),
-  body('firstName', 'You must provide your first name')
-    .notEmpty()
-    .exists(),
-  body('lastName')
-    .default('')
-    .optional(),
-  body('groupName')
-    .optional(),
-  body('tos', 'You must accept the Terms of Service to use this platform')
-    .exists()
-    .notEmpty(),
-  middleware.isStrongPassword,
-  middleware.hCaptcha,
+    body('email')
+        .isEmail()
+        .trim()
+        .toLowerCase()
+        .custom(async (email) => {
+            const user = await User.findOne({ where: { email } });
+            if (user) throw new Error('This email address is taken');
+        }),
+    body('password')
+        .notEmpty()
+        .exists(),
+    body('firstName', 'You must provide your first name')
+        .notEmpty()
+        .exists(),
+    body('lastName')
+        .default('')
+        .optional(),
+    body('groupName')
+        .optional(),
+    body('tos', 'You must accept the Terms of Service to use this platform')
+        .exists()
+        .notEmpty(),
+    middleware.isStrongPassword,
+    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const data = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const data = matchedData(req);
 
-    const userID = uuidv4();
-    const groupID = uuidv4();
-    if (!data.lastName) data.lastName = '';
-    if (!data.groupName) data.groupName = data.firstName.concat('\'s Team');
+        const userID = uuidv4();
+        const groupID = uuidv4();
+        if (!data.lastName) data.lastName = '';
+        if (!data.groupName) data.groupName = data.firstName.concat('\'s Team');
 
-    await Group.create({
-      id: groupID,
-      name: data.groupName,
-      ownerID: userID,
-    });
-
-    await GroupUser.create({ userID, groupID, role: 'Admin' });
-
-    const user = await User.create({
-      id: userID,
-      email: data.email,
-      password: bcrypt.hashSync(data.password, bcrypt.genSaltSync(10)),
-      mfaEnabled: false,
-      firstName: ucFirst(data.firstName),
-      lastName: ucFirst(data.lastName),
-      lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
-      tos: data.tos,
-      emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
-    });
-
-
-    //////////////////////////////////////////
-    // EMAIL THIS TO THE USER
-    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS CODE TO THE USER\nCODE: ${user.emailVerificationKey}\n\n`);
-
-    // const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`; // HINT: You could also send a clickable link.
-
-    // const html = generateEmail('Verify', { firstName: user.firstName, code: user.emailVerificationKey });
-    //////////////////////////////////////////
-
-
-    return passport.authenticate('local', { session: false }, (err: Error, usr: UserModel) => {
-      if (err) throw err;
-
-      req.login(usr, { session: false }, (err_) => {
-        if (err_) throw err_;
-
-        res.json({
-          accessToken: generateJWT(usr, {
-            expiresIn: '24h',
-          }),
+        await Group.create({
+            id: groupID,
+            name: data.groupName,
+            ownerID: userID,
         });
 
-        LoginAttempt.create({
-          email: user.email,
-          successful: true,
-          ip: req.headers['x-forwarded-for']?.toString().split(',')[0].trim() || req.socket.remoteAddress,
-          headers: JSON.stringify(req.headers),
+        await GroupUser.create({ userID, groupID, role: 'Admin' });
+
+        const user = await User.create({
+            id: userID,
+            email: data.email,
+            password: bcrypt.hashSync(data.password, bcrypt.genSaltSync(10)),
+            mfaEnabled: false,
+            firstName: ucFirst(data.firstName),
+            lastName: ucFirst(data.lastName),
+            lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
+            tos: data.tos,
+            emailVerificationKey: String(Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111),
         });
-      });
-    })(req, res);
-  } catch (error) {
-    return next(error);
-  }
+
+
+        //////////////////////////////////////////
+        // EMAIL THIS TO THE USER
+        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS CODE TO THE USER\nCODE: ${user.emailVerificationKey}\n\n`);
+
+        // const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`; // HINT: You could also send a clickable link.
+
+        // const html = generateEmail('Verify', { firstName: user.firstName, code: user.emailVerificationKey });
+        //////////////////////////////////////////
+
+
+        return passport.authenticate('local', { session: false }, (err: Error, usr: UserModel) => {
+            if (err) throw err;
+
+            req.login(usr, { session: false }, (err_) => {
+                if (err_) throw err_;
+
+                res.json({
+                    accessToken: generateJWT(usr, {
+                        expiresIn: '24h',
+                    }),
+                });
+
+                LoginAttempt.create({
+                    email: user.email,
+                    successful: true,
+                    ip: req.headers['x-forwarded-for']?.toString().split(',')[0].trim() || req.socket.remoteAddress,
+                    headers: JSON.stringify(req.headers),
+                });
+            });
+        })(req, res);
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -384,68 +384,68 @@ app.post('/auth/sign-up', [
  *               $ref: '#/components/schemas/AccessToken'
  */
 app.post('/auth/sign-up/with-invite', [
-  body('email')
-    .exists({ checkFalsy: true })
-    .isEmail()
-    .toLowerCase(),
-  body('password')
-    .notEmpty()
-    .exists(),
-  body('firstName', 'You must provide your first name')
-    .exists(),
-  body('lastName'),
-  body('tos', 'You must accept the Terms of Service to use this platform')
-    .exists(),
-  body('inviteKey').exists(),
-  middleware.isStrongPassword,
-  middleware.hCaptcha,
+    body('email')
+        .exists({ checkFalsy: true })
+        .isEmail()
+        .toLowerCase(),
+    body('password')
+        .notEmpty()
+        .exists(),
+    body('firstName', 'You must provide your first name')
+        .exists(),
+    body('lastName'),
+    body('tos', 'You must accept the Terms of Service to use this platform')
+        .exists(),
+    body('inviteKey').exists(),
+    middleware.isStrongPassword,
+    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const data = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const data = matchedData(req);
 
-    const relationship = await GroupUser.findOne({
-      where: { inviteKey: data.inviteKey },
-    });
-
-    if (!relationship) return res.status(404).json({ msg: 'Invite not found' });
-
-    const user = await User.findByPk(relationship.userID, {
-      rejectOnEmpty: true,
-    });
-
-    await user.update({
-      password: bcrypt.hashSync(data.password, bcrypt.genSaltSync(10)),
-      firstName: ucFirst(data.firstName),
-      lastName: ucFirst(data.lastName),
-      lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
-      tos: data.tos,
-      emailVerified: true,
-      emailVerificationKey: null,
-    });
-
-    await relationship.update({
-      inviteKey: null,
-    });
-
-    return passport.authenticate('local', { session: false }, (err: Error | null, usr: UserModel | null) => {
-      if (err) throw err;
-      if (!usr) throw new Error('User not found');
-
-      req.login(usr, { session: false }, (err_) => {
-        if (err_) throw err_;
-
-        return res.json({
-          accessToken: generateJWT(usr, {
-            expiresIn: '24h',
-          }),
+        const relationship = await GroupUser.findOne({
+            where: { inviteKey: data.inviteKey },
         });
-      });
-    })(req, res);
-  } catch (error) {
-    return next(error);
-  }
+
+        if (!relationship) return res.status(404).json({ msg: 'Invite not found' });
+
+        const user = await User.findByPk(relationship.userID, {
+            rejectOnEmpty: true,
+        });
+
+        await user.update({
+            password: bcrypt.hashSync(data.password, bcrypt.genSaltSync(10)),
+            firstName: ucFirst(data.firstName),
+            lastName: ucFirst(data.lastName),
+            lastLoginAt: day().format('YYYY-MM-DD HH:mm:ss'),
+            tos: data.tos,
+            emailVerified: true,
+            emailVerificationKey: null,
+        });
+
+        await relationship.update({
+            inviteKey: null,
+        });
+
+        return passport.authenticate('local', { session: false }, (err: Error | null, usr: UserModel | null) => {
+            if (err) throw err;
+            if (!usr) throw new Error('User not found');
+
+            req.login(usr, { session: false }, (err_) => {
+                if (err_) throw err_;
+
+                return res.json({
+                    accessToken: generateJWT(usr, {
+                        expiresIn: '24h',
+                    }),
+                });
+            });
+        })(req, res);
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -481,31 +481,31 @@ app.post('/auth/sign-up/with-invite', [
  *                   type: string
  */
 app.get('/auth/verify-email/:emailVerificationKey', [
-  param('emailVerificationKey').exists(),
+    param('emailVerificationKey').exists(),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const { emailVerificationKey } = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { emailVerificationKey } = matchedData(req);
 
-    const user = await User.findOne({
-      where: {
-        emailVerificationKey,
-      },
-      rejectOnEmpty: true,
-    });
+        const user = await User.findOne({
+            where: {
+                emailVerificationKey,
+            },
+            rejectOnEmpty: true,
+        });
 
-    await user.update({
-      emailVerified: true,
-      emailVerificationKey: null,
-    });
+        await user.update({
+            emailVerified: true,
+            emailVerificationKey: null,
+        });
 
-    if (req.query.redirect === '1') return res.redirect(`${process.env.FRONTEND_URL}?email_verified=1`);
+        if (req.query.redirect === '1') return res.redirect(`${process.env.FRONTEND_URL}?email_verified=1`);
 
-    return res.json({ verified: true, id: user.id });
-  } catch (error) {
-    return next(error);
-  }
+        return res.json({ verified: true, id: user.id });
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -539,40 +539,40 @@ app.get('/auth/verify-email/:emailVerificationKey', [
  *                   type: boolean
  */
 app.post('/auth/forgot', [
-  body('email')
-    .isEmail()
-    .toLowerCase()
-    .custom(async (email) => {
-      const user = await User.findOne({ where: { email } });
-      if (!user) throw new Error('This email address does not exist');
-    }),
-  middleware.hCaptcha,
+    body('email')
+        .isEmail()
+        .toLowerCase()
+        .custom(async (email) => {
+            const user = await User.findOne({ where: { email } });
+            if (!user) throw new Error('This email address does not exist');
+        }),
+    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const { email } = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { email } = matchedData(req);
 
-    const user = await User.findOne({
-      where: { email },
-      rejectOnEmpty: true,
-    });
+        const user = await User.findOne({
+            where: { email },
+            rejectOnEmpty: true,
+        });
 
-    const passwordResetKey = crypto.randomBytes(32).toString('base64').replace(/[^a-zA-Z0-9]/g, '');
+        const passwordResetKey = crypto.randomBytes(32).toString('base64').replace(/[^a-zA-Z0-9]/g, '');
 
-    await user.update({ passwordResetKey });
+        await user.update({ passwordResetKey });
 
-    //////////////////////////////////////////
-    // EMAIL THIS TO THE USER
-    const link = `${process.env.FRONTEND_URL}/reset/${passwordResetKey}`;
-    if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nPASSWORD RESET LINK: ${link}\n\n`);
-    // const html = generateEmail('Reset', { firstName: user.firstName, link });
-    //////////////////////////////////////////
+        //////////////////////////////////////////
+        // EMAIL THIS TO THE USER
+        const link = `${process.env.FRONTEND_URL}/reset/${passwordResetKey}`;
+        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nPASSWORD RESET LINK: ${link}\n\n`);
+        // const html = generateEmail('Reset', { firstName: user.firstName, link });
+        //////////////////////////////////////////
 
-    return res.json({ success: true });
-  } catch (error) {
-    return next(error);
-  }
+        return res.json({ success: true });
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -603,28 +603,28 @@ app.post('/auth/forgot', [
  *                   format: email
  */
 app.get('/auth/get-user-by-reset-key/:passwordResetKey', [
-  param('passwordResetKey').exists(),
+    param('passwordResetKey').exists(),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const { passwordResetKey } = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { passwordResetKey } = matchedData(req);
 
-    const user = await User.findOne({
-      where: {
-        passwordResetKey,
-      },
-      attributes: ['id', 'email'],
-      rejectOnEmpty: true,
-    });
+        const user = await User.findOne({
+            where: {
+                passwordResetKey,
+            },
+            attributes: ['id', 'email'],
+            rejectOnEmpty: true,
+        });
 
-    return res.json({
-      id: user.id,
-      email: user.email,
-    });
-  } catch (error) {
-    return next(error);
-  }
+        return res.json({
+            id: user.id,
+            email: user.email,
+        });
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -663,58 +663,58 @@ app.get('/auth/get-user-by-reset-key/:passwordResetKey', [
  *               $ref: '#/components/schemas/AccessToken'
  */
 app.post('/auth/reset', [
-  body('email')
-    .isEmail()
-    .toLowerCase()
-    .custom(async (email) => {
-      const user = await User.findOne({ where: { email } });
-      if (!user) throw new Error('This email address does not exist');
-    }),
-  body('password')
-    .notEmpty()
-    .exists(),
-  body('passwordResetKey', 'This link has expired')
-    .custom(async (passwordResetKey) => {
-      if (!passwordResetKey) throw new Error('This link has expired');
-      const user = await User.findOne({ where: { passwordResetKey } });
-      if (!user) throw new Error('This link has expired');
-    }),
-  middleware.isStrongPassword,
-  middleware.hCaptcha,
+    body('email')
+        .isEmail()
+        .toLowerCase()
+        .custom(async (email) => {
+            const user = await User.findOne({ where: { email } });
+            if (!user) throw new Error('This email address does not exist');
+        }),
+    body('password')
+        .notEmpty()
+        .exists(),
+    body('passwordResetKey', 'This link has expired')
+        .custom(async (passwordResetKey) => {
+            if (!passwordResetKey) throw new Error('This link has expired');
+            const user = await User.findOne({ where: { passwordResetKey } });
+            if (!user) throw new Error('This link has expired');
+        }),
+    middleware.isStrongPassword,
+    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const { email, password, passwordResetKey } = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { email, password, passwordResetKey } = matchedData(req);
 
-    const user = await User.findOne({
-      where: { email, passwordResetKey },
-      include: [Group],
-      rejectOnEmpty: true,
-    });
-
-    await user.update({
-      password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
-      passwordResetKey: null,
-    });
-
-    return passport.authenticate('local', { session: false }, (err: Error | null, usr: UserModel | null) => {
-      if (err) throw err;
-      if (!usr) throw new Error('User not found');
-
-      req.login(usr, { session: false }, (err_) => {
-        if (err_) throw err_;
-
-        return res.json({
-          accessToken: generateJWT(usr, {
-            expiresIn: '24h',
-          }),
+        const user = await User.findOne({
+            where: { email, passwordResetKey },
+            include: [Group],
+            rejectOnEmpty: true,
         });
-      });
-    })(req, res);
-  } catch (error) {
-    return next(error);
-  }
+
+        await user.update({
+            password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)),
+            passwordResetKey: null,
+        });
+
+        return passport.authenticate('local', { session: false }, (err: Error | null, usr: UserModel | null) => {
+            if (err) throw err;
+            if (!usr) throw new Error('User not found');
+
+            req.login(usr, { session: false }, (err_) => {
+                if (err_) throw err_;
+
+                return res.json({
+                    accessToken: generateJWT(usr, {
+                        expiresIn: '24h',
+                    }),
+                });
+            });
+        })(req, res);
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -747,34 +747,34 @@ app.post('/auth/reset', [
  *                   description: User's email address
  */
 app.get('/auth/get-user-by-invite-key/:inviteKey', [
-  param('inviteKey').exists(),
+    param('inviteKey').exists(),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
-    const { inviteKey } = matchedData(req);
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(422).json({ errors: errors.mapped() });
+        const { inviteKey } = matchedData(req);
 
-    const relationship = await GroupUser.findOne({
-      where: { inviteKey },
-    });
+        const relationship = await GroupUser.findOne({
+            where: { inviteKey },
+        });
 
-    if (!relationship) return res.status(404).json({ msg: 'Invite not found' });
+        if (!relationship) return res.status(404).json({ msg: 'Invite not found' });
 
-    const user = await User.findOne({
-      where: {
-        id: relationship.userID,
-      },
-      attributes: ['id', 'email'],
-      rejectOnEmpty: true,
-    });
+        const user = await User.findOne({
+            where: {
+                id: relationship.userID,
+            },
+            attributes: ['id', 'email'],
+            rejectOnEmpty: true,
+        });
 
-    return res.json({
-      id: user.id,
-      email: user.email,
-    });
-  } catch (error) {
-    return next(error);
-  }
+        return res.json({
+            id: user.id,
+            email: user.email,
+        });
+    } catch (error) {
+        return next(error);
+    }
 });
 
 /**
@@ -799,8 +799,8 @@ app.get('/auth/get-user-by-invite-key/:inviteKey', [
  *         description: Unauthorized
  */
 app.get('/_authcheck', [
-  passport.authenticate('jwt', { session: false }),
+    passport.authenticate('jwt', { session: false }),
 ], async (req: express.Request, res: express.Response) => res.json({
-  auth: true,
-  id: req.user.id,
+    auth: true,
+    id: req.user.id,
 }));
