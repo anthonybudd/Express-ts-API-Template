@@ -12,12 +12,12 @@ A minimal REST API template using Express.ts, Sequelize and MySQL.
 - 🥇 Real-World Tested. Handled Over $50M Live Transactions!
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=PwZWUVhFmmQ">
-  <img width="350" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-temaplate-thumbnail.png" alt="YouTube Video">
+  <a href="https://youtu.be/YNTMBs6Jh7A">
+  <img width="350" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-temaplate-thumbnail.png?v=2" alt="YouTube Video">
   </a>
   </br>
-  <a href="https://youtu.be/PwZWUVhFmmQ">
-  Getting Started: youtu.be/PwZWUVhFmmQ
+  <a href="https://youtu.be/YNTMBs6Jh7A">
+  Getting Started: youtu.be/YNTMBs6Jh7A
   </a>
 </p>
 
@@ -29,10 +29,11 @@ cd express-ts-api-template
 LC_ALL=C find . -type f -name '*.*' -exec sed -i '' s/express-api/your-api-name/g {} +
 
 # Local SSL Cert for HTTPS and RSA key for JWT signing
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ssl.key -out ssl.cert -subj "/O=dev"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ssl.key -out ssl.cert -subj "/O=express-api"
 openssl genrsa -out private.pem 2048
 openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 
+# Run
 cp .env.example .env
 npm install
 docker compose up
@@ -49,7 +50,7 @@ curl -k -X POST https://localhost/api/v1/auth/login \
 
 # Contents
 - [DB Structure](#db-structure) - DB structure and design philosophy
-- [Open API Spec](#open-api-spec) - Generate an OpenApiSpec.yml with one command
+- [Open API Spec](#open-api-spec) - Generate an Open API Spec with JSDoc
 - [Client-Side SDK Generation](#client-side-sdk-generation) - Use OpenAPISpec.yml to generate client SDKs
 - [Deployment](#deployment) - Full Kubernetes deployment guide
 - [Commands](#commands) - Lots of useful helper commands
@@ -108,11 +109,12 @@ npm run build-sdk
 
 
 ### Deployment
-Full Kubernetes deployment instructions can be found in [k8s/Deployment.md](./k8s/Deployment.md).
+Kubernetes deployment instructions can be found in [k8s/Deployment.md](./k8s/Deployment.md).
 
 ```sh
-kubectl apply -f ./k8s/api.deployment.yml \
-  -f ./k8s/api.service.yml 
+export KUBECONFIG=/path/to/kubeconfig.yaml
+
+kubectl apply -f ./k8s/api.deployment.yml -f ./k8s/api.service.yml
 ```
 
 
@@ -141,12 +143,12 @@ Some commands need to be executed inside the Node container. For ease of use, I 
 | POST        | `/api/v1/auth/login`                                            | Login                                 | {email, password}                     | {accessToken}     |  
 | POST        | `/api/v1/auth/sign-up`                                          | Sign-up                               | {email, password, firstName, tos}     | {accessToken}     |  
 | POST        | `/api/v1/auth/sign-up/with-invite`                              | Complete user invite process          | {inviteKey, email, password, ...}     | {accessToken}     |   
+| POST        | `/api/v1/auth/forgot`                                           | Begin password reset flow             | {email}                               | {success: true}   |  
+| POST        | `/api/v1/auth/reset`                                            | Reset password                        | {email, password, passwordResetKey}   | {accessToken}     |  
+| GET         | `/api/v1/auth/get-user-by-invite-key/:inviteKey`                | Get user for given `inviteKey`        | --                                    | {id, email}       |  
+| GET         | `/api/v1/auth/get-user-by-reset-key/:passwordResetKey`          | Get user for given `passwordResetKey` | --                                    | {id, email}       |  
 | GET         | `/api/v1/auth/verify-email/:emailVerificationKey`               | Verify email                          | --                                    | {success: true}   |  
 | GET         | `/api/v1/auth/resend-verification-email`                        | Resend verification email             | --                                    | {email}           |  
-| POST        | `/api/v1/auth/forgot`                                           | Forgot                                | {email}                               | {success: true}   |  
-| POST        | `/api/v1/auth/reset`                                            | Reset password                        | {email, password, passwordResetKey}   | {accessToken}     |  
-| GET         | `/api/v1/auth/get-user-by-reset-key/:passwordResetKey`          | Get user for given `passwordResetKey` | --                                    | {id, email}       |  
-| GET         | `/api/v1/auth/get-user-by-invite-key/:inviteKey`                | Get user for given `inviteKey`        | --                                    | {id, email}       |  
 | GET         | `/api/v1/_authcheck`                                            | Returns {auth: true} if has auth      | --                                    | {auth: true}      |  
 | **User**    |                                                                 |                                       |                                       |                   |  
 | GET         | `/api/v1/user`                                                  | Get the current user                  |                                       | {User}            |  
@@ -157,6 +159,6 @@ Some commands need to be executed inside the Node container. For ease of use, I 
 | POST        | `/api/v1/groups/:groupID`                                       | Update group by ID                    | {name: 'New Name'}                    | {Group}           |  
 | POST        | `/api/v1/groups/:groupID/users/invite`                          | Invite user to group                  | {email, role}                         | {UserID, GroupID} |  
 | POST        | `/api/v1/groups/:groupID/users/:userID/resend-invitation-email` | Resend invitation email               | {}                                    | {email}           |  
-| POST        | `/api/v1/groups/:groupID/users/:userID/set-role`                | Set user role                         | {role: 'User'|'Admin' }               | {UserID, role}    |  
+| POST        | `/api/v1/groups/:groupID/users/:userID/set-role`                | Set user role                         | {role: 'Admin' }                      | {UserID, role}    |  
 | DELETE      | `/api/v1/groups/:groupID/users/:userID`                         | Remove user from group                | --                                    | {UserID}          |  
 
