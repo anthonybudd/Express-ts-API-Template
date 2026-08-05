@@ -13,7 +13,7 @@ A minimal REST API template using Express.ts, Sequelize and MySQL.
 
 <p align="center">
   <a href="https://youtu.be/YNTMBs6Jh7A">
-  <img width="350" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-temaplate-thumbnail.png?v=3" alt="YouTube Video">
+  <img width="350" src="https://raw.githubusercontent.com/anthonybudd/anthonybudd/master/img/express-ts-api-temaplate-thumbnail.png?v=4" alt="YouTube Video">
   </a>
   </br>
   <a href="https://youtu.be/YNTMBs6Jh7A">
