@@ -1,7 +1,6 @@
 import { body, validationResult, matchedData, param } from 'express-validator';
-import { generateEmail } from './../providers/Helpers';
+import { generateEmail, isTest } from './../providers/Helpers';
 import { GroupUser } from './../models/GroupUser';
-import passport from './../providers/Passport';
 import { Group } from './../models/Group';
 import middleware from './middleware';
 import User from './../models/User';
@@ -58,8 +57,8 @@ export const app = express.Router();
  *                   description: Only included when with=users query parameter is provided
  */
 app.get('/groups/:groupID', [
-    passport.authenticate('jwt', { session: false }),
     param('groupID').exists().isUUID(),
+    middleware.auth,
     middleware.isInGroup,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
@@ -107,9 +106,9 @@ app.get('/groups/:groupID', [
  *               $ref: '#/components/schemas/Group'
  */
 app.post('/groups/:groupID', [
-    passport.authenticate('jwt', { session: false }),
     param('groupID').isUUID(),
     body('name').exists().isString(),
+    middleware.auth,
     middleware.hasRole('Admin'),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
@@ -173,10 +172,10 @@ app.post('/groups/:groupID', [
  *                   enum: [User, Admin]
  */
 app.post('/groups/:groupID/users/invite', [
-    passport.authenticate('jwt', { session: false }),
     param('groupID').isUUID(),
     body('email').isEmail().toLowerCase(),
     body('role').default('User').isIn(['User', 'Admin']),
+    middleware.auth,
     middleware.hasRole('Admin'),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
@@ -235,7 +234,7 @@ app.post('/groups/:groupID/users/invite', [
             //////////////////////////////////////////
             // EMAIL THIS TO THE USER
             const link = `${process.env.FRONTEND_URL}/invite/${relationship.inviteKey}`;
-            if (typeof global.it !== 'function') console.log(`\n\nINVITE LINK: ${link}\n\n`);
+            if (!isTest) console.log(`\n\nINVITE LINK: ${link}\n\n`);
             // const html = generateEmail('Default', { 
             //     title: `You've been invited to join ${group.name}`,
             //     body: `You have been invited to join ${group.name} by ${req.user.firstName} ${req.user.lastName}. Click the button below to accept the invitation.`,
@@ -289,9 +288,9 @@ app.post('/groups/:groupID/users/invite', [
  *                   description: Email address of the user
  */
 app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
-    passport.authenticate('jwt', { session: false }),
     param('groupID').isUUID(),
     param('userID').isUUID(),
+    middleware.auth,
     middleware.hasRole('Admin'),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
@@ -320,7 +319,7 @@ app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
         //////////////////////////////////////////
         // EMAIL THIS TO THE USER
         const link = `${process.env.FRONTEND_URL}/invite/${relationship.inviteKey}`;
-        if (typeof global.it !== 'function') console.log(`\n\nINVITE LINK: ${link}\n\n`);
+        if (!isTest) console.log(`\n\nINVITE LINK: ${link}\n\n`);
         // const html = generateEmail('Invite', { link, groupName: group.name });
         //////////////////////////////////////////
 
@@ -380,10 +379,10 @@ app.post('/groups/:groupID/users/:userID/resend-invitation-email', [
  *                   enum: [User, Admin]
  */
 app.post('/groups/:groupID/users/:userID/set-role', [
-    passport.authenticate('jwt', { session: false }),
     param('groupID').isUUID(),
     param('userID').isUUID(),
     body('role').default('User').isIn(['User', 'Admin']),
+    middleware.auth,
     middleware.hasRole('Admin'),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
@@ -455,11 +454,9 @@ app.post('/groups/:groupID/users/:userID/set-role', [
  *                   type: string
  */
 app.delete('/groups/:groupID/users/:userID', [
-    passport.authenticate('jwt', { session: false }),
-
     param('groupID').isUUID(),
     param('userID').isUUID(),
-
+    middleware.auth,
     middleware.isNotSelf,
     middleware.hasRole('Admin'),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {

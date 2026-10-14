@@ -1,6 +1,5 @@
 import { body, validationResult, matchedData } from 'express-validator';
-import { generateEmail } from './../providers/Helpers';
-import passport from './../providers/Passport';
+import { generateEmail, isTest } from './../providers/Helpers';
 import middleware from './middleware';
 import Group from './../models/Group';
 import User from './../models/User';
@@ -36,7 +35,7 @@ export const app = express.Router();
  *         description: Unauthorized - Invalid or missing authentication token
  */
 app.get('/user', [
-    passport.authenticate('jwt', { session: false }),
+    middleware.auth,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         return res.json(await User.findByPk(req.user.id, {
@@ -83,10 +82,10 @@ app.get('/user', [
  *         description: Unauthorized - Invalid or missing authentication token
  */
 app.post('/user', [
-    passport.authenticate('jwt', { session: false }),
     body('firstName').optional(),
     body('lastName').optional(),
     body('bio').optional(),
+    middleware.auth,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const errors = validationResult(req);
@@ -120,7 +119,7 @@ app.post('/user', [
  *                   type: string
  */
 app.post('/user/resend-verification-email', [
-    passport.authenticate('jwt', { session: false }),
+    middleware.auth,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const user = await User.findByPk(req.user.id, { rejectOnEmpty: true });
@@ -130,7 +129,7 @@ app.post('/user/resend-verification-email', [
 
         //////////////////////////////////////////
         // EMAIL THIS LINK TO THE USER
-        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS CODE TO THE USER\nCODE: ${user.emailVerificationKey}\n\n`);
+        if (!isTest) console.log(`\n\nEMAIL THIS CODE TO THE USER\nCODE: ${user.emailVerificationKey}\n\n`);
         // const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`; // HINT: You could also send a clickable link.
         // const html = generateEmail('Verify', { firstName: user.firstName, code: user.emailVerificationKey });
         //////////////////////////////////////////
@@ -161,15 +160,9 @@ app.post('/user/resend-verification-email', [
  *                   type: boolean
  */
 app.post('/user/update-password', [
-    passport.authenticate('jwt', { session: false }),
-
-    body('newPassword')
-        .notEmpty()
-        .exists(),
-    body('password')
-        .notEmpty()
-        .exists(),
-
+    body('newPassword').notEmpty().exists(),
+    body('password').notEmpty().exists(),
+    middleware.auth,
     middleware.checkPassword,
     middleware.isStrongPassword,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -212,7 +205,7 @@ app.post('/user/update-password', [
  *                   type: string
  */
 app.post('/user/enable-mfa', [
-    passport.authenticate('jwt', { session: false }),
+    middleware.auth,
     middleware.checkPassword,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
@@ -286,10 +279,8 @@ app.post('/user/enable-mfa', [
  *         description: Unauthorized - Invalid MFA code or MFA not enabled
  */
 app.post('/user/confirm-mfa', [
-    passport.authenticate('jwt', { session: false }),
-    body('token')
-        .exists()
-        .isLength({ min: 6, max: 6 }),
+    body('token').exists().isLength({ min: 6, max: 6 }),
+    middleware.auth,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const errors = validationResult(req);
@@ -350,7 +341,7 @@ app.post('/user/confirm-mfa', [
  *         description: Unauthorized - Invalid MFA code or MFA not enabled
  */
 app.post('/user/disable-mfa', [
-    passport.authenticate('jwt', { session: false }),
+    middleware.auth,
     middleware.checkPassword,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {

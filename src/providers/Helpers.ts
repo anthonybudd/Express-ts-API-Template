@@ -20,7 +20,7 @@ const generateJWT = (user: UserModel, signOptions: SignOptions) => {
         email: user.get('email'),
     };
 
-    signOptions.algorithm = 'RS512';
+    signOptions.algorithm = 'RS512'; // Force the algorithm to be RS512.
 
     return sign(
         payload,
@@ -29,8 +29,11 @@ const generateJWT = (user: UserModel, signOptions: SignOptions) => {
     );
 };
 
+const isTest = (process.env.NODE_ENV === 'test');
+
 export {
     ucFirst,
     generateEmail,
     generateJWT,
+    isTest,
 };

@@ -11,8 +11,6 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": "src",
-    "moduleResolution": "node",
     "resolveJsonModule": true,
   },
   "include": [

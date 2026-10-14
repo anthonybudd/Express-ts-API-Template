@@ -1,14 +1,15 @@
 import 'dotenv/config';
-import { version } from '../package.json';
 import ErrorHandler from './providers/ErrorHandler';
 import { rateLimit } from 'express-rate-limit';
+import { isTest } from './providers/Helpers';
+import { version } from './../package.json';
 import fileUpload from 'express-fileupload';
-import express from 'express';
 // import cron from 'node-cron';
+import './models/Relationships';
+import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
-import './models/Relationships';
 
 
 ////////////////////////////////////////////////
@@ -17,8 +18,6 @@ import { app as Auth } from './routes/Auth';
 import { app as User } from './routes/User';
 import { app as Groups } from './routes/Groups';
 
-
-const isTest = (process.env.NODE_ENV === 'test');
 if (!isTest) console.log('*************************************');
 if (!isTest) console.log(`* express-api v${version}`);
 if (!isTest) console.log('*');

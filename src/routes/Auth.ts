@@ -1,5 +1,5 @@
 import { body, validationResult, matchedData, param } from 'express-validator';
-import { ucFirst, generateJWT, generateEmail } from './../providers/Helpers';
+import { ucFirst, generateJWT, generateEmail, isTest } from './../providers/Helpers';
 import { LoginAttempt, LoginAttemptModel } from './../models/LoginAttempt';
 import { User, UserModel } from './../models/User';
 import { GroupUser } from './../models/GroupUser';
@@ -76,11 +76,11 @@ export const app = express.Router();
  *         description: Validation errors
  */
 app.post('/auth/login', [
-    body('email').exists().toLowerCase(),
+    middleware.hCaptcha,
+
+    body('email').exists().trim().toLowerCase(),
     body('password').exists(),
     body('token').optional().isLength({ min: 6, max: 6 }),
-
-    middleware.hCaptcha,
 
     async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
@@ -177,7 +177,7 @@ app.post('/auth/login', [
  *                   type: boolean
  */
 app.post('/auth/login/mfa', [
-    body('email').optional().default('').toLowerCase(),
+    body('email').optional().default('').trim().toLowerCase(),
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const errors = validationResult(req);
@@ -304,7 +304,7 @@ app.post('/auth/sign-up', [
 
         //////////////////////////////////////////
         // EMAIL THIS TO THE USER
-        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS CODE TO THE USER\nCODE: ${user.emailVerificationKey}\n\n`);
+        if (!isTest) console.log(`\n\nEMAIL THIS CODE TO THE USER\nCODE: ${user.emailVerificationKey}\n\n`);
 
         // const link = `${process.env.BACKEND_URL}/auth/verify-email/${user.emailVerificationKey}?redirect=1`; // HINT: You could also send a clickable link.
 
@@ -386,6 +386,7 @@ app.post('/auth/sign-up', [
 app.post('/auth/sign-up/with-invite', [
     body('email')
         .exists({ checkFalsy: true })
+        .trim()
         .isEmail()
         .toLowerCase(),
     body('password')
@@ -539,14 +540,15 @@ app.get('/auth/verify-email/:emailVerificationKey', [
  *                   type: boolean
  */
 app.post('/auth/forgot', [
+    middleware.hCaptcha,
     body('email')
-        .isEmail()
+        .trim()
         .toLowerCase()
+        .isEmail()
         .custom(async (email) => {
             const user = await User.findOne({ where: { email } });
             if (!user) throw new Error('This email address does not exist');
         }),
-    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const errors = validationResult(req);
@@ -565,7 +567,7 @@ app.post('/auth/forgot', [
         //////////////////////////////////////////
         // EMAIL THIS TO THE USER
         const link = `${process.env.FRONTEND_URL}/reset/${passwordResetKey}`;
-        if (typeof global.it !== 'function') console.log(`\n\nEMAIL THIS TO THE USER\nPASSWORD RESET LINK: ${link}\n\n`);
+        if (!isTest) console.log(`\n\nEMAIL THIS TO THE USER\nPASSWORD RESET LINK: ${link}\n\n`);
         // const html = generateEmail('Reset', { firstName: user.firstName, link });
         //////////////////////////////////////////
 
@@ -663,24 +665,26 @@ app.get('/auth/get-user-by-reset-key/:passwordResetKey', [
  *               $ref: '#/components/schemas/AccessToken'
  */
 app.post('/auth/reset', [
+    middleware.hCaptcha,
+
     body('email')
-        .isEmail()
+        .trim()
         .toLowerCase()
+        .isEmail()
         .custom(async (email) => {
             const user = await User.findOne({ where: { email } });
             if (!user) throw new Error('This email address does not exist');
         }),
-    body('password')
-        .notEmpty()
-        .exists(),
+
+    body('password').notEmpty().exists(),
+    middleware.isStrongPassword,
+
     body('passwordResetKey', 'This link has expired')
         .custom(async (passwordResetKey) => {
             if (!passwordResetKey) throw new Error('This link has expired');
             const user = await User.findOne({ where: { passwordResetKey } });
             if (!user) throw new Error('This link has expired');
         }),
-    middleware.isStrongPassword,
-    middleware.hCaptcha,
 ], async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
         const errors = validationResult(req);
@@ -799,7 +803,7 @@ app.get('/auth/get-user-by-invite-key/:inviteKey', [
  *         description: Unauthorized
  */
 app.get('/_authcheck', [
-    passport.authenticate('jwt', { session: false }),
+    middleware.auth,
 ], async (req: express.Request, res: express.Response) => res.json({
     auth: true,
     id: req.user.id,

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { isTest } from '../../providers/Helpers';
 import axios from 'axios';
 import * as qs from 'qs';
 
@@ -7,9 +8,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     const htoken = req.body.htoken;
 
     // Skip hCaptcha validation if running tests
-    if (typeof global.it === 'function') {
-        return next();
-    }
+    if (isTest) return next();
 
     if (!process.env.H_CAPTCHA_SECRET) {
         console.log('⚠️  Warning: H_CAPTCHA_SECRET not set, skipping captcha validadation');
@@ -26,17 +25,14 @@ export default async (req: Request, res: Response, next: NextFunction) => {
         },
     });
 
-    const { data } = await axios.post('https://hcaptcha.com/siteverify',
-        qs.stringify({
-            response: htoken,
-            secret: process.env.H_CAPTCHA_SECRET,
-        }),
-        {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+    const { data } = await axios.post('https://hcaptcha.com/siteverify', qs.stringify({
+        response: htoken,
+        secret: process.env.H_CAPTCHA_SECRET,
+    }), {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-    );
+    });
 
     if (data.success) return next();
 
