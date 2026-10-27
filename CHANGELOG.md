@@ -1,5 +1,11 @@
 # CHANGELOG
 
+### v1.2.5 - 10/26/26
+- Added graceful shutdown procedure, triggered on `SIGINT` or `SIGTERM`
+- Moved contents of `app.ts` into `index.ts`
+- `middleware.auth` added to avoid repeating `passport.authenticate('jwt', { session: false })`
+- `isTest` added to helpers
+
 ### v1.2.4 - 04/30/26
 - Invite system refactored. Current process had bug preventing multiple invites to the same new email. 
 - Deleted `providers/hCaptcha.ts`. Moved contents to `routes/middleware/hCaptcha.ts`
