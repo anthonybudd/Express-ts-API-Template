@@ -58,7 +58,7 @@ curl -k -X POST https://localhost/api/v1/auth/login \
 
 
 ### DB Structure
-The DB structure is the optimum balance of functionality and minimalism. A User can belong to many Groups through the GroupsUsers table. This allows you to make very basic single-user applications that do not even require the concept of groups or full SaaS solutions with complex User-Group relationships.
+The DB structure has been designed to strike a balance between functionality and minimalism. A User can belong to many Groups through the GroupsUsers table. This allows you to make very basic single-user applications that do not require the concept of groups or full SaaS solutions with complex User-Group relationships.
 
 ```                                                                
 +--------------+           +---------------+         +--------------+  
