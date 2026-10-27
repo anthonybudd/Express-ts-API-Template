@@ -2,7 +2,7 @@ import 'dotenv/config';
 import supertest from 'supertest';
 import { expect } from 'chai';
 import * as OTPAuth from 'otpauth';
-import app from '../src/app';
+import app from '../src/index';
 import User from '../src/models/User';
 
 

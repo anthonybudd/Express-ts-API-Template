@@ -4,7 +4,7 @@ import { Group } from '../src/models/Group';
 import { User } from '../src/models/User';
 import supertest from 'supertest';
 import { expect } from 'chai';
-import app from '../src/app';
+import app from '../src/index';
 import crypto from 'crypto';
 
 

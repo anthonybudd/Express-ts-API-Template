@@ -5,8 +5,6 @@ import * as qs from 'qs';
 
 export default async (req: Request, res: Response, next: NextFunction) => {
 
-    const htoken = req.body.htoken;
-
     // Skip hCaptcha validation if running tests
     if (isTest) return next();
 
@@ -15,7 +13,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
         return next();
     }
 
-    if (!htoken) return res.status(422).json({
+    if (!req.body.htoken) return res.status(422).json({
         errors: {
             htoken: {
                 location: 'body',
@@ -26,7 +24,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     });
 
     const { data } = await axios.post('https://hcaptcha.com/siteverify', qs.stringify({
-        response: htoken,
+        response: req.body.htoken,
         secret: process.env.H_CAPTCHA_SECRET,
     }), {
         headers: {
@@ -34,7 +32,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
         },
     });
 
-    if (data.success) return next();
+    if (data.success === true) return next();
 
     return res.status(422).json({
         errors: {

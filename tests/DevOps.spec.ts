@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import supertest from 'supertest';
 import { expect } from 'chai';
-import app from '../src/app';
+import app from '../src/index';
 
 
 describe('DevOps', () => {

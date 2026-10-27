@@ -1,6 +1,6 @@
 {
   "name": "express-api",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "author": "Anthony Budd",
   "description": "Production-ready minimal REST API template using Express, Sequelize and MySQL.",
   "main": "src/index.ts",

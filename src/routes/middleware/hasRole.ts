@@ -16,7 +16,7 @@ export default (role: string) => async (req: Request, res: Response, next: NextF
         },
     });
 
-    if (hasRole) {
+    if (hasRole !== null) {
         return next();
     } else {
         if (role === 'Admin') {

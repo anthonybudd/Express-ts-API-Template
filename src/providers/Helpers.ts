@@ -4,9 +4,9 @@ import Mustache from 'mustache';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const ucFirst = (string: string) => string.charAt(0).toUpperCase() + string.slice(1);
+const ucFirst = (string: string): string => (string.charAt(0).toUpperCase() + string.slice(1));
 
-const generateEmail = (template: string, params: object = {}) => {
+const generateEmail = (template: string, params: object = {}): string => {
     return Mustache.render(fs.readFileSync(path.resolve('./src/emails/layout/Header.html'), 'utf8'), params).concat(
         Mustache.render(fs.readFileSync(path.resolve(`./src/emails/${template}.html`), 'utf8'), params),
     ).concat(
@@ -14,7 +14,7 @@ const generateEmail = (template: string, params: object = {}) => {
     );
 };
 
-const generateJWT = (user: UserModel, signOptions: SignOptions) => {
+const generateJWT = (user: UserModel, signOptions: SignOptions): string => {
     const payload = {
         id: user.get('id'),
         email: user.get('email'),
